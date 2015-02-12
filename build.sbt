@@ -12,6 +12,8 @@ libraryDependencies += "org.apache.spark" %% "spark-core" % SPARK_VERSION
 
 libraryDependencies += "org.apache.spark" %% "spark-sql" % SPARK_VERSION
 
+libraryDependencies += "org.apache.spark" %% "spark-mllib" % SPARK_VERSION
+
 seq(bintrayPublishSettings:_*)
 
 licenses += ("Apache-2.0", url("http://opensource.org/licenses/Apache-2.0"))
