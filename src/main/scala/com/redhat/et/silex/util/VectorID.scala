@@ -16,26 +16,24 @@
  * limitations under the License.c
  */
 
-package com.redhat.et.silex.util
+package com.redhat.et.silex.util.VectorID
 
-object VectorID {
-  import org.apache.spark.mllib.linalg.{Vector => MLVec, DenseVector => MLDenseVec, SparseVector => MLSparseVec}
+import org.apache.spark.mllib.linalg.{Vector => MLVec, DenseVector => MLDenseVec, SparseVector => MLSparseVec}
 
-  class DenseVectorID[ID](val data: Array[Double], val id: ID) extends MLDenseVec(data)
+class DenseVectorID[ID](val data: Array[Double], val id: ID) extends MLDenseVec(data)
 
-  object DenseVectorID {
-    def apply[ID](data: Array[Double], id: ID) = new DenseVectorID[ID](data, id)
-    def unapply[ID](v: DenseVectorID[ID]): Option[(Array[Double], ID)] =
-      Some((v.data, v.id))
-  }
+object DenseVectorID {
+  def apply[ID](data: Array[Double], id: ID) = new DenseVectorID[ID](data, id)
+  def unapply[ID](v: DenseVectorID[ID]): Option[(Array[Double], ID)] =
+    Some((v.data, v.id))
+}
 
-  class SparseVectorID[ID](val sz: Int, val idx: Array[Int], val data: Array[Double], val id: ID)
-      extends MLSparseVec(sz, idx, data)
+class SparseVectorID[ID](val sz: Int, val idx: Array[Int], val data: Array[Double], val id: ID)
+    extends MLSparseVec(sz, idx, data)
 
-  object SparseVectorID {
-    def apply[ID](sz: Int, idx: Array[Int], data: Array[Double], id: ID) =
-      new SparseVectorID[ID](sz, idx, data, id)
-    def unapply[ID](v: SparseVectorID[ID]): Option[(Int, Array[Int], Array[Double], ID)] =
-      Some((v.sz, v.idx, v.data, v.id))
-  }
+object SparseVectorID {
+  def apply[ID](sz: Int, idx: Array[Int], data: Array[Double], id: ID) =
+    new SparseVectorID[ID](sz, idx, data, id)
+  def unapply[ID](v: SparseVectorID[ID]): Option[(Int, Array[Int], Array[Double], ID)] =
+    Some((v.sz, v.idx, v.data, v.id))
 }
