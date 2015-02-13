@@ -15,3 +15,7 @@ libraryDependencies += "org.apache.spark" %% "spark-sql" % SPARK_VERSION
 seq(bintrayPublishSettings:_*)
 
 licenses += ("Apache-2.0", url("http://opensource.org/licenses/Apache-2.0"))
+
+scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
+
+scalacOptions in (Compile, doc) ++= Seq("-doc-root-content", baseDirectory.value+"/root-doc.txt")
