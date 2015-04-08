@@ -21,8 +21,6 @@ package com.redhat.et.silex.frame
 import com.redhat.et.silex.app.ConsoleApp
 
 import org.scalatest._
-import scala.reflect.ClassTag
-import scala.reflect.runtime.universe._
 
 private[frame] case class Example1(a: Int, b: Int, c: Int) {}
 private[frame] case class Example2(a: Int, b: Int, d: Int) {}
@@ -45,23 +43,9 @@ class NatJoinSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
     val sqlc = app.sqlContext
     import sqlc.implicits._
     
-    val c1 = (1 to 10).map { i => Example1(i, i * 2, i * 3)}
-    val c2 = (100 to 150).map { i => Example2(i, i * 2, i * 3)}
+    val frame1 = app.context.parallelize((1 to 10).map { i => Example1(i, i * 2, i * 3)}).toDF()
+    val frame2 = app.context.parallelize((100 to 150).map { i => Example2(i, i * 2, i * 3)}).toDF()
     
-    assert(NJHelper.nj(c1, c2, app).collect.length == 0)
-  }
-}
-
-object NJHelper {
-  import org.apache.spark.sql.DataFrame
-  
-  def nj[A <: Product : ClassTag : TypeTag, B <: Product : ClassTag : TypeTag](data1: Seq[A], data2: Seq[B], app: ConsoleApp): DataFrame = {
-    val sqlc = app.sqlContext
-    import sqlc.implicits._
-
-    val e1 = app.context.parallelize(data1).toDF()
-    val e2 = app.context.parallelize(data2).toDF()
-    
-    NaturalJoin.natjoin(e1, e2)
+    assert(NaturalJoin.natjoin(frame1, frame2).collect.length == 0)
   }
 }
