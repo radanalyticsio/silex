@@ -32,14 +32,26 @@ class NatJoinSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
 
   override def beforeEach() {
     app = new ConsoleApp()
+    System.clearProperty("spark.master.port")
+    
     app.context
   }
   
   override def afterEach() {
     app.context.stop
   }
+
+  it should "produce an empty frame after joining two frames with no columns in common" in {
+    val sqlc = app.sqlContext
+    import sqlc.implicits._
+    
+    val frame1 = app.context.parallelize((1 to 10).map { i => Example1(i, i * 2, i * 3)}).toDF()
+    val frame2 = app.context.parallelize((1 to 10).map { i => Example4(i)}).toDF()
+    
+    assert(NaturalJoin.natjoin(frame1, frame2).collect.length == 0)    
+  }
   
-  it should "produce an empty frame after joining two frames with nothing in common" in {
+  it should "produce an empty frame after joining two frames with no values in common" in {
     val sqlc = app.sqlContext
     import sqlc.implicits._
     
@@ -48,4 +60,5 @@ class NatJoinSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
     
     assert(NaturalJoin.natjoin(frame1, frame2).collect.length == 0)
   }
+  
 }

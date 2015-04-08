@@ -38,12 +38,27 @@ trait NaturalJoining {
     val rightCols = right.columns
 
     val commonCols = leftCols.toSet intersect rightCols.toSet
-
-    left
-      .join(right, commonCols.map {col => left(col) === right(col) }.reduce(_ && _))
-      .select( leftCols.filter { c => commonCols.contains(c) }.map { c => left(c) } ++ 
-               leftCols.filter { c => !commonCols.contains(c) }.map { c => left(c) } ++ 
-               rightCols.filter { c => !commonCols.contains(c) }.map { c => right(c) } : _*)
+    
+    if(commonCols.isEmpty)
+      left.limit(0).join(right.limit(0))
+    else
+      left
+        .join(right, commonCols.map {col => left(col) === right(col) }.reduce(_ && _))
+        .select(leftCols.filter { c => commonCols.contains(c) }.map { c => left(c) } ++ 
+                leftCols.filter { c => !commonCols.contains(c) }.map { c => left(c) } ++ 
+                rightCols.filter { c => !commonCols.contains(c) }.map { c => right(c) } : _*)
+  }
+  
+  private def emptyJoin(left: DataFrame, right: DataFrame) = {
+    val schema = mergeSchema(left, right)
+    val StructType(fields) = schema
+    fields.map {_ => null}
+  }
+  
+  private def mergeSchema(left: DataFrame, right: DataFrame) = {
+    val StructType(leftFields) = left.schema
+    val StructType(rightFields) = right.schema
+    StructType(leftFields ++ rightFields)
   }
 }
 
