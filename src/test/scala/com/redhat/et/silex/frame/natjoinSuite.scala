@@ -28,6 +28,8 @@ private[frame] case class Example3(a: Int, e: Int) {}
 private[frame] case class Example4(f: Int) {}
 
 class NatJoinSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
+  import org.apache.spark.sql.Row
+  
   private var app: ConsoleApp = null
 
   override def beforeEach() {
@@ -59,6 +61,34 @@ class NatJoinSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
     val frame2 = app.context.parallelize((100 to 150).map { i => Example2(i, i * 2, i * 3)}).toDF()
     
     assert(NaturalJoin.natjoin(frame1, frame2).collect.length == 0)
+  }
+  
+  it should "produce frames with the appropriate schema after joining" in {
+    val sqlc = app.sqlContext
+    import sqlc.implicits._
+    
+    val frame1 = app.context.parallelize((1 to 10).map { i => Example1(i, i * 2, i * 3)}).toDF()
+    val frame2 = app.context.parallelize((1 to 10).map { i => Example2(i, i * 2, i * 4)}).toDF()
+    val join = NaturalJoin.natjoin(frame1, frame2)
+    
+    assert(join.columns.length == 4)
+    assert(join.columns.toSet == Set("a", "b", "c", "d"))
+  }
+  
+  it should "produce frames with the appropriate values after joining" in {
+    val sqlc = app.sqlContext
+    import sqlc.implicits._
+    
+    val frame1 = app.context.parallelize((1 to 9).map { i => Example1(i, i * 2, i * 3)}).toDF()
+    val frame2 = app.context.parallelize((1 to 12).map { i => Example2(i, i * 2, i * 4)}).toDF()
+    val join = NaturalJoin.natjoin(frame1, frame2)
+    
+    assert(join.count == 9)
+    join.collect.foreach {
+      case Row(a: Int, b: Int, c: Int, d: Int) => {
+        assert(d == a * 4 && c == a * 3 && b == a * 2)
+      }
+    }
   }
   
 }
