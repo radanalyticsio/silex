@@ -14,6 +14,8 @@ libraryDependencies += "org.apache.spark" %% "spark-sql" % SPARK_VERSION
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % Test
 
+seq(bintraySettings:_*)
+
 seq(bintrayPublishSettings:_*)
 
 licenses += ("Apache-2.0", url("http://opensource.org/licenses/Apache-2.0"))
