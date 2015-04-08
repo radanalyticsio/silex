@@ -19,11 +19,20 @@
 package com.redhat.et.silex.frame
 
 import org.apache.spark.sql.DataFrame
+import scala.language.implicitConversions
 
 trait NaturalJoining {
   import org.apache.spark.sql.functions._
   import org.apache.spark.sql.types._  
   
+  /**
+   * Performs a natural join of two data frames.
+   *
+   * The frames are joined by equality on all of the columns they have in common.
+   * The resulting frame has the common columns (in the order they appeared in <code>left</code>), 
+   * followed by the columns that only exist in <code>left</code>, followed by the columns that 
+   * only exist in <code>right</code>.
+   */
   def natjoin(left: DataFrame, right: DataFrame): DataFrame = {
     val leftCols = left.columns
     val rightCols = right.columns
@@ -36,4 +45,12 @@ trait NaturalJoining {
                leftCols.filter { c => !commonCols.contains(c) }.map { c => left(c) } ++ 
                rightCols.filter { c => !commonCols.contains(c) }.map { c => right(c) } : _*)
   }
+}
+
+private[frame] case class DFWithNatJoin(df: DataFrame) extends NaturalJoining {
+  def natjoin(other: DataFrame): DataFrame = super.natjoin(df, other)
+}
+
+object NaturalJoin extends NaturalJoining {  
+  implicit def dfWithNatJoin(df: DataFrame) = DFWithNatJoin(df)
 }
