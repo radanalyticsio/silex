@@ -51,6 +51,13 @@ private[frame] case class DFWithNatJoin(df: DataFrame) extends NaturalJoining {
   def natjoin(other: DataFrame): DataFrame = super.natjoin(df, other)
 }
 
+/** 
+ * Module for natural join functionality.  Import <code>NaturalJoin._</code> for static access 
+ * to the <code>natjoin</code> method, or import <code>NaturalJoin.implicits._</code> to pimp 
+ * Spark DataFrames with a <code>natjoin</code> member method. 
+ */
 object NaturalJoin extends NaturalJoining {  
-  implicit def dfWithNatJoin(df: DataFrame) = DFWithNatJoin(df)
+  object implicits {
+    implicit def dfWithNatJoin(df: DataFrame) = DFWithNatJoin(df)
+  }
 }
