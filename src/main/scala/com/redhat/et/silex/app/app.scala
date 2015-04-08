@@ -71,13 +71,16 @@ trait AppCommon {
     configHooks = xform :: configHooks
   }
   
-  /** Adds a thunk to be run when your application exits */
+  /** Adds a thunk to be run when your application exits.
+   *
+   * These are executed in the order that they are added.
+   */
   def addExitHook(thunk: => Unit) {
     exitHooks = {() => thunk} :: exitHooks
   }
     
   private def runExitHooks() {
-    for (hook <- exitHooks) {
+    for (hook <- exitHooks.reverse) {
       hook()
     }
   }
