@@ -4,7 +4,7 @@ organization := "com.redhat.et"
 
 version := "0.0.1"
 
-val SPARK_VERSION = "1.2.1"
+val SPARK_VERSION = "1.3.0"
 
 scalaVersion := "2.10.4"
 
