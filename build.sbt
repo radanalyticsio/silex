@@ -12,6 +12,8 @@ libraryDependencies += "org.apache.spark" %% "spark-core" % SPARK_VERSION
 
 libraryDependencies += "org.apache.spark" %% "spark-sql" % SPARK_VERSION
 
+libraryDependencies += "org.apache.spark" %% "spark-mllib" % SPARK_VERSION
+
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % Test
 
 seq(bintraySettings:_*)
@@ -25,3 +27,13 @@ scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
 scalacOptions in (Compile, doc) ++= Seq("-doc-root-content", baseDirectory.value+"/root-doc.txt")
 
 fork := true
+
+site.settings
+
+site.includeScaladoc()
+
+site.jekyllSupport()
+
+ghpages.settings
+
+git.remoteRepo := "git@github.com:willb/silex.git"
