@@ -2,7 +2,7 @@
 title: silex
 email: willb@acm.org
 description: "Silex is a library of reusable code for Spark applications."
-baseurl: ""
+baseurl: "http://projects.willbenton.com/silex"
 url: "http://projects.willbenton.com/silex"
 
 # Build settings
