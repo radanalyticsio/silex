@@ -5,6 +5,11 @@ description: "Silex is a library of reusable code for Spark applications."
 baseurl: "http://projects.willbenton.com/silex"
 url: "http://projects.willbenton.com/silex"
 
+silexVersion: 0.0.3
+
 # Build settings
 markdown: kramdown
 permalink: pretty
+
+kramdown:
+  fenced_code_blocks: true
