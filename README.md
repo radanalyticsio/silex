@@ -17,3 +17,7 @@ and then add Silex as a dependency:
 ```scala
 libraryDependencies += "com.redhat.et" %% "silex" % "0.0.3"
 ```
+
+### Documentation
+
+API docs are [here](http://projects.willbenton.com/silex/latest/api/#package).
