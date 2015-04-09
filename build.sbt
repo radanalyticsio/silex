@@ -27,3 +27,13 @@ scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
 scalacOptions in (Compile, doc) ++= Seq("-doc-root-content", baseDirectory.value+"/root-doc.txt")
 
 fork := true
+
+site.settings
+
+site.includeScaladoc()
+
+site.jekyllSupport()
+
+ghpages.settings
+
+git.remoteRepo := "git@github.com:willb/silex.git"
