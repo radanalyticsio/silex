@@ -12,6 +12,8 @@ libraryDependencies += "org.apache.spark" %% "spark-core" % SPARK_VERSION
 
 libraryDependencies += "org.apache.spark" %% "spark-sql" % SPARK_VERSION
 
+libraryDependencies += "org.apache.spark" %% "spark-mllib" % SPARK_VERSION
+
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % Test
 
 seq(bintraySettings:_*)
