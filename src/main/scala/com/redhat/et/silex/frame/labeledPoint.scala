@@ -81,7 +81,7 @@ private[frame] case class DFWithVectorExtracting(df: DataFrame) extends VectorEx
     super.toLabeledPoints(df, label, vcs : _*)
 }
 
-object VectorExtract extends VectorExtracting {
+object FrameToVector extends VectorExtracting {
   /** Import the contents of <code>implicits</code> to have all of the methods of [[VectorExtracting]] available on any [[DataFrame]] */
   object implicits {
     implicit def toVectorExtracting(df: DataFrame) = DFWithVectorExtracting(df)
