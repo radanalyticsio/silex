@@ -4,12 +4,63 @@ email: willb@acm.org
 description: "Silex is a library of reusable code for Spark applications."
 baseurl: "http://projects.willbenton.com/silex"
 url: "http://projects.willbenton.com/silex"
+author:
+  name: William Benton and others
 
 silexVersion: 0.0.3
 
 # Build settings
 markdown: kramdown
 permalink: pretty
+highlighter: pygments
 
 kramdown:
   fenced_code_blocks: true
+
+# All Jekyll-Bootstrap specific configurations are namespaced into this hash
+#
+JB :
+  version : 0.3.0
+
+  # All links will be namespaced by BASE_PATH if defined.
+  # Links in your website should always be prefixed with {{BASE_PATH}}
+  # however this value will be dynamically changed depending on your deployment situation.
+  #
+  # CNAME (http://yourcustomdomain.com)
+  #   DO NOT SET BASE_PATH
+  #   (urls will be prefixed with "/" and work relatively)
+  #
+  # GitHub Pages (http://username.github.io)
+  #   DO NOT SET BASE_PATH
+  #   (urls will be prefixed with "/" and work relatively)
+  #
+  # GitHub Project Pages (http://username.github.io/project-name)
+  #
+  #   A GitHub Project site exists in the `gh-pages` branch of one of your repositories.
+  #  REQUIRED! Set BASE_PATH to: http://username.github.io/project-name
+  #
+  # CAUTION:
+  #   - When in Localhost, your site will run from root "/" regardless of BASE_PATH
+  #   - Only the following values are falsy: ["", null, false]
+  #   - When setting BASE_PATH it must be a valid url.
+  #     This means always setting the protocol (http|https) or prefixing with "/"
+  BASE_PATH : false
+
+  # By default, the asset_path is automatically defined relative to BASE_PATH plus the enabled theme.
+  # ex: [BASE_PATH]/assets/themes/[THEME-NAME]
+  #
+  # Override this by defining an absolute path to assets here.
+  # ex:
+  #   http://s3.amazonaws.com/yoursite/themes/watermelon
+  #   /assets
+  #
+  ASSET_PATH : false
+
+  # These paths are to the main pages Jekyll-Bootstrap ships with.
+  # Some JB helpers refer to these paths; change them here if needed.
+  #
+  archive_path: /archive.html
+  categories_path : /categories.html
+  tags_path : /tags.html
+  atom_path : /atom.xml
+  rss_path : /rss.xml
