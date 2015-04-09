@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Docs
-permalink: /docs/
+permalink: docs/
 ---
 
 API docs are [here](/latest/api).
