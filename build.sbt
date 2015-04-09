@@ -2,7 +2,7 @@ name := "silex"
 
 organization := "com.redhat.et"
 
-version := "0.0.2"
+version := "0.0.3"
 
 val SPARK_VERSION = "1.3.0"
 
@@ -12,7 +12,11 @@ libraryDependencies += "org.apache.spark" %% "spark-core" % SPARK_VERSION
 
 libraryDependencies += "org.apache.spark" %% "spark-sql" % SPARK_VERSION
 
+libraryDependencies += "org.apache.spark" %% "spark-mllib" % SPARK_VERSION
+
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % Test
+
+seq(bintraySettings:_*)
 
 seq(bintrayPublishSettings:_*)
 
@@ -23,3 +27,13 @@ scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
 scalacOptions in (Compile, doc) ++= Seq("-doc-root-content", baseDirectory.value+"/root-doc.txt")
 
 fork := true
+
+site.settings
+
+site.includeScaladoc()
+
+site.jekyllSupport()
+
+ghpages.settings
+
+git.remoteRepo := "git@github.com:willb/silex.git"
