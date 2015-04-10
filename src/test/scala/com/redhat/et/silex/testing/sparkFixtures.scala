@@ -34,6 +34,8 @@ trait PerTestSparkContext extends BeforeAndAfterEach {
     app = new TestConsoleApp()
     System.clearProperty("spark.master.port")
     
+    app.sqlContext.setConf("spark.sql.shuffle.partitions", "10")
+    
     app.context
   }
   

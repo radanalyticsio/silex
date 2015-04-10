@@ -18,7 +18,7 @@
 
 package com.redhat.et.silex.frame
 
-import com.redhat.et.silex.app.TestConsoleApp
+import com.redhat.et.silex.testing.PerTestSparkContext
 
 import org.scalatest._
 
@@ -27,49 +27,35 @@ private[frame] case class Example2(a: Int, b: Int, d: Int) {}
 private[frame] case class Example3(a: Int, e: Int) {}
 private[frame] case class Example4(f: Int) {}
 
-class NatJoinSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
+class NatJoinSpec extends FlatSpec with Matchers with PerTestSparkContext {
   import org.apache.spark.sql.Row
   
-  private var app: TestConsoleApp = null
-
-  override def beforeEach() {
-    app = new TestConsoleApp()
-    app.sqlContext.setConf("spark.sql.shuffle.partitions", "10")
-    System.clearProperty("spark.master.port")
-    
-    app.context
-  }
-  
-  override def afterEach() {
-    app.context.stop
-  }
-
   it should "produce an empty frame after joining two frames with no columns in common" in {
-    val sqlc = app.sqlContext
+    val sqlc = sqlContext
     import sqlc.implicits._
     
-    val frame1 = app.context.parallelize((1 to 10).map { i => Example1(i, i * 2, i * 3)}).toDF()
-    val frame2 = app.context.parallelize((1 to 10).map { i => Example4(i)}).toDF()
+    val frame1 = context.parallelize((1 to 10).map { i => Example1(i, i * 2, i * 3)}).toDF()
+    val frame2 = context.parallelize((1 to 10).map { i => Example4(i)}).toDF()
     
     assert(NaturalJoin.natjoin(frame1, frame2).collect.length == 0)    
   }
   
   it should "produce an empty frame after joining two frames with no values in common" in {
-    val sqlc = app.sqlContext
+    val sqlc = sqlContext
     import sqlc.implicits._
     
-    val frame1 = app.context.parallelize((1 to 10).map { i => Example1(i, i * 2, i * 3)}).toDF()
-    val frame2 = app.context.parallelize((100 to 150).map { i => Example2(i, i * 2, i * 3)}).toDF()
+    val frame1 = context.parallelize((1 to 10).map { i => Example1(i, i * 2, i * 3)}).toDF()
+    val frame2 = context.parallelize((100 to 150).map { i => Example2(i, i * 2, i * 3)}).toDF()
     
     assert(NaturalJoin.natjoin(frame1, frame2).collect.length == 0)
   }
   
   it should "produce frames with the appropriate schema after joining" in {
-    val sqlc = app.sqlContext
+    val sqlc = sqlContext
     import sqlc.implicits._
     
-    val frame1 = app.context.parallelize((1 to 10).map { i => Example1(i, i * 2, i * 3)}).toDF()
-    val frame2 = app.context.parallelize((1 to 10).map { i => Example2(i, i * 2, i * 4)}).toDF()
+    val frame1 = context.parallelize((1 to 10).map { i => Example1(i, i * 2, i * 3)}).toDF()
+    val frame2 = context.parallelize((1 to 10).map { i => Example2(i, i * 2, i * 4)}).toDF()
     val join = NaturalJoin.natjoin(frame1, frame2)
     
     assert(join.columns.length == 4)
@@ -77,11 +63,11 @@ class NatJoinSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
   }
   
   it should "produce frames with the appropriate values after joining" in {
-    val sqlc = app.sqlContext
+    val sqlc = sqlContext
     import sqlc.implicits._
     
-    val frame1 = app.context.parallelize((1 to 9).map { i => Example1(i, i * 2, i * 3)}).toDF()
-    val frame2 = app.context.parallelize((1 to 12).map { i => Example2(i, i * 2, i * 4)}).toDF()
+    val frame1 = context.parallelize((1 to 9).map { i => Example1(i, i * 2, i * 3)}).toDF()
+    val frame2 = context.parallelize((1 to 12).map { i => Example2(i, i * 2, i * 4)}).toDF()
     val join = NaturalJoin.natjoin(frame1, frame2)
     
     assert(join.count == 9)
