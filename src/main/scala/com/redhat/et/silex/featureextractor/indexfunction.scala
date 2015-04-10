@@ -61,9 +61,9 @@ abstract class IndexFunction[V] extends PartialFunction[Int, V] with Serializabl
       (self.range ++ that.range).foreach { v =>
          uniq += v
       }
-      uniq.iterator
+      uniq
     }
-    def range = rangeLazy
+    def range = rangeLazy.iterator
     def apply(j: Int) = if (j < self.width) self.apply(j) else that.apply(j - self.width)
     def isDefinedAt(j: Int) = if (j < self.width) self.isDefinedAt(j) else that.isDefinedAt(j - self.width)
   }
@@ -140,7 +140,8 @@ object IndexFunction {
     new IndexFunction[V] {
       def width = wid
       def domain = (0 until wid).iterator
-      def range = List(v).iterator
+      def range = rangeLazy.iterator
+      private lazy val rangeLazy = if (width > 0) List(v) else List()
       def isDefinedAt(j: Int) = (j >= 0)  &&  (j < wid)
       def apply(j: Int) = v
     }
