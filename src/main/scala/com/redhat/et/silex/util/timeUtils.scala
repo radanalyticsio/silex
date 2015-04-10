@@ -34,6 +34,7 @@ import scala.language.implicitConversions
   * will convert to UTC first).
   */
 case class DateTimeUTC(year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int, millis: Int = 0) {
+  /** Converts from {{DateTimeUTC}} to {{T}}, if an appropriate implicit conversion function is in scope */
   def as[T](implicit ev: (DateTimeUTC) => T): T = ev(this)
   
   lazy val asSecondsSinceEpoch = (as[DateTime].getMillis / 1000).asInstanceOf[Int]
@@ -54,6 +55,7 @@ object DateTimeUTC {
   
   def fromSecondsSinceEpoch(epoch: Int) = from(new DateTime(epoch * 1000L))
   
+  /** Converts from {{T}} to {{DateTimeUTC}}, if an appropriate implicit conversion function is in scope */
   def from[T](t: T)(implicit ev: (T) => DateTimeUTC): DateTimeUTC = ev(t)
 }
 
@@ -61,10 +63,12 @@ object Amortizer {
   val ONE_DAY = new org.joda.time.Period().withDays(1)
   
   /**
-   * Amortizes some quantity over the days between {{start}} and {{end}}, 
-   * returning a [[Seq]] of pairs consisting of the [[DateTimeUTC]] to which 
-   * the value should be ascribed and the amortized amount.
-   *
+   * Amortizes some quantity over the days between {{start}} and {{end}}.
+   *  
+   * Returns a [[Seq]] of pairs consisting of the [[DateTimeUTC]] to which 
+   * the value should be ascribed and the amortized amount.  If {{start}} and
+   * {{end}} are on the same day, return a [[Seq]] with {{start}} and the whole
+   * amount.
    */
   def amortize(start: DateTimeUTC, end: DateTimeUTC, amt: Double): Seq[Pair[DateTimeUTC, Double]] = {
     val db = start.daysBetween(end)
