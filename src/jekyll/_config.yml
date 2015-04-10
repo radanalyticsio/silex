@@ -7,7 +7,7 @@ url: "http://projects.willbenton.com/silex"
 author:
   name: William Benton and others
 
-silexVersion: 0.0.3
+silexVersion: 0.0.4
 
 # Build settings
 markdown: kramdown
