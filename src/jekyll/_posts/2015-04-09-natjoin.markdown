@@ -1,0 +1,35 @@
+---
+layout: post
+title:  "Using NaturalJoin on DataFrames"
+date:   2015-04-09 09:52:38
+categories: examples
+---
+
+Since version 0.0.2, Silex has included [a simple interface to perform natural join operations on data frames](http://projects.willbenton.com/silex/latest/api/#com.redhat.et.silex.frame.NaturalJoining).  (For more background, [see here](http://chapeau.freevariable.com/2015/04/natural-join-for-spark-dataframes.html).)  Here's an example of this functionality in action:
+
+    // Apologies to Paul Revere, but we wanted a join that
+    // would actually filter some rows out.
+    case class TwoIfByLand(i: Int, byLand: String) {}
+    case class ThreeIfBySea(i: Int, bySea: String) {}
+    
+    val landDF = spark.parallelize((0 to 50 by 2).map { i => TwoIfByLand(i, s"land: $i") }).toDF()
+    val seaDF = spark.parallelize((0 to 50 by 3).map { i => ThreeIfBySea(i, s"sea: $i") }).toDF()
+    
+    import com.redhat.et.silex.frame.NaturalJoin.implicits._
+    
+    landDF.natjoin(seaDF).orderBy("i").show
+
+That should produce the following output.
+
+    i  byLand   bySea  
+    0  land: 0  sea: 0 
+    6  land: 6  sea: 6 
+    12 land: 12 sea: 12
+    18 land: 18 sea: 18
+    24 land: 24 sea: 24
+    30 land: 30 sea: 30
+    36 land: 36 sea: 36
+    42 land: 42 sea: 42
+    48 land: 48 sea: 48
+
+

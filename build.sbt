@@ -2,7 +2,7 @@ name := "silex"
 
 organization := "com.redhat.et"
 
-version := "0.0.3"
+version := "0.0.4"
 
 val SPARK_VERSION = "1.3.0"
 
@@ -13,6 +13,8 @@ libraryDependencies += "org.apache.spark" %% "spark-core" % SPARK_VERSION
 libraryDependencies += "org.apache.spark" %% "spark-sql" % SPARK_VERSION
 
 libraryDependencies += "org.apache.spark" %% "spark-mllib" % SPARK_VERSION
+
+libraryDependencies ++= Seq("joda-time" % "joda-time" % "2.7", "org.joda" % "joda-convert" % "1.7")
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % Test
 
