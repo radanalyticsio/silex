@@ -62,9 +62,10 @@ object Amortizer {
     val db = start.daysBetween(end)
     if (db > 0) {
       val perDay = amt / db
+      val startDateTime = start.as[DateTime]
       (0 until db).map { offset => 
         (
-          DateTimeUTC.from(start.as[DateTime].plus(ONE_DAY.multipliedBy(offset))), 
+          DateTimeUTC.from(startDateTime.plus(ONE_DAY.multipliedBy(offset))), 
           perDay
         )
       }
