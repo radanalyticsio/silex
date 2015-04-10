@@ -18,7 +18,7 @@
 
 package com.redhat.et.silex.frame
 
-import com.redhat.et.silex.app.ConsoleApp
+import com.redhat.et.silex.app.TestConsoleApp
 
 import org.scalatest._
 
@@ -32,10 +32,10 @@ class LabeledPointSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
   
   import org.apache.spark.mllib.regression.LabeledPoint
   
-  private var app: ConsoleApp = null
+  private var app: TestConsoleApp = null
 
   override def beforeEach() {
-    app = new ConsoleApp()
+    app = new TestConsoleApp()
     System.clearProperty("spark.master.port")
     
     app.context

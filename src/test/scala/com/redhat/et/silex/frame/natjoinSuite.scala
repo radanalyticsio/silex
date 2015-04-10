@@ -18,7 +18,7 @@
 
 package com.redhat.et.silex.frame
 
-import com.redhat.et.silex.app.ConsoleApp
+import com.redhat.et.silex.app.TestConsoleApp
 
 import org.scalatest._
 
@@ -30,10 +30,10 @@ private[frame] case class Example4(f: Int) {}
 class NatJoinSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
   import org.apache.spark.sql.Row
   
-  private var app: ConsoleApp = null
+  private var app: TestConsoleApp = null
 
   override def beforeEach() {
-    app = new ConsoleApp()
+    app = new TestConsoleApp()
     System.clearProperty("spark.master.port")
     
     app.context
