@@ -21,11 +21,17 @@ package com.redhat.et.silex.util
 import org.joda.time.{DateTime, DateTimeZone, Period, Days}
 import scala.language.implicitConversions
 
-/** A simple class to abstract away our choice of date and time library */
+/** A simple structure representing a calendar date in UTC.
+  * 
+  * This class is deliberately extremely simple and delegates out to {{joda-time}}
+  * for its actual functionality; it exists solely to abstract away our choice of 
+  * date and time library.  (In JDK 8, it would probably make sense to use the new
+  * standard library date and time classes.)  
+  */
 case class DateTimeUTC(year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int, millis: Int = 0) {
   def as[T](implicit ev: (DateTimeUTC) => T): T = ev(this)
   
-  lazy val asSecondsFromEpoch = as[DateTime].getMillis / 1000
+  lazy val asSecondsSinceEpoch = as[DateTime].getMillis / 1000
   lazy val dayOfYear = as[DateTime].getDayOfYear
   def daysBetween(other: DateTimeUTC) = Days.daysBetween(this.as[DateTime], other.as[DateTime]).getDays
 }
@@ -33,13 +39,25 @@ case class DateTimeUTC(year: Int, month: Int, day: Int, hour: Int, minute: Int, 
 object DateTimeUTC {
   implicit def dtutc2joda(d: DateTimeUTC): DateTime = 
     new DateTime(d.year, d.month, d.day, d.hour, d.minute, d.second, d.millis, DateTimeZone.UTC)
-
+  
+  implicit def joda2dtutc(d: DateTime): DateTimeUTC =
+    new DateTimeUTC(d.getYear, d.getMonthOfYear, d.getDayOfMonth, 
+                    d.getHourOfDay, d.getMinuteOfHour, d.getSecondOfMinute, d.getMillisOfSecond)
+  
+  def fromSecondsSinceEpoch(epoch: Int) = from(new DateTime(epoch * 1000L))
+  
   def from[T](t: T)(implicit ev: (T) => DateTimeUTC): DateTimeUTC = ev(t)
 }
 
 object Amortizer {
   val ONE_DAY = new org.joda.time.Period().withDays(1)
   
+  /**
+   * Amortizes some quantity over the days between {{start}} and {{end}}, 
+   * returning a [[Seq]] of pairs consisting of the [[DateTimeUTC]] to which 
+   * the value should be ascribed and the amortized amount.
+   *
+   */
   def amortize(start: DateTimeUTC, end: DateTimeUTC, amt: Double) = {
     val db = start.daysBetween(end)
     if (db > 0) {
@@ -52,13 +70,19 @@ object Amortizer {
 }
 
 /** A function object to convert to and from times in some particular string format */
-trait TimeConverter {
+trait TimeLens {
   def apply(date: String): DateTimeUTC
-  def apply(d: DateTimeUTC): String = d.toString
+  def apply(d: DateTimeUTC): String
 }
 
-/** A function object to convert to and from times in the AWS billing format */
-object AWSTimeConverter extends TimeConverter {
+/** 
+  * A function object to convert to and from times in the AWS billing format.
+  * 
+  * These are UTC, in the form {{YYYY-MM-DD HH:MM:SS}}.  By converting to the [[DateTimeUTC]] 
+  * format, you can manipulate individual components or convert to another format for further
+  * processing.
+  */
+object AWSTimeLens extends TimeLens {
   import RegexImplicits._
   
   def apply(date: String) = date match {
@@ -66,7 +90,7 @@ object AWSTimeConverter extends TimeConverter {
       DateTimeUTC(year.toInt, month.toInt, day.toInt, hour.toInt, minute.toInt, second.toInt)
   }
   
-  override def apply(d: DateTimeUTC) = 
+  def apply(d: DateTimeUTC) = 
     "%04d-%02d-%02d %02d:%02d:%02d".format(d.year, d.month, d.day, d.hour, d.minute, d.second)
 }
 
