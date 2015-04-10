@@ -115,6 +115,14 @@ class ConsoleApp extends AppCommon {
   }
 }
 
+private [silex] class TestConsoleApp(val suppliedMaster: String = "local[*]") extends AppCommon { 
+  override def master = suppliedMaster
+  override def appName = "console"
+  def appMain(args: Array[String]) {
+    // this never runs
+  }
+}
+
 object ReplApp {
   import scala.tools.nsc.interpreter._
   import scala.tools.nsc.Settings
