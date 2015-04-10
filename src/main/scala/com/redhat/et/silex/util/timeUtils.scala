@@ -31,7 +31,7 @@ import scala.language.implicitConversions
 case class DateTimeUTC(year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int, millis: Int = 0) {
   def as[T](implicit ev: (DateTimeUTC) => T): T = ev(this)
   
-  lazy val asSecondsSinceEpoch = as[DateTime].getMillis / 1000
+  lazy val asSecondsSinceEpoch = (as[DateTime].getMillis / 1000).asInstanceOf[Int]
   lazy val dayOfYear = as[DateTime].getDayOfYear
   def daysBetween(other: DateTimeUTC) = Days.daysBetween(this.as[DateTime], other.as[DateTime]).getDays
 }
@@ -58,13 +58,18 @@ object Amortizer {
    * the value should be ascribed and the amortized amount.
    *
    */
-  def amortize(start: DateTimeUTC, end: DateTimeUTC, amt: Double) = {
+  def amortize(start: DateTimeUTC, end: DateTimeUTC, amt: Double): Seq[Pair[DateTimeUTC, Double]] = {
     val db = start.daysBetween(end)
     if (db > 0) {
       val perDay = amt / db
-      (0 until db).map { offset => (start.as[DateTime].plus(ONE_DAY.multipliedBy(offset)), perDay)}
+      (0 until db).map { offset => 
+        (
+          DateTimeUTC.from(start.as[DateTime].plus(ONE_DAY.multipliedBy(offset))), 
+          perDay
+        )
+      }
     } else {
-      Seq(Pair(start.as[DateTime], amt))
+      Seq(Pair(start, amt))
     }
   }
 }
