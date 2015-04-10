@@ -4,5 +4,5 @@ title: Docs
 permalink: docs/
 ---
 
-API docs are [here](/latest/api).
+API docs are [here](/silex/latest/api).
 
