@@ -26,7 +26,12 @@ import scala.language.implicitConversions
   * This class is deliberately extremely simple and delegates out to {{joda-time}}
   * for its actual functionality; it exists solely to abstract away our choice of 
   * date and time library.  (In JDK 8, it would probably make sense to use the new
-  * standard library date and time classes.)  
+  * standard library date and time classes.)
+  *
+  * If you need to deal with multiple time zones or different calendars, 
+  * you're probably best served by using something more sophisticated (although the
+  * {{from}} method in the companion object to convert from a [[org.joda.time.DateTime]] 
+  * will convert to UTC first).
   */
 case class DateTimeUTC(year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int, millis: Int = 0) {
   def as[T](implicit ev: (DateTimeUTC) => T): T = ev(this)
@@ -40,9 +45,12 @@ object DateTimeUTC {
   implicit def dtutc2joda(d: DateTimeUTC): DateTime = 
     new DateTime(d.year, d.month, d.day, d.hour, d.minute, d.second, d.millis, DateTimeZone.UTC)
   
-  implicit def joda2dtutc(d: DateTime): DateTimeUTC =
-    new DateTimeUTC(d.getYear, d.getMonthOfYear, d.getDayOfMonth, 
-                    d.getHourOfDay, d.getMinuteOfHour, d.getSecondOfMinute, d.getMillisOfSecond)
+  implicit def joda2dtutc(d: DateTime): DateTimeUTC = {
+    val utc = d.toDateTime(DateTimeZone.UTC)
+    new DateTimeUTC(utc.getYear, utc.getMonthOfYear, utc.getDayOfMonth, 
+                    utc.getHourOfDay, utc.getMinuteOfHour, utc.getSecondOfMinute, 
+                    utc.getMillisOfSecond)
+  }
   
   def fromSecondsSinceEpoch(epoch: Int) = from(new DateTime(epoch * 1000L))
   
