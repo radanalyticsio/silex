@@ -7,17 +7,19 @@ categories: examples
 
 Since version 0.0.2, Silex has included [a simple interface to perform natural join operations on data frames](http://projects.willbenton.com/silex/latest/api/#com.redhat.et.silex.frame.NaturalJoining).  (For more background, [see here](http://chapeau.freevariable.com/2015/04/natural-join-for-spark-dataframes.html).)  Here's an example of this functionality in action:
 
-    // Apologies to Paul Revere, but we wanted a join that
-    // would actually filter some rows out.
-    case class TwoIfByLand(i: Int, byLand: String) {}
-    case class ThreeIfBySea(i: Int, bySea: String) {}
-    
-    val landDF = spark.parallelize((0 to 50 by 2).map { i => TwoIfByLand(i, s"land: $i") }).toDF()
-    val seaDF = spark.parallelize((0 to 50 by 3).map { i => ThreeIfBySea(i, s"sea: $i") }).toDF()
-    
-    import com.redhat.et.silex.frame.NaturalJoin.implicits._
-    
-    landDF.natjoin(seaDF).orderBy("i").show
+{% highlight scala %}
+// Apologies to Paul Revere, but we wanted a join that
+// would actually filter some rows out.
+case class TwoIfByLand(i: Int, byLand: String) {}
+case class ThreeIfBySea(i: Int, bySea: String) {}
+
+val landDF = spark.parallelize((0 to 50 by 2).map { i => TwoIfByLand(i, s"land: $i") }).toDF()
+val seaDF = spark.parallelize((0 to 50 by 3).map { i => ThreeIfBySea(i, s"sea: $i") }).toDF()
+
+import com.redhat.et.silex.frame.NaturalJoin.implicits._
+
+landDF.natjoin(seaDF).orderBy("i").show
+{% endhighlight %}
 
 That should produce the following output.
 

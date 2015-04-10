@@ -12,6 +12,7 @@ silexVersion: 0.0.4
 # Build settings
 markdown: kramdown
 permalink: pretty
+
 highlighter: pygments
 
 kramdown:
