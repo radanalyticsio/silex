@@ -33,8 +33,11 @@ trait AppCommon {
   private var configHooks: List[SparkConf => SparkConf] = Nil
   private var functionRegistry: Map[String, Any] = Map[String, Any]()
   private lazy val _conf = { 
+    if(java.lang.System.getProperty("spark.master", null) == null) {
+      java.lang.System.setProperty("spark.master", master)
+    }
+    
     val initialConf = new SparkConf()
-     .setMaster(master)
      .setAppName(appName)
      .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
      .set("spark.kryoserializer.buffer.mb", "256")
