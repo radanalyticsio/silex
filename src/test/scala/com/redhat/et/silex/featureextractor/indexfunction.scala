@@ -203,6 +203,8 @@ class IndexFunctionSpec extends FlatSpec with Matchers {
     drTest(f2)
     opIdentityTest(f2)
     opTest(IndexFunction.constant("6 * 9", 42), IndexFunction.constant("42", 6 * 9))
+
+    an [Exception] should be thrownBy IndexFunction.constant(3.14, -1)
   }
 
   it should "provide IndexFunction.apply method on IndexedSeq" in {
