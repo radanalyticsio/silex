@@ -20,7 +20,7 @@ package com.redhat.et.silex.indexfunction
 
 import org.scalatest._
 
-class IndexFunctionSpec extends FlatSpec with Matchers {
+object IndexFunctionSpecSupport extends FlatSpec with Matchers {
   def drTest[V](f: IndexFunction[V]) {
     f.width should be >= (0)
     val rng = f.range.toSet
@@ -85,6 +85,10 @@ class IndexFunctionSpec extends FlatSpec with Matchers {
       f(x) should be (y)
     }
   }
+}
+
+class IndexFunctionSpec extends FlatSpec with Matchers {
+  import IndexFunctionSpecSupport._
 
   it should "provide IndexFunction.empty factory method" in {
     identityTest(IndexFunction.empty[Nothing])
