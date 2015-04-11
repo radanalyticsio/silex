@@ -228,7 +228,9 @@ class IndexFunctionSpec extends FlatSpec with Matchers {
   }
 
   it should "provide IndexFunction.apply method on ordered pairs" in {
-    val f1 = IndexFunction(5, (1, 'a), (2, 'c), (4, 'f), (10, 'j))
+    an [Exception] should be thrownBy IndexFunction(5, (1, 'a), (2, 'c), (4, 'f), (10, 'j))
+    an [Exception] should be thrownBy IndexFunction(-1, (1, 'a), (2, 'c), (4, 'f))
+    val f1 = IndexFunction(5, (1, 'a), (2, 'c), (4, 'f))
     f1.width should be (5)
     f1.domain.toSet should equal (Set(1, 2, 4))
     f1.range.toSet should equal (Set('a, 'c, 'f))
@@ -239,7 +241,9 @@ class IndexFunctionSpec extends FlatSpec with Matchers {
   }
 
   it should "provide IndexFunction.apply method on a map" in {
-    val m = Map((1, 'a), (2, 'c), (4, 'f), (10, 'j))
+    an [Exception] should be thrownBy IndexFunction(5, Map((1, 'a), (2, 'c), (4, 'f), (10, 'z)))
+    an [Exception] should be thrownBy IndexFunction(-1, Map((1, 'a), (2, 'c), (4, 'f)))
+    val m = Map((1, 'a), (2, 'c), (4, 'f))
     val f1 = IndexFunction(5, m)
     f1.width should be (5)
     f1.domain.toSet should equal (Set(1, 2, 4))
@@ -298,7 +302,10 @@ class InvertableIndexFunctionSpec extends FlatSpec with Matchers {
   }
 
   it should "provide InvertableIndexFunction.apply method on ordered pairs" in {
-    val f1 = InvertableIndexFunction(5, (1, 'a), (2, 'c), (4, 'f), (10, 'j))
+    an [Exception] should be thrownBy InvertableIndexFunction(5, (1, 'a), (2, 'c), (4, 'f), (10, 'j))
+    an [Exception] should be thrownBy InvertableIndexFunction(-1, (1, 'a), (2, 'c), (4, 'f))
+    an [Exception] should be thrownBy InvertableIndexFunction(5, (1, 'a), (2, 'c), (4, 'a))
+    val f1 = InvertableIndexFunction(5, (1, 'a), (2, 'c), (4, 'f))
     f1.width should be (5)
     f1.domain.toSet should equal (Set(1, 2, 4))
     f1.range.toSet should equal (Set('a, 'c, 'f))
@@ -309,7 +316,10 @@ class InvertableIndexFunctionSpec extends FlatSpec with Matchers {
   }
 
   it should "provide InvertableIndexFunction.apply method on a map" in {
-    val m = Map((1, 'a), (2, 'c), (4, 'f), (10, 'j))
+    an [Exception] should be thrownBy InvertableIndexFunction(5, Map((1, 'a), (2, 'c), (4, 'f), (10, 'j)))
+    an [Exception] should be thrownBy InvertableIndexFunction(-1, Map((1, 'a), (2, 'c), (4, 'f)))
+    an [Exception] should be thrownBy InvertableIndexFunction(-1, Map((1, 'a), (2, 'c), (4, 'a)))
+    val m = Map((1, 'a), (2, 'c), (4, 'f))
     val f1 = InvertableIndexFunction(5, m)
     f1.width should be (5)
     f1.domain.toSet should equal (Set(1, 2, 4))

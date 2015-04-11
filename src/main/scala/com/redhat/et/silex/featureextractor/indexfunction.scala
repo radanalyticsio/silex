@@ -160,12 +160,13 @@ object IndexFunction {
 
   def apply[V](wid: Int, map: Map[Int, V]): IndexFunction[V] = new IndexFunction[V] {
     require(wid >= 0)
+    require(!map.keysIterator.exists(k => (k < 0  ||  k >= wid)))
     def width = wid
-    def domain = map.keysIterator.filter(k => (k >= 0  &&  k < wid))
+    def domain = map.keysIterator
     def range = rangeLazy.iterator
     def isDefinedAt(j: Int) = (j >= 0) && (j < wid) && map.isDefinedAt(j)
     def apply(j: Int) = map(j)
-    private lazy val rangeLazy = domain.map(map).toSeq.distinct
+    private lazy val rangeLazy = map.valuesIterator.toVector
   }
 }
 
@@ -214,8 +215,9 @@ object InvertableIndexFunction {
     checkRange(map.valuesIterator)
     new InvertableIndexFunction[V] { self =>
       require(wid >= 0)
+      require(!map.keysIterator.exists(k => (k < 0  ||  k >= wid)))
       def width = wid
-      def domain = map.keysIterator.filter(k => (k >= 0  &&  k < wid))
+      def domain = map.keysIterator
       def isDefinedAt(j: Int) = (j >= 0) && (j < wid) && map.isDefinedAt(j)
       def apply(j: Int) = map(j)
       def inverse = inverseLazy
