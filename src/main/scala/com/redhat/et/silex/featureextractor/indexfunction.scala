@@ -212,15 +212,15 @@ object InvertableIndexFunction {
 
   def apply[V](wid: Int, map: Map[Int, V]): InvertableIndexFunction[V] = {
     checkRange(map.valuesIterator)
-    new InvertableIndexFunction[V] {
+    new InvertableIndexFunction[V] { self =>
       require(wid >= 0)
       def width = wid
-      def domain = map.keysIterator
+      def domain = map.keysIterator.filter(k => (k >= 0  &&  k < wid))
       def isDefinedAt(j: Int) = (j >= 0) && (j < wid) && map.isDefinedAt(j)
       def apply(j: Int) = map(j)
       def inverse = inverseLazy
       private lazy val inverseLazy = new InverseIndexFunction[V] {
-        val imap = Map(map.iterator.map(_.swap).toSeq:_*)
+        val imap = Map(self.domain.map(d => (map(d), d)).toSeq:_*)
         def width = wid
         def domain = imap.keysIterator
         def isDefinedAt(v: V) = imap.isDefinedAt(v)
