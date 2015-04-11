@@ -161,11 +161,11 @@ object IndexFunction {
   def apply[V](wid: Int, map: Map[Int, V]): IndexFunction[V] = new IndexFunction[V] {
     require(wid >= 0)
     def width = wid
-    def domain = map.keysIterator
+    def domain = map.keysIterator.filter(k => (k >= 0  &&  k < wid))
     def range = rangeLazy.iterator
     def isDefinedAt(j: Int) = (j >= 0) && (j < wid) && map.isDefinedAt(j)
     def apply(j: Int) = map(j)
-    private lazy val rangeLazy = map.values.toSeq.distinct
+    private lazy val rangeLazy = domain.map(map).toSeq.distinct
   }
 }
 
