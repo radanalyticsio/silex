@@ -321,6 +321,7 @@ class InvertableIndexFunctionSpec extends FlatSpec with Matchers {
     an [Exception] should be thrownBy InvertableIndexFunction(5, Map((1, 'a), (2, 'c), (4, 'f), (10, 'j)))
     an [Exception] should be thrownBy InvertableIndexFunction(-1, Map((1, 'a), (2, 'c), (4, 'f)))
     an [Exception] should be thrownBy InvertableIndexFunction(-1, Map((1, 'a), (2, 'c), (4, 'a)))
+    identityTest(InvertableIndexFunction(0, Map.empty[Int, Double]))
     val m = Map((1, 'a), (2, 'c), (4, 'f))
     val f1 = InvertableIndexFunction(5, m)
     f1.width should be (5)
