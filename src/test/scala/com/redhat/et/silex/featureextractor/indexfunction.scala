@@ -78,15 +78,19 @@ object IndexFunctionSpecSupport extends FlatSpec with Matchers {
     }
   }
 
-  def propertyTest[V](
+  def associativeTest[V](
     f1: IndexFunction[V],
     f2: IndexFunction[V],
     f3: IndexFunction[V]) {
-    drTest(f1);  drTest(f2);  drTest(f3)
-    opIdentityTest(f1);  opIdentityTest(f2);  opIdentityTest(f3)
-    opTest(f1, f1); opTest(f1, f2); opTest(f1, f3)
-    opTest(f2, f1); opTest(f2, f2); opTest(f2, f3)
-    opTest(f3, f1); opTest(f3, f2); opTest(f3, f3)
+    equalTest((f1 ++ f2) ++ f3, f1 ++ (f2 ++ f3))
+  }
+
+  def propertyTest[V](fs: IndexFunction[V]*) {
+    fs.foreach { drTest(_) }
+    fs.foreach { opIdentityTest(_) }
+    fs.combinations(2).flatMap(_.permutations).foreach { f => opTest(f(0), f(1)) }
+    fs.foreach { f => opTest(f, f) }
+    fs.combinations(3).flatMap(_.permutations).foreach { f => associativeTest(f(0), f(1), f(2)) }
   }
 
   def xyTest[V](f: IndexFunction[V], xy: (Int, V)*) {
@@ -159,18 +163,21 @@ object InvertableIndexFunctionSpecSupport extends FlatSpec with Matchers {
     }
   }
 
-  def propertyTest[V](
+  def associativeTest[V](
     f1: InvertableIndexFunction[V],
     f2: InvertableIndexFunction[V],
     f3: InvertableIndexFunction[V]) {
-    drTest(f1);  drTest(f2);  drTest(f3)
-    opIdentityTest(f1);  opIdentityTest(f2);  opIdentityTest(f3)
-    opTest(f1, f2); opTest(f1, f3)
-    opTest(f2, f1); opTest(f2, f3)
-    opTest(f3, f1); opTest(f3, f2)
-    if (f1.range.size > 0) { an [Exception] should be thrownBy (f1 ++ f1) }
-    if (f2.range.size > 0) { an [Exception] should be thrownBy (f2 ++ f2) }
-    if (f3.range.size > 0) { an [Exception] should be thrownBy (f3 ++ f3) }
+    equalTest((f1 ++ f2) ++ f3, f1 ++ (f2 ++ f3))
+  }
+
+  def propertyTest[V](fs: InvertableIndexFunction[V]*) {
+    fs.foreach { drTest(_) }
+    fs.foreach { opIdentityTest(_) }
+    fs.combinations(2).flatMap(_.permutations).foreach { f => opTest(f(0), f(1)) }
+    fs.foreach { f =>
+      if (f.range.size > 0) { an [Exception] should be thrownBy (f ++ f) }
+    }
+    fs.combinations(3).flatMap(_.permutations).foreach { f => associativeTest(f(0), f(1), f(2)) }
   }
 
   def xyTest[V](f: InvertableIndexFunction[V], xy: (Int, V)*) {
