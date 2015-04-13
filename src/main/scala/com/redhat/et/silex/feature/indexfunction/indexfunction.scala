@@ -16,7 +16,7 @@
  * limitations under the License.c
  */
 
-package com.redhat.et.silex.indexfunction
+package com.redhat.et.silex.feature.indexfunction
 
 import scala.language.implicitConversions
 

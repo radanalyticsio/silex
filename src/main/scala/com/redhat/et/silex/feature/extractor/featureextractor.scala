@@ -18,7 +18,7 @@
 
 package com.redhat.et.silex.featureextractor
 
-import com.redhat.et.silex.indexfunction._
+import com.redhat.et.silex.feature.indexfunction._
 
 sealed abstract class FeatureVector(sz: Int) extends Serializable {
   // abstract methods
