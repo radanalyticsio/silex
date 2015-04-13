@@ -333,6 +333,7 @@ class InvertableIndexFunctionSpec extends FlatSpec with Matchers {
   }
 
   it should "provide InvertableIndexFunction.serialName method" in {
+    an [Exception] should be thrownBy InvertableIndexFunction.serialName("foo", -1)
     identityTest(InvertableIndexFunction.serialName("foo", 0))
     val f1 = InvertableIndexFunction.serialName("foo", 3)
     f1.width should be (3)
