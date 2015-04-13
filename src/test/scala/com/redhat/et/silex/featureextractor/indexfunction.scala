@@ -78,6 +78,17 @@ object IndexFunctionSpecSupport extends FlatSpec with Matchers {
     }
   }
 
+  def propertyTest[V](
+    f1: IndexFunction[V],
+    f2: IndexFunction[V],
+    f3: IndexFunction[V]) {
+    drTest(f1);  drTest(f2);  drTest(f3)
+    opIdentityTest(f1);  opIdentityTest(f2);  opIdentityTest(f3)
+    opTest(f1, f1); opTest(f1, f2); opTest(f1, f3)
+    opTest(f2, f1); opTest(f2, f2); opTest(f2, f3)
+    opTest(f3, f1); opTest(f3, f2); opTest(f3, f3)
+  }
+
   def xyTest[V](f: IndexFunction[V], xy: (Int, V)*) {
     xy.foreach { xy =>
       val (x, y) = xy
@@ -148,6 +159,20 @@ object InvertableIndexFunctionSpecSupport extends FlatSpec with Matchers {
     }
   }
 
+  def propertyTest[V](
+    f1: InvertableIndexFunction[V],
+    f2: InvertableIndexFunction[V],
+    f3: InvertableIndexFunction[V]) {
+    drTest(f1);  drTest(f2);  drTest(f3)
+    opIdentityTest(f1);  opIdentityTest(f2);  opIdentityTest(f3)
+    opTest(f1, f2); opTest(f1, f3)
+    opTest(f2, f1); opTest(f2, f3)
+    opTest(f3, f1); opTest(f3, f2)
+    if (f1.range.size > 0) { an [Exception] should be thrownBy (f1 ++ f1) }
+    if (f2.range.size > 0) { an [Exception] should be thrownBy (f2 ++ f2) }
+    if (f3.range.size > 0) { an [Exception] should be thrownBy (f3 ++ f3) }
+  }
+
   def xyTest[V](f: InvertableIndexFunction[V], xy: (Int, V)*) {
     IndexFunctionSpecSupport.xyTest(f, xy:_*)
     val i = f.inverse
@@ -162,28 +187,36 @@ object InvertableIndexFunctionSpecSupport extends FlatSpec with Matchers {
 class IndexFunctionSpec extends FlatSpec with Matchers {
   import IndexFunctionSpecSupport._
 
+  it should "enforce range type consistency during concatenation" in {
+    "IndexFunction.empty[Int] ++ IndexFunction.empty[String]" shouldNot typeCheck
+  }
+
   it should "provide IndexFunction.empty factory method" in {
     identityTest(IndexFunction.empty[Nothing])
     identityTest(IndexFunction.empty[Int])
     identityTest(IndexFunction.empty[String])
     identityTest(IndexFunction.empty[String] ++ IndexFunction.empty[String])
-    opTest(IndexFunction.empty[String], IndexFunction.empty[String])
-  }
-
-  it should "enforce range type consistency during concatenation" in {
-    "IndexFunction.empty[Int] ++ IndexFunction.empty[String]" shouldNot typeCheck
+    propertyTest(
+      IndexFunction.empty[String],
+      IndexFunction.empty[String],
+      IndexFunction.empty[String])
   }
 
   it should "provide IndexFunction.undefined factory method" in {
+    an [Exception] should be thrownBy IndexFunction.undefined(-1)
     identityTest(IndexFunction.undefined[Int](0))
     undefinedTest(IndexFunction.undefined[Int](5))
     undefinedTest(IndexFunction.undefined[String](1))
     undefinedTest(IndexFunction.undefined[String](1) ++ IndexFunction.undefined[String](3))
-    opTest(IndexFunction.undefined[Int](4), IndexFunction.undefined[Int](1000))
-    an [Exception] should be thrownBy IndexFunction.undefined(-1)
+    propertyTest(
+      IndexFunction.undefined[Int](4),
+      IndexFunction.undefined[Int](1000),
+      IndexFunction.undefined[Int](1))
   }
 
   it should "provide IndexFunction.constant factory method" in {
+    an [Exception] should be thrownBy IndexFunction.constant(3.14, -1)
+
     identityTest(IndexFunction.constant("a", 0))
 
     val f1 = IndexFunction.constant(42, 42)
@@ -191,20 +224,20 @@ class IndexFunctionSpec extends FlatSpec with Matchers {
       f1.isDefinedAt(j) should be (true)
       f1(j) should be (42)
     }
-    drTest(f1)
-    opIdentityTest(f1)
-    opTest(IndexFunction.constant(42, 42), IndexFunction.constant(42, 6 * 9))
+    propertyTest(
+      IndexFunction.constant(42, 42),
+      IndexFunction.constant(54, 6 * 9),
+      IndexFunction.constant(73, 1))
 
     val f2 = IndexFunction.constant("6 * 9", 42)
     (0 until f2.width).foreach { j =>
       f2.isDefinedAt(j) should be (true)
       f2(j) should be ("6 * 9")
     }
-    drTest(f2)
-    opIdentityTest(f2)
-    opTest(IndexFunction.constant("6 * 9", 42), IndexFunction.constant("42", 6 * 9))
-
-    an [Exception] should be thrownBy IndexFunction.constant(3.14, -1)
+    propertyTest(
+      IndexFunction.constant("73", 100),
+      IndexFunction.constant("6 * 9", 42),
+      IndexFunction.constant("42", 6 * 9))
   }
 
   it should "provide IndexFunction.apply method on IndexedSeq" in {
@@ -215,18 +248,14 @@ class IndexFunctionSpec extends FlatSpec with Matchers {
     f1.domain.toSet should equal ((0 until f1.width).toSet)
     f1.range.toSet should equal (Set(2, 3, 5, 7))
     xyTest(f1, (0, 2), (1, 3), (2, 5), (3, 7), (4, 3))
-    drTest(f1)
-    opIdentityTest(f1)
-    opTest(IndexFunction(Vector(2, 3, 5)), IndexFunction(Vector(7, 11, 13)))
+    propertyTest(f1, IndexFunction(Vector(2, 3, 5)), IndexFunction(Vector(7, 11, 13)))
 
     val f2 = IndexFunction(Vector('a, 'c, 'f, 'j, 'c))
     f2.width should be (5)
     f2.domain.toSet should equal ((0 until f2.width).toSet)
     f2.range.toSet should equal (Set('a, 'c, 'f, 'j))
     xyTest(f2, (0, 'a), (1, 'c), (2, 'f), (3, 'j), (4, 'c))
-    drTest(f2)
-    opIdentityTest(f2)
-    opTest(IndexFunction(Vector('a, 'c, 'f)), IndexFunction(Vector('j, 'r, 'z)))    
+    propertyTest(f2, IndexFunction(Vector('a, 'c, 'f)), IndexFunction(Vector('j, 'r, 'z)))
   }
 
   it should "provide IndexFunction.apply method on ordered pairs" in {
@@ -237,9 +266,7 @@ class IndexFunctionSpec extends FlatSpec with Matchers {
     f1.domain.toSet should equal (Set(1, 2, 4))
     f1.range.toSet should equal (Set('a, 'c, 'f))
     xyTest(f1, (1, 'a), (2, 'c), (4, 'f))
-    drTest(f1)
-    opIdentityTest(f1)
-    opTest(f1, IndexFunction(Vector('j, 'r, 'z)))    
+    propertyTest(f1, IndexFunction(Vector('w)), IndexFunction(Vector('j, 'r, 'z)))
   }
 
   it should "provide IndexFunction.apply method on a map" in {
@@ -251,34 +278,38 @@ class IndexFunctionSpec extends FlatSpec with Matchers {
     f1.domain.toSet should equal (Set(1, 2, 4))
     f1.range.toSet should equal (Set('a, 'c, 'f))
     xyTest(f1, (1, 'a), (2, 'c), (4, 'f))
-    drTest(f1)
-    opIdentityTest(f1)
-    opTest(f1, IndexFunction(Vector('j, 'r, 'z)))    
+    propertyTest(f1, IndexFunction(Vector('j, 'r, 'z)), IndexFunction(13, Map((1, 'q))))
   }
 }
 
 class InvertableIndexFunctionSpec extends FlatSpec with Matchers {
   import InvertableIndexFunctionSpecSupport._
 
+  it should "enforce range type consistency during concatenation" in {
+    "InvertableIndexFunction.empty[Int] ++ InvertableIndexFunction.empty[String]" shouldNot typeCheck
+  }
+
   it should "provide InvertableIndexFunction.empty factory method" in {
     identityTest(InvertableIndexFunction.empty[Nothing])
     identityTest(InvertableIndexFunction.empty[Int])
     identityTest(InvertableIndexFunction.empty[String])
     identityTest(InvertableIndexFunction.empty[String] ++ InvertableIndexFunction.empty[String])
-    opTest(InvertableIndexFunction.empty[String], InvertableIndexFunction.empty[String])
-  }
-
-  it should "enforce range type consistency during concatenation" in {
-    "InvertableIndexFunction.empty[Int] ++ InvertableIndexFunction.empty[String]" shouldNot typeCheck
+    propertyTest(
+      InvertableIndexFunction.empty[String],
+      InvertableIndexFunction.empty[String],
+      InvertableIndexFunction.empty[String])
   }
 
   it should "provide InvertableIndexFunction.undefined factory method" in {
+    an [Exception] should be thrownBy InvertableIndexFunction.undefined(-1)
     identityTest(InvertableIndexFunction.undefined[Int](0))
     undefinedTest(InvertableIndexFunction.undefined[Int](5))
     undefinedTest(InvertableIndexFunction.undefined[String](1))
     undefinedTest(InvertableIndexFunction.undefined[String](1) ++ InvertableIndexFunction.undefined[String](3))
-    opTest(InvertableIndexFunction.undefined[Int](4), InvertableIndexFunction.undefined[Int](1000))
-    an [Exception] should be thrownBy InvertableIndexFunction.undefined(-1)
+    propertyTest(
+      InvertableIndexFunction.undefined[Int](4),
+      InvertableIndexFunction.undefined[Int](77),
+      InvertableIndexFunction.undefined[Int](1000))
   }
 
   it should "provide InvertableIndexFunction.apply method on IndexedSeq" in {
@@ -289,18 +320,20 @@ class InvertableIndexFunctionSpec extends FlatSpec with Matchers {
     f1.domain.toSet should equal ((0 until f1.width).toSet)
     f1.range.toSet should equal (Set(2, 3, 5, 7))
     xyTest(f1, (0, 2), (1, 3), (2, 5), (3, 7))
-    drTest(f1)
-    opIdentityTest(f1)
-    opTest(InvertableIndexFunction(Vector(2, 3, 5)), InvertableIndexFunction(Vector(7, 11, 13)))
+    propertyTest(
+      InvertableIndexFunction(Vector(1)),
+      InvertableIndexFunction(Vector(2, 3, 5)),
+      InvertableIndexFunction(Vector(7, 11, 13)))
 
     val f2 = InvertableIndexFunction(Vector('a, 'c, 'f, 'j, 'c))
     f2.width should be (4)
     f2.domain.toSet should equal ((0 until f2.width).toSet)
     f2.range.toSet should equal (Set('a, 'c, 'f, 'j))
     xyTest(f2, (0, 'a), (1, 'c), (2, 'f), (3, 'j))
-    drTest(f2)
-    opIdentityTest(f2)
-    opTest(InvertableIndexFunction(Vector('a, 'c, 'f)), InvertableIndexFunction(Vector('j, 'r, 'z)))    
+    propertyTest(
+      InvertableIndexFunction(Vector('a, 'c, 'f)),
+      InvertableIndexFunction(Vector('u)),
+      InvertableIndexFunction(Vector('j, 'r, 'z)))
   }
 
   it should "provide InvertableIndexFunction.apply method on ordered pairs" in {
@@ -312,9 +345,10 @@ class InvertableIndexFunctionSpec extends FlatSpec with Matchers {
     f1.domain.toSet should equal (Set(1, 2, 4))
     f1.range.toSet should equal (Set('a, 'c, 'f))
     xyTest(f1, (1, 'a), (2, 'c), (4, 'f))
-    drTest(f1)
-    opIdentityTest(f1)
-    opTest(f1, InvertableIndexFunction(Vector('j, 'r, 'z)))    
+    propertyTest(
+      f1,
+      InvertableIndexFunction(Vector('g)),
+      InvertableIndexFunction(Vector('j, 'r, 'z)))
   }
 
   it should "provide InvertableIndexFunction.apply method on a map" in {
@@ -328,9 +362,10 @@ class InvertableIndexFunctionSpec extends FlatSpec with Matchers {
     f1.domain.toSet should equal (Set(1, 2, 4))
     f1.range.toSet should equal (Set('a, 'c, 'f))
     xyTest(f1, (1, 'a), (2, 'c), (4, 'f))
-    drTest(f1)
-    opIdentityTest(f1)
-    opTest(f1, InvertableIndexFunction(Vector('j, 'r, 'z)))    
+    propertyTest(
+      f1,
+      InvertableIndexFunction(3, (1, 'y)),
+      InvertableIndexFunction(Vector('j, 'r, 'z)))
   }
 
   it should "provide InvertableIndexFunction.serialName method" in {
@@ -343,8 +378,9 @@ class InvertableIndexFunctionSpec extends FlatSpec with Matchers {
     xyTest(f1, (0, "foo0"), (1, "foo1"), (2, "foo2"))
     f1.inverse.isDefinedAt("foo3") should be (false)
     f1.inverse.isDefinedAt("goo1") should be (false)
-    drTest(f1)
-    opIdentityTest(f1)
-    opTest(f1, InvertableIndexFunction(Vector("a", "b", "z")))    
+    propertyTest(
+      f1,
+      InvertableIndexFunction.serialName("cow", 33),
+      InvertableIndexFunction(Vector("a", "b", "z")))
   }
 }
