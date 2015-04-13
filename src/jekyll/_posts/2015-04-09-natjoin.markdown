@@ -5,7 +5,7 @@ date:   2015-04-09 09:52:38
 categories: examples
 ---
 
-Since version 0.0.2, Silex has included [a simple interface to perform natural join operations on data frames](http://projects.willbenton.com/silex/latest/api/#com.redhat.et.silex.frame.NaturalJoining).  (For more background, [see here](http://chapeau.freevariable.com/2015/04/natural-join-for-spark-dataframes.html).)  Here's an example of this functionality in action:
+Since version 0.0.2, Silex has included [a simple interface to perform natural join operations on data frames](/latest/api/#com.redhat.et.silex.frame.NaturalJoining).  (For more background, [see here](http://chapeau.freevariable.com/2015/04/natural-join-for-spark-dataframes.html).)  Here's an example of this functionality in action:
 
 {% highlight scala %}
 // Apologies to Paul Revere, but we wanted a join that
