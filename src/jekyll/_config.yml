@@ -2,8 +2,8 @@
 title: silex
 email: willb@acm.org
 description: "Silex is a library of reusable code for Spark applications."
-baseurl: "http://projects.willbenton.com/silex"
-url: "http://projects.willbenton.com/silex"
+baseurl: "http://silex.freevariable.com/"
+url: "http://silex.freevariable.com/"
 author:
   name: William Benton and others
 
@@ -12,6 +12,7 @@ silexVersion: 0.0.4
 # Build settings
 markdown: kramdown
 permalink: pretty
+
 highlighter: pygments
 
 kramdown:
@@ -46,7 +47,7 @@ JB :
   #   - Only the following values are falsy: ["", null, false]
   #   - When setting BASE_PATH it must be a valid url.
   #     This means always setting the protocol (http|https) or prefixing with "/"
-  BASE_PATH: "http://projects.willbenton.com/silex"
+  #  BASE_PATH: "http://silex.freevariable.com/"
 
   # By default, the asset_path is automatically defined relative to BASE_PATH plus the enabled theme.
   # ex: [BASE_PATH]/assets/themes/[THEME-NAME]
@@ -56,7 +57,7 @@ JB :
   #   http://s3.amazonaws.com/yoursite/themes/watermelon
   #   /assets
   #
-  ASSET_PATH : "http://projects.willbenton.com/silex/assets/themes/bootstrap"
+  ASSET_PATH : "http://silex.freevariable.com/assets/themes/bootstrap"
 
   # These paths are to the main pages Jekyll-Bootstrap ships with.
   # Some JB helpers refer to these paths; change them here if needed.

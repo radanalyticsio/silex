@@ -1,0 +1,74 @@
+---
+layout: post
+title:  "Destructuring and manipulating time"
+date:   2015-04-10 12:50:44
+categories: examples
+---
+
+Time- and date-valued data offer a wide range of headaches for real-world data processing applications.  Silex 0.0.4 introduces a [very simple class](/latest/api/#com.redhat.et.silex.util.DateTimeUTC) to represent a timestamp in UTC, along with a flexible mechanism for converting instances of this class to other timestamp representations for further processing.
+
+Here's a simple example of it in action:
+
+{% highlight scala %}
+import com.redhat.et.silex.util._
+
+val utc = DateTimeUTC.fromSecondsSinceEpoch(1428690706)
+// utc: com.redhat.et.silex.util.DateTimeUTC = DateTimeUTC(2015,4,10,18,31,46,0)
+
+val fiveDaysAgo = DateTimeUTC.fromSecondsSinceEpoch(1428258706)
+// fiveDaysAgo: com.redhat.et.silex.util.DateTimeUTC = DateTimeUTC(2015,4,5,18,31,46,0)
+
+val db = fiveDaysAgo daysBetween utc
+// db: Int = 5
+
+val seconds = fiveDaysAgo.asSecondsSinceEpoch
+// seconds: Int = 1428258706
+
+val joda = fiveDaysAgo.as[org.joda.time.DateTime]
+// joda: org.joda.time.DateTime = 2015-04-05T18:31:46.000Z
+
+val roundtrip = DateTimeUTC.from(joda)
+// roundtrip: com.redhat.et.silex.util.DateTimeUTC = DateTimeUTC(2015,4,5,18,31,46,0)
+
+{% endhighlight %}
+
+The idea is not that `DateTimeUTC` is a reasonable general-purpose representation for timestamps (it is absolutely not).  Rather, it is intended to: 
+
+* provide a straightforward intermediate format for time values that may be converted from one of several string formats to one of several richer date and time libraries,
+* contain enough information to reconstruct a clock time (with optional millisecond accuracy) in a variety of preferred, richer representations,
+* enable libraries that provide generic date processing without imposing a choice of a date and time library on client code, and
+* provide a simple mechanism for inspecting components of time values.
+
+### Implementing conversions
+
+In order to meet these requirements, Silex provides two interfaces involving `DateTimeUTC` instances.  
+
+The first is the conversion interface, given by the `as[T]` method in [`DateTimeUTC`](/latest/api/#com.redhat.et.silex.util.DateTimeUTC) and the `from[T](T)` method [in the companion object](/latest/api/index.html#com.redhat.et.silex.util.DateTimeUTC$).  In order to extend these for arbitrary `T`, simply ensure that witness functions converting from `T` to `DateTimeUTC` (for `from`) and from `DateTimeUTC` to `T` (for `as`) are in scope.  (Silex provides [implementations of these](https://github.com/willb/silex/blob/v0.0.4/src/main/scala/com/redhat/et/silex/util/timeUtils.scala#L46) for Joda-Time's `DateTime` class.)
+
+The second interface is the [`TimeLens`](/latest/api/index.html#com.redhat.et.silex.util.TimeLens) trait, which lets applications define conversions from a particular string-based time format to a `DateTimeUTC` instance and back.  (This is not exactly a "lens" in the functional programming sense, since it doesn't extract or modify individual components of the time, but it provides the round-trip functionality of a lens.)  Silex currently includes one `TimeLens` (to convert to and from timestamps in the format used by Amazon Web Services billing data); we've reproduced it below as an example:
+
+{% highlight scala %}
+/** 
+  * A function object to convert to and from times in the AWS billing format.
+  * 
+  * These are UTC, in the form <code>YYYY-MM-DD HH:MM:SS</code>.  By converting to the 
+  * [[DateTimeUTC]] format, you can manipulate individual components or convert to 
+  * another format for further processing.
+  */
+object AWSTimeLens extends com.redhat.et.silex.util.TimeLens {
+  import RegexImplicits._
+  
+  def apply(date: String) = date match {
+    case r"(\d\d\d\d)$year-(\d\d)$month-(\d\d)$day (\d\d)$hour:(\d\d)$minute:(\d\d)$second" => 
+      DateTimeUTC(year.toInt, month.toInt, day.toInt, hour.toInt, minute.toInt, second.toInt)
+  }
+  
+  def apply(d: DateTimeUTC) = 
+    "%04d-%02d-%02d %02d:%02d:%02d".format(d.year, d.month, d.day, d.hour, d.minute, d.second)
+}
+{% endhighlight %}
+
+(If you develop a useful `TimeLens`, please contribute it as a pull request!)
+
+Most data processing code will only need declare a custom `TimeLens` and convert string timestamps to seconds since the UNIX epoch.  However, since Silex lets users declare arbitrary round-trip conversions between string formats and `DateTimeUTC` instances and between `DateTimeUTC` instances and objects in any alternative date and time representation, it is possible to write more sophisticated time-processing code concisely and generically.
+

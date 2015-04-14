@@ -23,18 +23,18 @@ import scala.language.implicitConversions
 
 /** A simple structure representing a calendar date in UTC.
   * 
-  * This class is deliberately extremely simple and delegates out to {{joda-time}}
+  * This class is deliberately extremely simple and delegates out to <code>joda-time</code>
   * for its actual functionality; it exists solely to abstract away our choice of 
   * date and time library.  (In JDK 8, it would probably make sense to use the new
   * standard library date and time classes.)
   *
   * If you need to deal with multiple time zones or different calendars, 
   * you're probably best served by using something more sophisticated (although the
-  * {{from}} method in the companion object to convert from a [[org.joda.time.DateTime]] 
+  * <code>from</code> method in the companion object to convert from a [[org.joda.time.DateTime]] 
   * will convert to UTC first).
   */
 case class DateTimeUTC(year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int, millis: Int = 0) {
-  /** Converts from {{DateTimeUTC}} to {{T}}, if an appropriate implicit conversion function is in scope */
+  /** Converts from <code>DateTimeUTC</code> to <code>T</code>, if an appropriate implicit conversion function is in scope */
   def as[T](implicit ev: (DateTimeUTC) => T): T = ev(this)
   
   lazy val asSecondsSinceEpoch = (as[DateTime].getMillis / 1000).asInstanceOf[Int]
@@ -55,7 +55,7 @@ object DateTimeUTC {
   
   def fromSecondsSinceEpoch(epoch: Int) = from(new DateTime(epoch * 1000L))
   
-  /** Converts from {{T}} to {{DateTimeUTC}}, if an appropriate implicit conversion function is in scope */
+  /** Converts from <code>T</code> to <code>DateTimeUTC</code>, if an appropriate implicit conversion function is in scope */
   def from[T](t: T)(implicit ev: (T) => DateTimeUTC): DateTimeUTC = ev(t)
 }
 
@@ -63,11 +63,11 @@ object Amortizer {
   val ONE_DAY = new org.joda.time.Period().withDays(1)
   
   /**
-   * Amortizes some quantity over the days between {{start}} and {{end}}.
+   * Amortizes some quantity over the days between <code>start</code> and <code>end</code>.
    *  
    * Returns a [[Seq]] of pairs consisting of the [[DateTimeUTC]] to which 
-   * the value should be ascribed and the amortized amount.  If {{start}} and
-   * {{end}} are on the same day, return a [[Seq]] with {{start}} and the whole
+   * the value should be ascribed and the amortized amount.  If <code>start</code> and
+   * <code>end</code> are on the same day, return a [[Seq]] with <code>start</code> and the whole
    * amount.
    */
   def amortize(start: DateTimeUTC, end: DateTimeUTC, amt: Double): Seq[Pair[DateTimeUTC, Double]] = {
@@ -96,7 +96,7 @@ trait TimeLens {
 /** 
   * A function object to convert to and from times in the AWS billing format.
   * 
-  * These are UTC, in the form {{YYYY-MM-DD HH:MM:SS}}.  By converting to the [[DateTimeUTC]] 
+  * These are UTC, in the form <code>YYYY-MM-DD HH:MM:SS</code>.  By converting to the [[DateTimeUTC]] 
   * format, you can manipulate individual components or convert to another format for further
   * processing.
   */
