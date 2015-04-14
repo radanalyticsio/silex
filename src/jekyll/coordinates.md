@@ -6,12 +6,12 @@ permalink: coordinates/
 
 To use Silex in your own projects, add the following library dependency to your build.sbt:
 
-```scala
+{% highlight scala %}
 resolvers += "Will's bintray" at "https://dl.bintray.com/willb/maven/"
-```
+{% endhighlight %}
 
 and then add Silex as a dependency:
 
-```scala
+{% highlight scala %}
 libraryDependencies += "com.redhat.et" %% "silex" % "{{ site.silexVersion }}"
-```
+{% endhighlight %}
