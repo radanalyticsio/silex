@@ -4,7 +4,7 @@ title: Ivy coordinates
 permalink: coordinates/
 ---
 
-To use Silex in your own projects, add the following library dependency to your build.sbt:
+To use Silex in your own projects, add the following library dependency to your `build.sbt`:
 
 {% highlight scala %}
 resolvers += "Will's bintray" at "https://dl.bintray.com/willb/maven/"
