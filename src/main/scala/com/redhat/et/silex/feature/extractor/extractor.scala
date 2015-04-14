@@ -20,229 +20,142 @@ package com.redhat.et.silex.extractor
 
 import com.redhat.et.silex.feature.indexfunction._
 
-sealed abstract class FeatureBuffer(sz: Int) extends Serializable {
-  // abstract methods
-  private[extractor] def set(i: Int, v: Double): Unit
-  private[extractor] def setAll(beg: Int, vList: TraversableOnce[Double]): Unit
-  private[extractor] def get(j: Int): Double
-
-  private var nxt = 0
-  private var beg = 0
-  private var end = 0
-  private[extractor] def release() {
-    beg = end
-    nxt = end
-  }
-  private[extractor] def reserve(r: Int) {
-    require(r >= 0)
-    end = beg + r
-    require(end <= this.size)
-  }
-
-  final def size: Int = sz
-  final def length: Int = sz
-
-  final def pad(width: Int) {
-    require(width >= 0)
-    nxt += width
-  }
-
-  final def +=(v: Double) {
-    require(nxt < end)
-    set(nxt, v)
-    nxt += 1
-  }
-
-  final def +=(v1: Double, v2: Double, vRest: Double*) {
-    require((nxt + 2 + vRest.length) <= end)
-    set(nxt, v1)
-    nxt += 1
-    set(nxt, v2)
-    nxt += 1
-    setAll(nxt, vRest)
-    nxt += vRest.length
-  }
-
-  final def append(vList: Double*) {
-    require(nxt + vList.length <= end)
-    setAll(nxt, vList)
-    nxt += vList.length
-  }
-
-  final def ++=(vList: TraversableOnce[Double]) {
-    require(vList.hasDefiniteSize && ((nxt + vList.size) <= end))
-    setAll(nxt, vList)
-    nxt += vList.size
-  }
-
-  final def appendAll(vList: TraversableOnce[Double]) {
-    require(vList.hasDefiniteSize && ((nxt + vList.size) <= end))
-    setAll(nxt, vList)
-    nxt += vList.size
-  }
-
-  final def apply(j: Int): Double = get(j)
+abstract class FeatureSeq extends scala.collection.immutable.Seq[Double] with Serializable {
+  def length: Int
+  def apply(j: Int): Double
+  def iterator: Iterator[Double]
+  def density: Double
+  def activeIterator: Iterator[(Int, Double)]
+  final def ++(that: FeatureSeq): FeatureSeq = new ConcatFS(this, that)
 }
 
-private[extractor] class DenseBuf(val sz: Int) extends FeatureBuffer(sz) {
-  val data = Array.fill[Double](sz)(0.0)
-  def set(i: Int, v: Double) { data(i) = v }
-  def setAll(beg: Int, vList: TraversableOnce[Double]) {
-    var j = beg
-    vList.foreach { v =>
-      data(j) = v
-      j += 1
+sealed class ConcatFS(fb1: FeatureSeq, fb2: FeatureSeq) extends FeatureSeq {
+  def length = length_
+  private lazy val length_ = fb1.length + fb2.length
+
+  def apply(j: Int) = if (j < fb1.length) fb1(j) else fb2(j - fb1.length)
+
+  def density = {
+    val (l1, l2) = (fb1.length.toDouble, fb2.length.toDouble)
+    val d = l1 + l2
+    if (d <= 0.0) 1.0 else (l1 * fb1.density + l2 * fb2.density) / d
+  }
+
+  def iterator = new Iterator[Double] {
+    val (i1, i2) = (fb1.iterator, fb2.iterator)
+    def hasNext = i1.hasNext || i2.hasNext
+    def next: Double = {
+      if (i1.hasNext) i1.next else i2.next
     }
   }
-  def get(j: Int) = data(j)
-  override def toString = "[" + data.map(_.toString).mkString(",") + "]"
+
+  def activeIterator = new Iterator[(Int, Double)] {
+    val L1 = fb1.length
+    val (i1, i2) = (fb1.activeIterator, fb2.activeIterator.map(p => (L1 + p._1, p._2)))
+    def hasNext = i1.hasNext || i2.hasNext
+    def next: (Int, Double) = {
+      if (i1.hasNext) i1.next else i2.next
+    }
+  }
+
+  override def toString = s"ConcatFS(${fb1}, ${fb2})"
 }
 
-private[extractor] class SparseBuf(val sz: Int) extends FeatureBuffer(sz) {
-  val idx = scala.collection.mutable.ArrayBuffer.empty[Int]
-  val data = scala.collection.mutable.ArrayBuffer.empty[Double]
-  def set(i: Int, v: Double) {
-    if (v != 0.0) {
-      idx += i
-      data += v
-    }
-  }
-  def setAll(beg: Int, vList: TraversableOnce[Double]) {
-    var j = beg
-    vList.foreach { v =>
-      if (v != 0.0) {
-        idx += j
-        data += v
-      }
-      j += 1
-    }
-  }
-  def get(j: Int) = {
-    val n = idx.length
-    if (n <= 4) {
-      val jj = idx.indexOf(j)
-      if (jj < 0) 0.0 else data(jj)
-    } else {
-      var b = 0
-      var e = n
-      var v = 0.0
-      while (b < e) {
-        val m = (b+e)/2
-        if (j == idx(m)) {
-          v = data(m)
-          e = b
-        } else if (j < idx(m)) {
-          e = m
-        } else {
-          b = m + 1
-        }
-      }
-      v
-    }
-  }
-  override def toString =
-    "[" + idx.zip(data).map(e => e._1.toString + " -> " + e._2.toString).mkString(", ") + "]"
+sealed class SeqFS(seq: Seq[Double]) extends FeatureSeq {
+  def length = seq.length
+  def apply(j: Int) = seq(j)
+  def iterator = seq.iterator
+  def density = 1.0
+  def activeIterator = (0 until seq.length).iterator.map(j => (j, seq(j)))
+  override def toString = s"SeqFS(${seq})"
 }
 
-object DenseFeatureBuffer {
-  def unapply(buf: DenseBuf): Option[Array[Double]] = Some(buf.data)
-}
-object SparseFeatureBuffer {
-  def unapply(buf: SparseBuf): Option[(Int, Array[Int], Array[Double])] =
-    Some((buf.sz, buf.idx.toArray, buf.data.toArray))
+object FeatureSeq {
+  import scala.language.implicitConversions
+
+  def empty = new FeatureSeq {
+    def length = 0
+    def apply(j: Int) = (Seq.empty)(j)
+    def iterator = Iterator.empty
+    def density = 1.0
+    def activeIterator = Iterator.empty
+  }
+
+  implicit def fromSeqToSeqFS(seq: Seq[Double]): FeatureSeq = new SeqFS(seq)
+  implicit def fromArrayToSeqFS(a: Array[Double]): FeatureSeq =
+    new SeqFS(a:scala.collection.mutable.WrappedArray[Double])
 }
 
 // a feature extractor is a function from some domain D to an intermediate
 // representation that (a) supports sparse and dense representations and (b) is easily 
 // converted to 3rd-party representations such as Spark mllib vectors.
-abstract class Extractor[D] extends Function[D, FeatureBuffer] with Serializable { self =>
+abstract class Extractor[D] extends Function[D, FeatureSeq] with Serializable { self =>
   // abstract methods
-  def size: Int
-  def density: Double
-  def fill(data: D, fv: FeatureBuffer): Unit
+  def width: Int
+  def function: D => FeatureSeq
 
   // by default, feature name function is empty - defined on no indexes
-  private lazy val lazyNames = InvertableIndexFunction.undefined[String](size)
-  def names: InvertableIndexFunction[String] = lazyNames
+  def names: InvertableIndexFunction[String] = names_
+  private lazy val names_ = InvertableIndexFunction.undefined[String](width)
 
   // By default, no category information is supplied.  If used with Spark MLLib, this
   // signifies "no features are categorical"
   // May be overridden if desired to supply an explicit category information map,
   // to a feature extractor that doesn't have one, or to override its default
-  private lazy val lazyCatInfo = IndexFunction.undefined[Int](size)
-  def categoryInfo: IndexFunction[Int] = lazyCatInfo
-
-  // this is overridden for concatenated extractors, which are not atomic
-  private[extractor] def atomic = true
+  def categoryInfo: IndexFunction[Int] = catInfo_
+  private lazy val catInfo_ = IndexFunction.undefined[Int](width)
 
   // use this to plug an extractor into custom shim/adaptor function
   // extractor compose shimFunction
   final override def compose[G](g: G => D) = new Extractor[G] {
-    def size = self.size
-    def density = self.density
-    def fill(data: G, fv: FeatureBuffer) { self.fill(g(data), fv) }
-    override def atomic = self.atomic
+    def width = self.width
+    def function = function_
+    private lazy val function_ = self.function.compose(g)
     override def categoryInfo = self.categoryInfo
     override def names = self.names
   }
 
-  final def apply(data: D): FeatureBuffer = {
-    val fv = if (this.density < 0.5) new SparseBuf(this.size) else new DenseBuf(this.size)
-    if (this.atomic) fv.reserve(this.size)
-    this.fill(data, fv)
-    fv
-  }
+  final def apply(data: D): FeatureSeq = function_ (data)
+  private lazy val function_ = this.function
 
   // this is where you can concatenate extractors
   final def ++(that: Extractor[D]) = new Extractor[D] {
-    def size = self.size + that.size
-    def density = densityLazy
-    def fill(data: D, fv: FeatureBuffer) {
-      if (self.atomic) fv.reserve(self.size)
-      self.fill(data, fv)
-      if (self.atomic) fv.release()
+    def width = self.width + that.width
 
-      if (that.atomic) fv.reserve(that.size)
-      that.fill(data, fv)
-      if (that.atomic) fv.release()
+    def function = function_
+    private lazy val function_ = {
+      val (f1, f2) = (self.function, that.function)
+      (data: D) => f1(data) ++ f2(data)
     }
-    override def atomic = false
-    override def categoryInfo = self.categoryInfo ++ that.categoryInfo
-    override def names = self.names ++ that.names
-    private lazy val densityLazy = {
-      val selfSize = self.size.toDouble
-      val thatSize = that.size.toDouble
-      val z = selfSize + thatSize
-      if (z > 0.0) ((selfSize * self.density) + (thatSize * that.density)) / z else 1.0
-    }
+
+    override def categoryInfo = catInfo_
+    private lazy val catInfo_ = self.categoryInfo ++ that.categoryInfo
+
+    override def names = names_
+    private lazy val names_ = self.names ++ that.names
   }
 
   // A way to augment an existing feature extractor with a categoryInfo map, or
   // to override its existing map
-  final def withCategoryInfo(info: IndexFunction[Int]): Extractor[D] =
-    new Extractor[D] {
-    require(info.width == self.size)
-    def size = self.size
-    def density = self.density
-    def fill(data: D, fv: FeatureBuffer) { self.fill(data, fv) }
-    override def atomic = self.atomic
+  final def withCategoryInfo(info: IndexFunction[Int]): Extractor[D] = new Extractor[D] {
+    require(info.width == self.width)
+    def width = self.width
+    def function = self.function
     override def categoryInfo = info
     override def names = self.names
   }
   final def withCategoryInfo(pairs: (String, Int)*): Extractor[D] = {
     val n2i = self.names.inverse
     val cif = IndexFunction(
-      self.size,
+      self.width,
       pairs.filter(p => n2i.isDefinedAt(p._1)).map(p => (n2i(p._1), p._2)):_*)
     self.withCategoryInfo(cif)
   }
 
   final def withNames(nf: InvertableIndexFunction[String]): Extractor[D] = new Extractor[D] {
-    require(nf.width == self.size)
-    def size = self.size
-    def density = self.density
-    def fill(data: D, fv: FeatureBuffer) { self.fill(data, fv) }
-    override def atomic = self.atomic
+    require(nf.width == self.width)
+    def width = self.width
+    def function = self.function
     override def categoryInfo = self.categoryInfo
     override def names = nf
   }
@@ -256,61 +169,75 @@ abstract class Extractor[D] extends Function[D, FeatureBuffer] with Serializable
 object Extractor {
   // the empty feature extractor
   def empty[D] = new Extractor[D] {
-    def size = 0
-    def density = 1.0
-    def fill(data: D, fv: FeatureBuffer) {}
+    def width = 0
+    def function = function_
+    private lazy val function_ = (data: D) => FeatureSeq.empty
   }
 
-  def constant[D](vList: Double*) = new Extractor[D] {
-    def size = vList.length
-    def density = 1.0
-    def fill(data: D, fv: FeatureBuffer) {
-      fv ++= vList
+  def constant[D](vList: Double*) = {
+    val v = vList.toArray
+    new Extractor[D] {
+      def width = v.length
+      def function = function_
+      private lazy val function_ = (data: D) => v:FeatureSeq
     }
   }
 
   // apply zero or more functions to some data object
-  def apply[D](fList: (D => Double)*) = new Extractor[D] {
-    def size = fList.length
-    def density = 1.0
-    def fill(data: D, fv: FeatureBuffer) {
-      fList.foreach { f =>
-        fv += f(data)
+  def apply[D](fList: (D => Double)*) = {
+    val w = fList.length
+    new Extractor[D] {
+      def width = w
+      def function = function_
+      private lazy val function_ = {
+        (data: D) => {
+          val v = new Array[Double](w)
+          var j = 0
+          fList.foreach { f =>
+            v(j) = f(data)
+            j += 1
+          }
+          v:FeatureSeq
+        }
       }
     }
   }
 
   // select zero or more numeric values by index, cast to Double
-  def numeric[N :Numeric](jList: Int*) = new Extractor[PartialFunction[Int, N]] {
-    def size = jList.length
-    def density = 1.0
-    def fill(data: PartialFunction[Int, N], fv: FeatureBuffer) {
-      val num = implicitly[Numeric[N]]
-      jList.foreach { j =>
-        fv += num.toDouble(data(j))
-      }
+  def numeric[N :Numeric](jList: Int*) = {
+    val jv = jList.toArray
+    val w = jv.length
+    val num = implicitly[Numeric[N]]
+    new Extractor[PartialFunction[Int, N]] {
+      def width = w
+      def function = function_
+      private lazy val function_ = 
+        (data: PartialFunction[Int, N]) => (jv.map(j => num.toDouble(data(j)))):FeatureSeq
     }
   }
 
   // select zero or more string values by index, cast to Double
-  def string(jList: Int*) = new Extractor[PartialFunction[Int, String]] {
-    def size = jList.length
-    def density = 1.0
-    def fill(data: PartialFunction[Int, String], fv: FeatureBuffer) {
-      jList.foreach { j =>
-        fv += data(j).toDouble
-      }
+  def string(jList: Int*) = {
+    val jv = jList.toArray
+    val w = jv.length
+    new Extractor[PartialFunction[Int, String]] {
+      def width = w
+      def function = function_
+      private lazy val function_ = 
+        (data: PartialFunction[Int, String]) => (jv.map(j => data(j).toDouble)):FeatureSeq
     }
   }
 
-  // load an entire sequence of numeric values, with expected size and density
-  def numericSeq[N :Numeric](sz: Int, rho: Double) = new Extractor[Seq[N]] {
-    def size = sz
-    def density = rho
-    def fill(data: Seq[N], fv: FeatureBuffer) {
-      require(data.length == sz)
-      val num = implicitly[Numeric[N]]
-      fv ++= data.view.map(v => num.toDouble(v))
+  // load an entire sequence of numeric values
+  def numericSeq[N :Numeric](w: Int) = {
+    val num = implicitly[Numeric[N]]
+    new Extractor[Seq[N]] {
+      def width = w
+      def function = function_
+      private lazy val function_ = (data: Seq[N]) => {
+        require(data.length == w)
+        (data.view.map(x => num.toDouble(x))):FeatureSeq    
+      }
     }
   }
 }
