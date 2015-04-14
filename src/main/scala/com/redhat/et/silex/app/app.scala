@@ -53,12 +53,15 @@ trait AppCommon {
     new org.apache.spark.sql.SQLContext(context)
   }
   
-  /** The Spark master URL; defaults to the value set in <code>SPARK_MASTER</code> in the environment or <code>local[*]</code> */
+  /** The Spark master URL.
+    *
+    * This defaults to the value set in <code>SPARK_MASTER</code> in the environment or <code>local[*]</code>.  The <code>spark.master</code> property will take precedence over this. */
   def master = sys.env.getOrElse("SPARK_MASTER", "local[*]")
   
   /** A method that returns your application's name */
   def appName: String
-    
+  
+  /** The main method for your application.  Do not override this; override [[AppCommon.appMain]] instead */
   def main(args: Array[String]) = {
     appMain(args)
     runExitHooks
