@@ -16,7 +16,7 @@
  * limitations under the License.c
  */
 
-package com.redhat.et.silex.extractor
+package com.redhat.et.silex.feature.extractor
 
 import com.redhat.et.silex.feature.indexfunction._
 
@@ -24,9 +24,15 @@ abstract class FeatureSeq extends scala.collection.immutable.Seq[Double] with Se
   def length: Int
   def apply(j: Int): Double
   def iterator: Iterator[Double]
+  def activeKeysIterator: Iterator[Int]
+  def activeValuesIterator: Iterator[Double]
+
   def density: Double
-  def activeIterator: Iterator[(Int, Double)]
+
   final def ++(that: FeatureSeq): FeatureSeq = new ConcatFS(this, that)
+
+  final def keysIterator = Iterator.range(0, length)
+  final def valuesIterator = iterator
 }
 
 sealed class ConcatFS(fb1: FeatureSeq, fb2: FeatureSeq) extends FeatureSeq {
@@ -41,22 +47,9 @@ sealed class ConcatFS(fb1: FeatureSeq, fb2: FeatureSeq) extends FeatureSeq {
     if (d <= 0.0) 1.0 else (l1 * fb1.density + l2 * fb2.density) / d
   }
 
-  def iterator = new Iterator[Double] {
-    val (i1, i2) = (fb1.iterator, fb2.iterator)
-    def hasNext = i1.hasNext || i2.hasNext
-    def next: Double = {
-      if (i1.hasNext) i1.next else i2.next
-    }
-  }
-
-  def activeIterator = new Iterator[(Int, Double)] {
-    val L1 = fb1.length
-    val (i1, i2) = (fb1.activeIterator, fb2.activeIterator.map(p => (L1 + p._1, p._2)))
-    def hasNext = i1.hasNext || i2.hasNext
-    def next: (Int, Double) = {
-      if (i1.hasNext) i1.next else i2.next
-    }
-  }
+  def iterator = fb1.iterator ++ fb2.iterator
+  def activeKeysIterator = fb1.activeKeysIterator ++ fb2.activeKeysIterator  
+  def activeValuesIterator = fb1.activeValuesIterator ++ fb2.activeValuesIterator  
 
   override def toString = s"ConcatFS(${fb1}, ${fb2})"
 }
@@ -65,8 +58,9 @@ sealed class SeqFS(seq: Seq[Double]) extends FeatureSeq {
   def length = seq.length
   def apply(j: Int) = seq(j)
   def iterator = seq.iterator
+  def activeKeysIterator = Iterator.range(0, length)
+  def activeValuesIterator = iterator
   def density = 1.0
-  def activeIterator = (0 until seq.length).iterator.map(j => (j, seq(j)))
   override def toString = s"SeqFS(${seq})"
 }
 
@@ -77,13 +71,16 @@ object FeatureSeq {
     def length = 0
     def apply(j: Int) = (Seq.empty)(j)
     def iterator = Iterator.empty
+    def activeKeysIterator = Iterator.empty
+    def activeValuesIterator = Iterator.empty
     def density = 1.0
-    def activeIterator = Iterator.empty
   }
 
   implicit def fromSeqToSeqFS(seq: Seq[Double]): FeatureSeq = new SeqFS(seq)
   implicit def fromArrayToSeqFS(a: Array[Double]): FeatureSeq =
     new SeqFS(a:scala.collection.mutable.WrappedArray[Double])
+
+  def apply[T <% FeatureSeq](x: T) = x:FeatureSeq
 }
 
 // a feature extractor is a function from some domain D to an intermediate
