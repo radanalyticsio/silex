@@ -44,7 +44,7 @@ sealed class BreezeFS(bv: BV[Double]) extends FeatureSeq {
 object implicits {
   import scala.language.implicitConversions
   implicit def fromBVtoBreezeFS(bv: BV[Double]): FeatureSeq = new BreezeFS(bv)
-  implicit class enrichBreezeFS(val fs: FeatureSeq) extends AnyVal {
+  implicit class enrichBreezeFS(@transient fs: FeatureSeq) extends Serializable {
     def toBreeze: BV[Double] = {
       if (fs.density > 0.5) new DenseBV(fs.toArray)
       else {
