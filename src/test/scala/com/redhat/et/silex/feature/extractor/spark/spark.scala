@@ -83,6 +83,23 @@ class SparkFeatureSeqSpec extends FlatSpec with Matchers {
       FeatureSeq(new SparseVector(10, Array(4, 9), Array(5.0, 9.0))))
   }
 
+  it should "support the toSpark enriched method" in {
+    val t1 = new DenseVector(Array(1.1, 2.2))
+    val v1 = FeatureSeq(t1).toSpark
+    v1.equals(t1) should be (true)
+    vectorType(v1) should equal ('dense)
+
+    val t2 = new SparseVector(5, Array(1, 3), Array(1.1, 2.2))
+    val v2 = FeatureSeq(t2).toSpark
+    v2.equals(t2) should be (true)
+    vectorType(v2) should equal ('sparse)
+
+    val t3 = new SparseVector(3, Array(1, 2), Array(1.1, 2.2))
+    val v3 = FeatureSeq(t3).toSpark
+    v3.equals(t3) should be (true)
+    vectorType(v3) should equal ('dense)
+  }
+
   it should "support the toLabeledPoint enriched method" in {
     val t1 = new LabeledPoint(0.0, new DenseVector(Array(1.1, 2.2)))
     val v1 = FeatureSeq(t1).toLabeledPoint(1.0)
