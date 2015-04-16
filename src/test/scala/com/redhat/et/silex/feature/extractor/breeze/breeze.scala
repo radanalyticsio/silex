@@ -29,11 +29,11 @@ class BreezeFeatureSeqSpec extends FlatSpec with Matchers {
 
   import _root_.breeze.linalg._
 
-  def isDense(v: Vector[_]) = v match {
-    case _: DenseVector[_] => true
-    case _ => false
+  def vectorType(v: Vector[_]) = v match {
+    case _: DenseVector[_] => 'dense
+    case _: SparseVector[_] => 'sparse
+    case _ => 'undefined
   }
-  def isSparse(v: Vector[_]) = !isDense(v)
 
   it should "construct a FeatureSeq from a Breeze DenseVector" in {
     identityTest(FeatureSeq(new DenseVector(Array[Double]())))
@@ -72,16 +72,16 @@ class BreezeFeatureSeqSpec extends FlatSpec with Matchers {
     val t1 = new DenseVector(Array(1.1, 2.2))
     val v1 = FeatureSeq(t1).toBreeze
     v1.equals(t1) should be (true)
-    isDense(v1) should be (true)
+    vectorType(v1) should equal ('dense)
 
     val t2 = new SparseVector(Array(1, 3), Array(1.1, 2.2), 5)
     val v2 = FeatureSeq(t2).toBreeze
     v2.equals(t2) should be (true)
-    isSparse(v2) should be (true)
+    vectorType(v2) should equal ('sparse)
 
     val t3 = new SparseVector(Array(1, 2), Array(1.1, 2.2), 3)
     val v3 = FeatureSeq(t3).toBreeze
     v3.equals(t3) should be (true)
-    isSparse(v3) should be (false)
+    vectorType(v3) should equal ('dense)
   }
 }
