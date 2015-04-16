@@ -48,7 +48,7 @@ sealed class ConcatFS(fb1: FeatureSeq, fb2: FeatureSeq) extends FeatureSeq {
   }
 
   def iterator = fb1.iterator ++ fb2.iterator
-  def activeKeysIterator = fb1.activeKeysIterator ++ fb2.activeKeysIterator  
+  def activeKeysIterator = fb1.activeKeysIterator ++ (fb2.activeKeysIterator.map(_ + fb1.length))
   def activeValuesIterator = fb1.activeValuesIterator ++ fb2.activeValuesIterator  
 
   override def toString = s"ConcatFS(${fb1}, ${fb2})"
