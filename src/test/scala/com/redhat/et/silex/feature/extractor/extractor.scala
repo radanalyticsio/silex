@@ -32,6 +32,7 @@ object FeatureSeqSpecSupport extends FlatSpec with Matchers {
     (0 until s.length).foreach { j => { s.isDefinedAt(j) should be (true) } }
 
     s.iterator.size should be (s.length)
+    (0 until s.length).map(j => s(j)) should beEqSeq(s.iterator)
 
     s.activeKeysIterator.toSeq should equal (s.activeKeysIterator.toSeq.sorted)
     s.activeKeysIterator.size should be (s.activeValuesIterator.size)
@@ -319,5 +320,64 @@ class ExtractorSpec extends FlatSpec with Matchers {
       Extractor((x: Int) => 2.0 * x, (x: Int) => 3.0 * x),
       Extractor((x: Int) => 2.0 * x + 3.0),
       Extractor((x: Int) => 2.0 * x, (x: Int) => 3.0 * x, (x: Int) => -7.0 * x))
+    propertyTest(
+      Extractor((x: Double) => 2.0 * x, (x: Double) => 3.0 * x),
+      Extractor((x: Double) => 2.0 * x + 3.0),
+      Extractor((x: Double) => 2.0 * x, (x: Double) => 3.0 * x, (x: Double) => -7.0 * x))
+  }
+
+  it should "provide Extractor.numeric factory method" in {
+    identityTest(Extractor.numeric[Int]())
+    val e1 = Extractor.numeric[Int](1, 0)
+    e1.width should be (2)
+    xyTest(e1,
+      (List(1, 2), FeatureSeq(2.0, 1.0)),
+      (List(55, 77), FeatureSeq(77.0, 55.0)),
+      (List(3, 4), FeatureSeq(4.0, 3.0)))
+    propertyTest(
+      Extractor.numeric[Int](2, 1, 0),
+      Extractor.numeric[Int](1),
+      Extractor.numeric[Int](0, 1, 2, 2, 1, 0))
+  }
+
+  it should "provide Extractor.string factory method" in {
+    identityTest(Extractor.string())
+    val e1 = Extractor.string(1, 0)
+    e1.width should be (2)
+    xyTest(e1,
+      (List("1", "2"), FeatureSeq(2.0, 1.0)),
+      (List("55", "77"), FeatureSeq(77.0, 55.0)),
+      (List("3", "4"), FeatureSeq(4.0, 3.0)))
+    propertyTest(
+      Extractor.string(2, 1, 0),
+      Extractor.string(1),
+      Extractor.string(0, 1, 2, 2, 1, 0))
+  }
+
+  it should "compose with another function" in {
+    val e1 = Extractor.numeric[Long](0).compose((s:String) => List(s.toLong))
+    e1.width should be (1)
+    xyTest(e1,
+      ("1", FeatureSeq(1)),
+      ("42", FeatureSeq(42)),
+      ("7", FeatureSeq(7)))
+    propertyTest(
+      Extractor((x:String) => 2.0 * x.toDouble).compose((s:Seq[String]) => s(2)),
+      Extractor.numeric[Long](1).compose((s:Seq[String])=>s.map(_.toLong)),
+      Extractor.numeric[Double](2, 1, 0).compose((s:Seq[String])=>s.map(_.toDouble)))
+  }
+
+  it should "provide Extractor.numericSeq factory method" in {
+    identityTest(Extractor.numericSeq[Double](0).compose((x:Seq[Double])=>x.take(0)))
+    val e1 = Extractor.numericSeq[Long](2)
+    e1.width should be (2)
+    xyTest(e1,
+      (List(1L, 2L), FeatureSeq(1.0, 2.0)),
+      (List(55L, 77L), FeatureSeq(55.0, 77.0)),
+      (List(3L, 4L), FeatureSeq(3.0, 4.0)))
+    propertyTest(
+      Extractor.numericSeq[Int](3),
+      Extractor.numericSeq[Int](1).compose((x:Seq[Int])=>x.take(1)),
+      Extractor.numericSeq[Int](2).compose((x:Seq[Int])=>x.take(2)))
   }
 }
