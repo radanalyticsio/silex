@@ -192,5 +192,132 @@ class FeatureSeqSpec extends FlatSpec with Matchers {
   }
 }
 
+object ExtractorSpecSupport extends FlatSpec with Matchers {
+  import com.redhat.et.silex.feature.extractor.Extractor
+  import com.redhat.et.silex.scalatest.matchers._
+
+  def drTest[D](e: Extractor[D])(implicit d: Seq[D]) {
+    e.width should be >= (0)
+    d.foreach { x =>
+      e(x).length should be (e.width)
+      e.function(x).length should be (e.width)
+      FeatureSeqSpecSupport.equalTest(e(x), e.function(x))
+    }
+  }
+
+  def identityTest[D](e: Extractor[D])(implicit d: Seq[D]) {
+    e.width should be (0)
+    d.foreach { x =>
+      e(x).length should be (0)
+    }
+    drTest(e)
+  }
+
+  def opTest[D](e1: Extractor[D], e2: Extractor[D])(implicit d: Seq[D]) {
+    val r = e1 ++ e2
+    r.width should be (e1.width + e2.width)
+    d.foreach { x =>
+      FeatureSeqSpecSupport.equalTest(r(x), e1(x) ++ e2(x))
+    }
+    drTest(r)
+  }
+
+  def equalTest[D](e1: Extractor[D], e2: Extractor[D])(implicit d: Seq[D]) {
+    e1.width should be (e2.width)
+    d.foreach { x =>
+      FeatureSeqSpecSupport.equalTest(e1(x), e2(x))
+    }
+  }
+
+  def opIdentityTest[D](e: Extractor[D])(implicit d: Seq[D]) {
+    val z = Extractor.empty[D]
+    identityTest(z)
+    List (z ++ e, e ++ z, (z ++ e) ++ z, z ++ (e ++ z)).foreach { t =>
+      equalTest(e, t)
+      equalTest(t, e)
+      drTest(t)
+    }
+  }
+
+  def associativeTest[D](e1: Extractor[D], e2: Extractor[D], e3: Extractor[D])(implicit d: Seq[D]) {
+    equalTest((e1 ++ e2) ++ e3, e1 ++ (e2 ++ e3))
+  }
+
+  def propertyTest[D](e: Extractor[D]*)(implicit d: Seq[D]) {
+    e.foreach { drTest(_) }
+    e.foreach { opIdentityTest(_) }
+    e.combinations(2).flatMap(_.permutations).foreach { x => opTest(x(0), x(1)) }
+    e.foreach { x => opTest(x, x) }
+    e.combinations(3).flatMap(_.permutations).foreach { x => associativeTest(x(0), x(1), x(2)) }
+  }
+
+  def xyTest[D](e: Extractor[D], xy: (D, FeatureSeq)*) {
+    xy.foreach { xy =>
+      val (x, y) = xy
+      e(x) should beEqSeq (y)
+    }
+  }
+}
+
 class ExtractorSpec extends FlatSpec with Matchers {
+  import com.redhat.et.silex.feature.extractor.Extractor
+  import ExtractorSpecSupport._
+
+  object domainImplicits {
+    implicit val domainValuesInt = List(1, 2, 3)
+    implicit val domainValuesDouble = List(1.0, 2.0, 3.0)
+    implicit val domainValuesString = List("1", "2", "3")
+    implicit val domainValuesIntSeq = List(
+      Vector(1, 2, 3),
+      Vector(3, 2, 1),
+      Vector(2, 2, 2)
+    )
+    implicit val domainValuesDoubleSeq = List(
+      Vector(1.0, 2.0, 3.0),
+      Vector(3.0, 2.0, 1.0),
+      Vector(2.0, 2.0, 2.0)
+    )
+    implicit val domainValuesStringSeq = List(
+      Vector("1", "2", "3"),
+      Vector("3", "2", "1"),
+      Vector("2", "2", "2")
+    )
+  }
+  import domainImplicits._
+
+  it should "enforce range type consistency during concatenation" in {
+    "Extractor.empty[Int] ++ Extractor.empty[String]" shouldNot typeCheck
+  }
+
+  it should "provide Extractor.empty factory method" in {
+    identityTest(Extractor.empty[Int])
+    identityTest(Extractor.empty[String])
+    identityTest(Extractor.empty[Vector[Double]])    
+  }
+
+  it should "provide Extractor.constant factory method" in {
+    identityTest(Extractor.constant[String]())
+    val e1 = Extractor.constant[Int](3.14, 2.72)
+    e1.width should be (2)
+    val fs1 = FeatureSeq(3.14, 2.72)
+    xyTest(e1, (-777, fs1), (0, fs1), (123435, fs1))
+    propertyTest(
+      Extractor.constant[Int](3.14, 2.72),
+      Extractor.constant[Int](5.55, 7.77, 11.1111),
+      Extractor.constant[Int](1.0))
+    propertyTest(
+      Extractor.constant[String](3.14, 2.72),
+      Extractor.constant[String](5.55, 7.77, 11.1111),
+      Extractor.constant[String](1.0))
+  }
+
+  it should "provide Extractor.apply factory method" in {
+    identityTest(Extractor.apply[Double]())
+    val e1 = Extractor((x: Int) => 2.0 * x, (x: Int) => 3.0 * x)
+    xyTest(e1, (1, FeatureSeq(2.0, 3.0)), (-1, FeatureSeq(-2.0, -3.0)), (3, FeatureSeq(6.0, 9.0)))
+    propertyTest(
+      Extractor((x: Int) => 2.0 * x, (x: Int) => 3.0 * x),
+      Extractor((x: Int) => 2.0 * x + 3.0),
+      Extractor((x: Int) => 2.0 * x, (x: Int) => 3.0 * x, (x: Int) => -7.0 * x))
+  }
 }
