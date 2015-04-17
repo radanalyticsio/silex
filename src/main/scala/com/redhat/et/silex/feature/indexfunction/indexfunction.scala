@@ -20,21 +20,6 @@ package com.redhat.et.silex.feature.indexfunction
 
 import scala.language.implicitConversions
 
-class IteratorWrapper[V](self: Iterator[V]) {
-  def ++(that: Iterator[V]) = new Iterator[V] {
-    def hasNext = self.hasNext || that.hasNext
-    def next: V = {
-      if (self.hasNext) self.next else that.next
-    }
-  }
-}
-
-object IteratorWrapper {
-  implicit def toIteratorWrapper[V](iter: Iterator[V]) = new IteratorWrapper(iter)
-}
-
-import IteratorWrapper._
-
 // An index function is a (partial) function from some subset of collection indices to 
 // some values, and which can be concatenated with other such functions such that they 
 // now cover an expanded index range, and the "right" side function has had its domain
