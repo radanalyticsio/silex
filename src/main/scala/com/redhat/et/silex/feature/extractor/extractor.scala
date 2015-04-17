@@ -81,6 +81,7 @@ object FeatureSeq {
     new SeqFS(a:scala.collection.mutable.WrappedArray[Double])
 
   def apply[T <% FeatureSeq](x: T) = x:FeatureSeq
+  def apply(values: Double*): FeatureSeq = new SeqFS(values.toVector)
 }
 
 // a feature extractor is a function from some domain D to an intermediate
