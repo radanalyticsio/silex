@@ -16,6 +16,18 @@
  * limitations under the License.c
  */
 
+/** Provides conversions from Breeze vectors to [[FeatureSeq]], and vice versa.
+  * {{{
+  * import com.redhat.et.silex.feature.extractor.{ FeatureSeq, Extractor }
+  * import com.redhat.et.silex.feature.extractor.breeze
+  * import com.redhat.et.silex.feature.extractor.breeze.implicits._
+  * import _root_.breeze.linalg.DenseVector
+  *
+  * val bv = new DenseVector(Array(1.0, 2.0))
+  * val featureSeq = FeatureSeq(bv)
+  * val bv2 = featureSeq.toBreeze
+  * }}}
+  */
 package com.redhat.et.silex.feature.extractor.breeze
 
 import com.redhat.et.silex.feature.extractor.FeatureSeq
@@ -27,6 +39,7 @@ import _root_.breeze.linalg.{
   HashVector => HashBV
 }
 
+/** Subclass of [[FeatureSeq]] for supporting Breeze Vector data */
 sealed class BreezeFS(bv: BV[Double]) extends FeatureSeq {
   def length = bv.length
   def apply(j: Int) = bv(j)
@@ -41,9 +54,26 @@ sealed class BreezeFS(bv: BV[Double]) extends FeatureSeq {
   override def toString = s"BreezeFS(${bv})"
 }
 
+/** Implicit conversions from Breeze vectors to [[FeatureSeq]].
+  *
+  * {{{
+  * import com.redhat.et.silex.feature.extractor.{ FeatureSeq, Extractor }
+  * import com.redhat.et.silex.feature.extractor.breeze
+  * import com.redhat.et.silex.feature.extractor.breeze.implicits._
+  * import _root_.breeze.linalg.DenseVector
+  *
+  * val bv = new DenseVector(Array(1.0, 2.0))
+  * val featureSeq = FeatureSeq(bv)
+  * val bv2 = featureSeq.toBreeze
+  * }}}
+  */
 object implicits {
   import scala.language.implicitConversions
+
+  /** Convert Breeze vectors to [[FeatureSeq]] */
   implicit def fromBVtoBreezeFS(bv: BV[Double]): FeatureSeq = new BreezeFS(bv)
+
+  /** Supply [[toBreeze]] enriched method on [[FeatureSeq]] objects */
   implicit class enrichBreezeFS(@transient fs: FeatureSeq) extends Serializable {
     def toBreeze: BV[Double] = {
       if (fs.density > 0.5) new DenseBV(fs.toArray)
