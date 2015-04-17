@@ -16,6 +16,24 @@
  * limitations under the License.c
  */
 
+/** Provides conversions from Spark vectors to [[FeatureSeq]], and vice versa.
+  * {{{
+  * import com.redhat.et.silex.feature.extractor.{ FeatureSeq, Extractor }
+  * import com.redhat.et.silex.feature.extractor.spark
+  * import com.redhat.et.silex.feature.extractor.spark.implicits._
+  * import org.apache.spark.mllib.linalg.DenseVector
+  * import org.apache.spark.mllib.regression.LabeledPoint
+  *
+  * val sv = new DenseVector(Array(1.0, 2.0))
+  * val featureSeq = FeatureSeq(sv)
+  * val sv2 = featureSeq.toSpark
+  *
+  * val label = 1.0
+  * val lp = new LabeledPoint(label, sv)
+  * val fs2 = FeatureSeq(lp)
+  * val lp2 = fs2.toLabeledPoint(label)
+  * }}}
+  */
 package com.redhat.et.silex.feature.extractor.spark
 
 import com.redhat.et.silex.feature.extractor.FeatureSeq
@@ -26,6 +44,7 @@ import org.apache.spark.mllib.linalg.{
   SparseVector => SparseSV
 }
 
+/** Subclass of [[FeatureSeq]] for supporting Spark vector data */
 sealed class SparkFS(v: SV) extends FeatureSeq {
   def length = v.size
   def apply(j: Int) = v(j)
@@ -48,11 +67,35 @@ sealed class SparkFS(v: SV) extends FeatureSeq {
   override def toString = s"SparkFS(${v})"
 }
 
+/** Implicit conversions from Spark vectors to [[FeatureSeq]], and vice versa.
+  * {{{
+  * import com.redhat.et.silex.feature.extractor.{ FeatureSeq, Extractor }
+  * import com.redhat.et.silex.feature.extractor.spark
+  * import com.redhat.et.silex.feature.extractor.spark.implicits._
+  * import org.apache.spark.mllib.linalg.DenseVector
+  * import org.apache.spark.mllib.regression.LabeledPoint
+  *
+  * val sv = new DenseVector(Array(1.0, 2.0))
+  * val featureSeq = FeatureSeq(sv)
+  * val sv2 = featureSeq.toSpark
+  *
+  * val label = 1.0
+  * val lp = new LabeledPoint(label, sv)
+  * val fs2 = FeatureSeq(lp)
+  * val lp2 = fs2.toLabeledPoint(label)
+  * }}}
+  */
 object implicits {
   import scala.language.implicitConversions
   import org.apache.spark.mllib.regression.LabeledPoint
+
+  /** Convert Spark vectors to [[FeatureSeq]] */
   implicit def fromSVtoSparkFS(v: SV): FeatureSeq = new SparkFS(v)
+
+  /** Convert Spark [[LabeledPoint]] objects to [[FeatureSeq]] */
   implicit def fromLPtoSparkFS(p: LabeledPoint) = new SparkFS(p.features)
+
+  /** Provides [[toSpark]] and [[toLabeledPoint]] enriched methods on [[FeatureSeq]] */
   implicit class enrichSparkFS(@transient fs: FeatureSeq) extends Serializable {
     def toSpark: SV = {
       if (fs.density > 0.5) new DenseSV(fs.toArray)
