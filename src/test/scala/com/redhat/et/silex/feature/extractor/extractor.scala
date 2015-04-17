@@ -196,9 +196,15 @@ class FeatureSeqSpec extends FlatSpec with Matchers {
 object ExtractorSpecSupport extends FlatSpec with Matchers {
   import com.redhat.et.silex.feature.extractor.Extractor
   import com.redhat.et.silex.scalatest.matchers._
+  import com.redhat.et.silex.feature.indexfunction.{
+    IndexFunctionSpecSupport,
+    InvertableIndexFunctionSpecSupport
+  }
 
   def drTest[D](e: Extractor[D])(implicit d: Seq[D]) {
     e.width should be >= (0)
+    e.names.width should be (e.width)
+    e.categoryInfo.width should be (e.width)
     d.foreach { x =>
       e(x).length should be (e.width)
       e.function(x).length should be (e.width)
@@ -217,6 +223,8 @@ object ExtractorSpecSupport extends FlatSpec with Matchers {
   def opTest[D](e1: Extractor[D], e2: Extractor[D])(implicit d: Seq[D]) {
     val r = e1 ++ e2
     r.width should be (e1.width + e2.width)
+    InvertableIndexFunctionSpecSupport.equalTest(r.names, e1.names ++ e2.names)
+    IndexFunctionSpecSupport.equalTest(r.categoryInfo, e1.categoryInfo ++ e2.categoryInfo)
     d.foreach { x =>
       FeatureSeqSpecSupport.equalTest(r(x), e1(x) ++ e2(x))
     }
@@ -225,6 +233,8 @@ object ExtractorSpecSupport extends FlatSpec with Matchers {
 
   def equalTest[D](e1: Extractor[D], e2: Extractor[D])(implicit d: Seq[D]) {
     e1.width should be (e2.width)
+    InvertableIndexFunctionSpecSupport.equalTest(e1.names, e2.names)
+    IndexFunctionSpecSupport.equalTest(e1.categoryInfo, e2.categoryInfo)
     d.foreach { x =>
       FeatureSeqSpecSupport.equalTest(e1(x), e2(x))
     }
@@ -248,7 +258,6 @@ object ExtractorSpecSupport extends FlatSpec with Matchers {
     e.foreach { drTest(_) }
     e.foreach { opIdentityTest(_) }
     e.combinations(2).flatMap(_.permutations).foreach { x => opTest(x(0), x(1)) }
-    e.foreach { x => opTest(x, x) }
     e.combinations(3).flatMap(_.permutations).foreach { x => associativeTest(x(0), x(1), x(2)) }
   }
 
@@ -263,6 +272,12 @@ object ExtractorSpecSupport extends FlatSpec with Matchers {
 class ExtractorSpec extends FlatSpec with Matchers {
   import com.redhat.et.silex.feature.extractor.Extractor
   import ExtractorSpecSupport._
+  import com.redhat.et.silex.feature.indexfunction.{
+    IndexFunction,
+    InvertableIndexFunction,
+    IndexFunctionSpecSupport,
+    InvertableIndexFunctionSpecSupport
+  }
 
   object domainImplicits {
     implicit val domainValuesInt = List(1, 2, 3)
@@ -379,5 +394,30 @@ class ExtractorSpec extends FlatSpec with Matchers {
       Extractor.numericSeq[Int](3),
       Extractor.numericSeq[Int](1).compose((x:Seq[Int])=>x.take(1)),
       Extractor.numericSeq[Int](2).compose((x:Seq[Int])=>x.take(2)))
+  }
+
+  it should "support withNames" in {
+    val e1 = Extractor.constant[Int](1.0, 2.0)
+    InvertableIndexFunctionSpecSupport.undefinedTest(e1.names)
+    val e2 = e1.withNames("a", "b")
+    e2.names(0) should equal("a")
+    e2.names(1) should equal("b")
+    propertyTest(
+      Extractor.constant[Int](1.0, 2.0).withNames("a", "b"),
+      Extractor.constant[Int](3.0).withNames(InvertableIndexFunction(Vector("c"))),
+      Extractor.constant[Int](4.0, 5.0, 6.0).withNames("d", "e", "f"))
+  }
+
+  it should "support withCategoryInfo" in {
+    val e1 = Extractor.constant[Int](1.0, 2.0, 3.0).withNames("a", "b", "c")
+    IndexFunctionSpecSupport.undefinedTest(e1.categoryInfo)
+    val e2 = e1.withCategoryInfo(("a", 2), ("c", 5))
+    e2.categoryInfo(0) should be (2)
+    e2.categoryInfo(2) should be (5)
+    e2.categoryInfo.isDefinedAt(1) should be (false)
+    propertyTest(
+      Extractor.constant[Int](1.0, 2.0).withNames("a", "b").withCategoryInfo(("a", 2), ("c", 5)),
+      Extractor.constant[Int](3.0).withNames("c").withCategoryInfo(IndexFunction(Vector(7))),
+      Extractor.constant[Int](4.0, 5.0).withNames("d", "e").withCategoryInfo(("d", 8), ("e", 9)))
   }
 }
