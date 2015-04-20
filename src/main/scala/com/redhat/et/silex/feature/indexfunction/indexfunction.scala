@@ -298,13 +298,11 @@ object InvertableIndexFunction {
 
   /** Create an invertable index function from a Scala IndexedSeq
     *
-    * @param values The indexed sequence of values
-    * @return An invertable index function over interval [0, values.distinct.length) where 
-    * f(j) = values.distinct(j)
-    * @note (values) is first reduced to unique elements to ensure invertability
+    * @param vals The indexed sequence of unique values
+    * @return An invertable index function over interval [0, vals.length) where f(j) = vals(j)
     */
-  def apply[V](values: IndexedSeq[V]): InvertableIndexFunction[V] = {
-    val vals = values.distinct
+  def apply[V](vals: IndexedSeq[V]): InvertableIndexFunction[V] = {
+    checkRange(vals.iterator)
     val v2i = v2iMap(vals)
     new InvertableIndexFunction[V] {
       def width = vals.length

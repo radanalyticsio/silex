@@ -322,7 +322,7 @@ class InvertableIndexFunctionSpec extends FlatSpec with Matchers {
   it should "provide InvertableIndexFunction.apply method on IndexedSeq" in {
     identityTest(InvertableIndexFunction(Vector()))
 
-    val f1 = InvertableIndexFunction(Vector(2, 3, 5, 7, 3))
+    val f1 = InvertableIndexFunction(Vector(2, 3, 5, 7))
     f1.width should be (4)
     f1.domain.toSet should equal ((0 until f1.width).toSet)
     f1.range.toSet should equal (Set(2, 3, 5, 7))
@@ -332,7 +332,7 @@ class InvertableIndexFunctionSpec extends FlatSpec with Matchers {
       InvertableIndexFunction(Vector(2, 3, 5)),
       InvertableIndexFunction(Vector(7, 11, 13)))
 
-    val f2 = InvertableIndexFunction(Vector('a, 'c, 'f, 'j, 'c))
+    val f2 = InvertableIndexFunction(Vector('a, 'c, 'f, 'j))
     f2.width should be (4)
     f2.domain.toSet should equal ((0 until f2.width).toSet)
     f2.range.toSet should equal (Set('a, 'c, 'f, 'j))
