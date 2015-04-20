@@ -16,7 +16,7 @@
  * limitations under the License.c
  */
 
-package com.redhat.et.silex.util
+package com.redhat.et.silex.histogram.rdd
 
 import scala.language.implicitConversions
 import scala.reflect.ClassTag
@@ -25,27 +25,27 @@ import scala.collection.mutable
 import org.apache.spark.AccumulableParam
 import org.apache.spark.rdd.RDD
 
-object HistogramRDD {
-  private type Counts[T] = mutable.Map[T, Long]
-  private def empty[T] = mutable.Map.empty[T, Long]
-  private val val0 = 0L
-  private val val1 = 1L
+object implicits {
+  implicit class EnrichRDDforHistogramming[T :ClassTag](data: RDD[T]) {
+    private type Counts[T] = mutable.Map[T, Long]
+    private def empty[T] = mutable.Map.empty[T, Long]
+    private val val0 = 0L
+    private val val1 = 1L
 
-  private class AccumulableCounts[T] extends AccumulableParam[Counts[T], T] {
-    def addAccumulator(c: Counts[T], v: T): Counts[T] = {
-      c(v) = val1 + c.getOrElse(v, val0)
-      c
-    }
-    def addInPlace(c1: Counts[T], c2: Counts[T]): Counts[T] = {
-      for { v <- c2.keys } {
-        c1(v) = c2(v) + c1.getOrElse(v, val0)
+    private class AccumulableCounts[T] extends AccumulableParam[Counts[T], T] {
+      def addAccumulator(c: Counts[T], v: T): Counts[T] = {
+        c(v) = val1 + c.getOrElse(v, val0)
+        c
       }
-      c1
+      def addInPlace(c1: Counts[T], c2: Counts[T]): Counts[T] = {
+        for { v <- c2.keys } {
+          c1(v) = c2(v) + c1.getOrElse(v, val0)
+        }
+        c1
+      }
+      def zero(h: Counts[T]): Counts[T] = empty[T]
     }
-    def zero(h: Counts[T]): Counts[T] = empty[T]
-  }
 
-  class HistogramRDDPatch[T :ClassTag](data: RDD[T]) {
     def countBy[U :ClassTag](f: T => U): Map[U, Long] = {
       val hacc = data.sparkContext.accumulable(empty[U])(new AccumulableCounts[U])
       data.foreach { r => hacc += f(r) }
@@ -94,6 +94,4 @@ object HistogramRDD {
       hist
     }
   }
-
-  implicit def toHistogramRDDPatch[T :ClassTag](rdd: RDD[T]) = new HistogramRDDPatch(rdd)
 }
