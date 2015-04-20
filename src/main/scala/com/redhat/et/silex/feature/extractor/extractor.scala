@@ -16,16 +16,13 @@
  * limitations under the License.c
  */
 
-/** Provides a feature extraction type system that supports concatenation of feature extraction
-  * functions in a logically constant and type safe manner.  Extraction functions are represented by
-  * instances of [[com.redhat.et.silex.feature.extractor.Extractor]].
-  */
 package com.redhat.et.silex.feature.extractor
 
 import com.redhat.et.silex.feature.indexfunction._
 
 /** An immutable sequence of Double values representing feature vectors extracted by an
-  * [[Extractor]].  [[FeatureSeq]] is a monoid with respect to the concatenation operator [[++]].
+  * [[Extractor]].  [[FeatureSeq]] is a monoid with respect to the concatenation operator
+  * [[FeatureSeq!.++]].
   */
 abstract class FeatureSeq extends scala.collection.immutable.Seq[Double] with Serializable {
   /** The length of the feature sequence
@@ -110,7 +107,7 @@ sealed class ConcatFS(fb1: FeatureSeq, fb2: FeatureSeq) extends FeatureSeq {
   override def toString = s"ConcatFS(${fb1}, ${fb2})"
 }
 
-/** Subclass of [[FeatureSeq]] representing a single Scala [[Seq]] object. */
+/** Subclass of [[FeatureSeq]] representing a single Scala Seq object. */
 sealed class SeqFS(seq: Seq[Double]) extends FeatureSeq {
   def length = seq.length
   def apply(j: Int) = seq(j)
@@ -142,8 +139,10 @@ object FeatureSeq {
   implicit def fromArrayToSeqFS(a: Array[Double]): FeatureSeq =
     new SeqFS(a:scala.collection.mutable.WrappedArray[Double])
 
-  /** Obtain a feature sequence from a Scala [[Seq]], [[Array]], or any other object with
-    * a defined conversion to [[FeatureSeq]].
+  /** Obtain a feature sequence from a Scala
+    * [[http://www.scala-lang.org/api/current/index.html#scala.collection.Seq Seq]],
+    * [[http://www.scala-lang.org/api/current/index.html#scala.Array Array]], or any other
+    * object with a defined conversion to [[FeatureSeq]].
     *
     * @param obj The object to create a feature sequence from
     * @return A new feature sequence created from the argument object
@@ -158,14 +157,17 @@ object FeatureSeq {
   def apply(values: Double*): FeatureSeq = new SeqFS(values.toVector)
 }
 
-/** A Scala [[Function]] from a domain type D, to a [[FeatureSeq]], extended with 
-  * a monoidal concatenation operator [[++]].
+/** A Scala Function from a domain type D, to a [[FeatureSeq]], extended with 
+  * a monoidal concatenation operator [[Extractor!.++]].
+  *
+  * @tparam D The domain type of the function.
+  * This is the type of object features are to be extracted from.
   */
 abstract class Extractor[D] extends Function[D, FeatureSeq] with Serializable { self =>
 
   /** The width, or dimension, of the output feature space
     *
-    * @returns The dimension of the output feature space.  i.e. the length of the output
+    * @return The dimension of the output feature space.  i.e. the length of the output
     * feature sequence.
     */
   def width: Int
@@ -178,7 +180,7 @@ abstract class Extractor[D] extends Function[D, FeatureSeq] with Serializable { 
 
   /** Obtain an invertable function from feature indices to corresponding feature names.
     *
-    * By default, no index => name mappings are defined, unless set via [[withNames]].
+    * By default, no index => name mappings are defined, unless set via withNames.
     * Any subset of feature indices may be defined with a name.  Names must be unique
     * to maintain invertability.
     *
@@ -189,7 +191,7 @@ abstract class Extractor[D] extends Function[D, FeatureSeq] with Serializable { 
 
   /** Obtain a function from feature indices to number of feature category values.
     *
-    * By default, no index => num-category mappings are defined, unless se via [[withCategoryInfo]].
+    * By default, no index => num-category mappings are defined, unless set via [[withCategoryInfo]].
     * Any subset of feature indices may be defined with a number of categories.
     *
     * @return A mapping from feature indices to numbers of categorical values.
@@ -396,7 +398,7 @@ object Extractor {
 
   /** Obtain a new extractor that loads an entire numeric sequence into a feature sequence
     *
-    * @param w The [[width]] of the extractor, and required input sequence length
+    * @param w The [[Extractor!.width width]] of the extractor, and required input sequence length
     * @return an extractor that will load sequences of numeric values into a feature sequence
     */
   def numericSeq[N :Numeric](w: Int) = {
