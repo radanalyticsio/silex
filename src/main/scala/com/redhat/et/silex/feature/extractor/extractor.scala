@@ -180,7 +180,7 @@ abstract class Extractor[D] extends Function[D, FeatureSeq] with Serializable { 
 
   /** Obtain an invertable function from feature indices to corresponding feature names.
     *
-    * By default, no index => name mappings are defined, unless set via withNames.
+    * By default, no index => name mappings are defined, unless set via [[withNames]].
     * Any subset of feature indices may be defined with a name.  Names must be unique
     * to maintain invertability.
     *
