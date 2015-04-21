@@ -25,8 +25,29 @@ import scala.collection.mutable
 import org.apache.spark.AccumulableParam
 import org.apache.spark.rdd.RDD
 
+private object details {
+  def toNormalized[V](iter: Iterator[(V, Double)]) = {
+    if (iter.isEmpty) iter
+    else {
+      val (zi, si) = iter.duplicate
+      val z = zi.map(_._2).sum
+      si.map(x => (x._1, x._2 / z))
+    }
+  }
+
+  def toCumulative[V](iter: Iterator[(V, Double)]) = {
+    if (iter.isEmpty) iter
+    else {
+      val h = iter.next
+      iter.scanLeft(h)((cum, nxt) => (nxt._1, cum._2 + nxt._2))
+    }
+  }
+}
+
 object implicits {
-  implicit class EnrichRDDforHistogramming[T :ClassTag](data: RDD[T]) {
+  import details._
+
+  implicit class EnrichRDDforHistogramming[T :ClassTag](data: RDD[T]) extends Serializable {
     private type Counts[T] = mutable.Map[T, Long]
     private def empty[T] = mutable.Map.empty[T, Long]
     private val val0 = 0L
@@ -54,25 +75,20 @@ object implicits {
 
     def histBy[U :ClassTag](
         f: T => U,
-        normalize: Boolean = false,
+        normalized: Boolean = false,
         cumulative: Boolean = false
-        ): Iterable[(Double, U)] = {
-      var hist = countBy(f).toSeq.map(x => (x._2.toDouble, x._1)).sortWith((a, b) => a._1 > b._1)
-      if (normalize && (hist.length > 0)) {
-        val z = hist.map(_._1).sum
-        hist = hist.map(x => (x._1 / z, x._2))
-      }
-      if (cumulative && (hist.length > 0)) {
-        hist = hist.scan((0.0, hist.head._2))((cum, nxt) => (cum._1 + nxt._1, nxt._2)).tail
-      }
-      hist
+        ): Seq[(U, Double)] = {
+      var hist = countBy(f).toSeq.sortWith((a, b) => a._2 > b._2).iterator.map(x => (x._1, x._2.toDouble))
+      if (normalized) hist = toNormalized(hist)
+      if (cumulative) hist = toCumulative(hist)
+      hist.toVector
     }
 
     def countByFlat[U :ClassTag](f: T => Iterable[U]): Map[U, Long] = {
       val hacc = data.sparkContext.accumulable(empty[U])(new AccumulableCounts[U])
       data.foreach { r =>
         for { e <- f(r) } {
-          hacc += e 
+          hacc += e
         }
       }
       hacc.value.toMap
@@ -80,18 +96,13 @@ object implicits {
 
     def histByFlat[U :ClassTag](
         f: T => Iterable[U],
-        normalize: Boolean = false,
+        normalized: Boolean = false,
         cumulative: Boolean = false
-        ): Iterable[(Double, U)] = {
-      var hist = countByFlat(f).toSeq.map(x => (x._2.toDouble, x._1)).sortWith((a, b) => a._1 > b._1)
-      if (normalize && (hist.length > 0)) {
-        val z = hist.map(_._1).sum
-        hist = hist.map(x => (x._1 / z, x._2))
-      }
-      if (cumulative && (hist.length > 0)) {
-        hist = hist.scan((0.0, hist.head._2))((cum, nxt) => (cum._1 + nxt._1, nxt._2)).tail
-      }
-      hist
+        ): Seq[(U, Double)] = {
+      var hist = countByFlat(f).toSeq.sortWith((a, b) => a._2 > b._2).iterator.map(x => (x._1,x._2.toDouble))
+      if (normalized) hist = toNormalized(hist)
+      if (cumulative) hist = toCumulative(hist)
+      hist.toVector
     }
   }
 }
