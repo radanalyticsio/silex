@@ -114,7 +114,7 @@ object implicits {
       *
       * @param f The function to apply to each RDD row: returns a sequence of values
       * @return A Map from occurring values to their counts
-      * @tparam U The return type of the function
+      * @tparam U The element type of the sequence returned by the function
       */
     def countByFlat[U :ClassTag](f: T => Iterable[U]): Map[U, Long] = {
       val hacc = data.sparkContext.accumulable(empty[U])(new AccumulableCounts[U])
@@ -131,7 +131,7 @@ object implicits {
       * @param normalized When true, histogram counts are normalized to sum to 1
       * @param cumulative When true, histogram counts are cumulative
       * @return A sequence ((u0, n0), (u1, n1), ...), sorted in decreasing order of counts nj
-      * @tparam U The return type of the function
+      * @tparam U The element type of the sequence returned by the function
       * @note When both cumulative and normalized are true, "counts" are analoglous to a sampled CDF
       */
     def histByFlat[U :ClassTag](
