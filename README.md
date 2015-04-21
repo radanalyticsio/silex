@@ -21,3 +21,7 @@ libraryDependencies += "com.redhat.et" %% "silex" % "0.0.4"
 ### Documentation
 
 The [Silex web site](http://silex.freevariable.com/) includes some examples of Silex functionality in use and [API docs](http://silex.freevariable.com/latest/api/#package).
+
+### CI Status
+
+[![Build Status](https://travis-ci.org/willb/silex.svg?branch=develop)](https://travis-ci.org/willb/silex)
