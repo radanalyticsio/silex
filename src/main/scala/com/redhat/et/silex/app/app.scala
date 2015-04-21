@@ -118,9 +118,12 @@ class ConsoleApp extends AppCommon {
   }
 }
 
-private [silex] class TestConsoleApp(val suppliedMaster: String = "local[*]") extends AppCommon { 
+private [silex] class TestConsoleApp(val suppliedMaster: String = "local[2]") extends AppCommon { 
   override def master = suppliedMaster
   override def appName = "console"
+  
+  addConfig( {(conf: SparkConf) => conf.set("spark.kryoserializer.buffer.mb", "16")})
+  
   def appMain(args: Array[String]) {
     // this never runs
   }
