@@ -24,6 +24,7 @@ import org.scalatest._
 
 class HistogramRDDSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
   import com.redhat.et.silex.histogram.rdd.implicits._
+  import com.redhat.et.silex.scalatest.matchers._
 
   private var app: TestConsoleApp = null
 
@@ -62,6 +63,19 @@ class HistogramRDDSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
 
     sc.parallelize(Seq("1", "2", "3", "2", "3", "3")).histBy(x => 1 + x.toInt) should equal (
       Seq((4, 3.0), (3, 2.0), (2, 1.0)))
+
+    val t1 = sc.parallelize(Seq(1, 2, 3, 2, 3, 3)).histBy(x => x, normalized = true)
+    t1.map(_._2) should beEqNumSeq (Seq(0.5, 0.3333, 0.1667), 0.001)
+    t1.map(_._1) should equal (Seq(3, 2, 1))
+
+    val t2 = sc.parallelize(Seq(1, 2, 3, 2, 3, 3)).histBy(x => x, cumulative = true)
+    t2.map(_._2) should beEqNumSeq (Seq(3.0, 5.0, 6.0), 0.001)
+    t2.map(_._1) should equal (Seq(3, 2, 1))
+
+    val t3 = sc.parallelize(Seq(1, 2, 3, 2, 3, 3))
+      .histBy(x => x, normalized = true, cumulative = true)
+    t3.map(_._2) should beEqNumSeq (Seq(0.5, 0.8333, 1.0), 0.001)
+    t3.map(_._1) should equal (Seq(3, 2, 1))
   }
 
   it should "provide countByFlat enriched method on RDDs" in {
@@ -96,5 +110,18 @@ class HistogramRDDSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
     sc.parallelize(Seq("1", "2", "3", "2", "3", "3"))
       .histByFlat(x => Seq(1 + x.toInt)) should equal (
         Seq((4, 3.0), (3, 2.0), (2, 1.0)))
+
+    val t1 = sc.parallelize(Seq(1, 2, 3, 2, 3, 3)).histByFlat(x => Seq(x), normalized = true)
+    t1.map(_._2) should beEqNumSeq (Seq(0.5, 0.3333, 0.1667), 0.001)
+    t1.map(_._1) should equal (Seq(3, 2, 1))
+
+    val t2 = sc.parallelize(Seq(1, 2, 3, 2, 3, 3)).histByFlat(x => Seq(x), cumulative = true)
+    t2.map(_._2) should beEqNumSeq (Seq(3.0, 5.0, 6.0), 0.001)
+    t2.map(_._1) should equal (Seq(3, 2, 1))
+
+    val t3 = sc.parallelize(Seq(1, 2, 3, 2, 3, 3))
+      .histByFlat(x => Seq(x), normalized = true, cumulative = true)
+    t3.map(_._2) should beEqNumSeq (Seq(0.5, 0.8333, 1.0), 0.001)
+    t3.map(_._1) should equal (Seq(3, 2, 1))
   }
 }
