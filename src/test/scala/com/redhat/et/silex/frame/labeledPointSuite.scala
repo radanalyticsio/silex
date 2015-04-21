@@ -36,6 +36,8 @@ class LabeledPointSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
 
   override def beforeEach() {
     app = new TestConsoleApp()
+    app.sqlContext.setConf("spark.sql.shuffle.partitions", "10")
+    
     System.clearProperty("spark.master.port")
     
     app.context
