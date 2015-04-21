@@ -18,40 +18,25 @@
 
 package com.redhat.et.silex.frame
 
-import com.redhat.et.silex.app.TestConsoleApp
+import com.redhat.et.silex.testing.PerTestSparkContext
 
 import org.scalatest._
 
 private[frame] case class LPExample1(label: Double, v1: Double, v2: Double) {}
 private[frame] case class LPExample2(a: Int, b: Int, c: Int) {}
 
-class LabeledPointSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
+class LabeledPointSpec extends FlatSpec with Matchers with PerTestSparkContext {
   import org.apache.spark.sql.Row
   import org.apache.spark.sql.functions._
   import org.apache.spark.sql.types._
   
   import org.apache.spark.mllib.regression.LabeledPoint
   
-  private var app: TestConsoleApp = null
-
-  override def beforeEach() {
-    app = new TestConsoleApp()
-    app.sqlContext.setConf("spark.sql.shuffle.partitions", "10")
-    
-    System.clearProperty("spark.master.port")
-    
-    app.context
-  }
-  
-  override def afterEach() {
-    app.context.stop
-  }
-
   it should "construct vectors from RDDs with Double-valued vector columns" in {
-    val sqlc = app.sqlContext
+    val sqlc = sqlContext
     import sqlc.implicits._
     
-    val df = app.context.parallelize((1 to 100).map { i => LPExample1(i * 1.0d, i * 2.0d, i * 4.0d)}).toDF()
+    val df = context.parallelize((1 to 100).map { i => LPExample1(i * 1.0d, i * 2.0d, i * 4.0d)}).toDF()
     val lps = FrameToVector.toDenseVectors(df, "v1", "v2")
     
     assert(lps.count() == 100)
@@ -63,10 +48,10 @@ class LabeledPointSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
   }
   
   it should "construct vectors from RDDs with Int-valued vector columns" in {
-    val sqlc = app.sqlContext
+    val sqlc = sqlContext
     import sqlc.implicits._
     
-    val df = app.context.parallelize((1 to 100).map { i => LPExample2(i, i * 2, i * 4)}).toDF()
+    val df = context.parallelize((1 to 100).map { i => LPExample2(i, i * 2, i * 4)}).toDF()
     val lps = FrameToVector.toDenseVectors(df, "a", "b")
     
     assert(lps.count() == 100)
@@ -78,10 +63,10 @@ class LabeledPointSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
   }
   
   it should "construct labeled points from RDDs with Double-valued label and vector columns" in {
-    val sqlc = app.sqlContext
+    val sqlc = sqlContext
     import sqlc.implicits._
     
-    val df = app.context.parallelize((1 to 100).map { i => LPExample1(i * 1.0d, i * 2.0d, i * 4.0d)}).toDF()
+    val df = context.parallelize((1 to 100).map { i => LPExample1(i * 1.0d, i * 2.0d, i * 4.0d)}).toDF()
     val lps = FrameToVector.toLabeledPoints(df, "label", "v1", "v2")
     
     assert(lps.count() == 100)
