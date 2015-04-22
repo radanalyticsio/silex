@@ -48,6 +48,6 @@ object matchers {
     }
   }
 
-  def beEqNumSeq[N <% Double](ref: TraversableOnce[N], eps: Double) =
-    new EqNumSeqMatcher(ref.map(_.toDouble), eps)
+  def beEqNumSeq[N](ref: TraversableOnce[N], eps: Double)(implicit td: N => Double) =
+    new EqNumSeqMatcher(ref.map(td), eps)
 }
