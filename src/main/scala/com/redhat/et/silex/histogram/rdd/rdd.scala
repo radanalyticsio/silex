@@ -25,7 +25,7 @@ import scala.collection.mutable
 import org.apache.spark.AccumulableParam
 import org.apache.spark.rdd.RDD
 
-private object details {
+private[histogram] object details {
   def toNormalized[V](iter: Iterator[(V, Double)]) = {
     if (iter.isEmpty) iter
     else {
