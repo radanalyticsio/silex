@@ -18,29 +18,16 @@
 
 package com.redhat.et.silex.histogram.rdd
 
-import com.redhat.et.silex.app.TestConsoleApp
+import com.redhat.et.silex.testing.PerTestSparkContext
 
 import org.scalatest._
 
-class HistogramRDDSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
+class HistogramRDDSpec extends FlatSpec with Matchers with PerTestSparkContext {
   import com.redhat.et.silex.histogram.rdd.implicits._
   import com.redhat.et.silex.scalatest.matchers._
 
-  private var app: TestConsoleApp = null
-
-  override def beforeEach() {
-    app = new TestConsoleApp()
-    System.clearProperty("spark.master.port")
-    
-    app.context
-  }
-
-  override def afterEach() {
-    app.context.stop
-  }
-
   it should "provide countBy enriched method on RDDs" in {
-    val sc = app.context
+    val sc = context
 
     sc.parallelize(Seq(1, 2, 3, 2, 3, 3)).countBy(x => x) should equal (
       Map((3, 3.0), (2, 2.0), (1, 1.0)))
@@ -53,7 +40,7 @@ class HistogramRDDSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
   }
 
   it should "provide histBy enriched method on RDDs" in {
-    val sc = app.context
+    val sc = context
 
     sc.parallelize(Seq(1, 2, 3, 2, 3, 3)).histBy(x => x) should equal (
       Seq((3, 3.0), (2, 2.0), (1, 1.0)))
@@ -79,7 +66,7 @@ class HistogramRDDSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
   }
 
   it should "provide countByFlat enriched method on RDDs" in {
-    val sc = app.context
+    val sc = context
 
     sc.parallelize(Seq(1, 2, 3, 2, 3, 3)).countByFlat(x => Seq(x)) should equal (
       Map((3, 3.0), (2, 2.0), (1, 1.0)))
@@ -96,7 +83,7 @@ class HistogramRDDSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
   }
 
   it should "provide histByFlat enriched method on RDDs" in {
-    val sc = app.context
+    val sc = context
 
     sc.parallelize(Seq(1, 2, 3, 2, 3, 3)).histByFlat(x => Seq(x)) should equal (
       Seq((3, 3.0), (2, 2.0), (1, 1.0)))
