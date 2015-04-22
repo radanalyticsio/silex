@@ -24,7 +24,7 @@ import org.scalatest._
 
 class HistogramRDDSpec extends FlatSpec with Matchers with PerTestSparkContext {
   import com.redhat.et.silex.histogram.implicits._
-  import com.redhat.et.silex.scalatest.matchers._
+  import com.redhat.et.silex.testing.matchers._
 
   it should "provide countBy enriched method on RDDs" in {
     val sc = context

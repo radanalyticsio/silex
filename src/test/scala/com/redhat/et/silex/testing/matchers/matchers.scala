@@ -16,7 +16,7 @@
  * limitations under the License.c
  */
 
-package com.redhat.et.silex.scalatest
+package com.redhat.et.silex.testing
 
 object matchers {
   import org.scalatest.matchers.{ Matcher, MatchResult }
