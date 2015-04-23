@@ -39,10 +39,9 @@ class PromisePartition extends Partition {
 }
 
 
-/**
- * A way to represent the concept of a promised expression as an RDD, so that it
- * can operate naturally inside the lazy-transform formalism
- */
+/** Represents the concept of a promised expression as an RDD, so that it
+  * can operate naturally inside the lazy-transform formalism
+  */
 class PromiseRDD[V: ClassTag](expr: => (TaskContext => V),
                               context: SparkContext, deps: Seq[Dependency[_]])
   extends RDD[V](context, deps) {
@@ -56,10 +55,9 @@ class PromiseRDD[V: ClassTag](expr: => (TaskContext => V),
 }
 
 
-/**
- * A partition that augments a standard RDD partition with a list of PromiseRDD arguments,
- * so that they are available at partition compute time
- */
+/** A partition that augments a standard RDD partition with a list of PromiseRDD arguments,
+  * so that they are available at partition compute time
+  */
 private[rdd]
 class PromiseArgPartition(p: Partition, argv: Seq[PromiseRDD[_]]) extends Partition {
   override def index = p.index
@@ -79,16 +77,22 @@ class PromiseArgPartition(p: Partition, argv: Seq[PromiseRDD[_]]) extends Partit
 }
 
 
-/**
- * Extra functions available on RDDs for providing the RDD analogs of Scala drop,
- * dropRight and dropWhile, which return an RDD as a result
- */
-class PromiseRDDFunctions[T : ClassTag](self: RDD[T]) extends Logging with Serializable {
+/** Enriched methods on RDD for creating a [[PromiseRDD]]
+  *
+  * To enable these methods, import:
+  * {{{
+  * import com.redhat.et.silex.rdd.promise.implicits._
+  * }}}
+  */
+class PromiseRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializable {
 
-  /**
-   * Return a PromiseRDD by applying function 'f' to the partitions of this RDD
-   */
-  def promiseFromPartitions[V: ClassTag](f: Seq[Iterator[T]] => V): PromiseRDD[V] = {
+  /** Obtain a PromiseRDD by applying a function 'f' to the partitions of this RDD
+    *
+    * @tparam V The return value type of the promised-value function
+    * @param f Function that maps RDD partitions to some promised value
+    * @return An RDD that will contain a single row having the promised value
+    */
+  def promiseFromPartitions[V :ClassTag](f: Seq[Iterator[T]] => V): PromiseRDD[V] = {
     val rdd = self
     val plist = rdd.partitions
     val expr = util.clean(
@@ -97,21 +101,30 @@ class PromiseRDDFunctions[T : ClassTag](self: RDD[T]) extends Logging with Seria
     new PromiseRDD[V](expr, rdd.context, List(new FanOutDep(rdd))) 
   }
 
-  /**
-   * Return a PromiseRDD by applying function 'f' to a partition array.
-   * This can allow improved efficiency over promiseFromPartitions(), as it does not force
-   * call to iterator() method over entire partition list, if 'f' does not require it
-   */
-  def promiseFromPartitionArray[V: ClassTag](f: (Array[Partition], 
+  /** Obtain a PromiseRDD by applying function 'f' to a partition array.
+    *
+    * @tparam V The return value type of the promised-value function
+    * @param f Function that maps an array of partitions, the RDD and the current task context
+    * to the promised value
+    * @return An RDD that will contain a single row having the promised value
+    * @note This function is most useful in a developer context.  Consider using
+    * [[promiseFromPartitions]] unless lower-level access is needed.
+    */
+  def promiseFromPartitionArray[V :ClassTag](f: (Array[Partition], 
                                              RDD[T], TaskContext) => V): PromiseRDD[V] = {
     val rdd = self
     val plist = rdd.partitions
     val expr = util.clean(self.context, (ctx: TaskContext) => f(plist, rdd, ctx))
     new PromiseRDD[V](expr, rdd.context, List(new FanOutDep(rdd))) 
   }
-
 }
 
+/** Provides implicit enrichment of an RDD with methods from [[PromiseRDDFunctions]]
+  *
+  * {{{
+  * import com.redhat.et.silex.rdd.promise.implicits._
+  * }}}
+  */
 object implicits {
   import scala.language.implicitConversions
   implicit def rddToPromiseRDD[T :ClassTag](rdd: RDD[T]) = new PromiseRDDFunctions(rdd)
