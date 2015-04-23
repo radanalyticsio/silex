@@ -34,16 +34,20 @@ class FanInDep[T: ClassTag](rdd: RDD[T]) extends NarrowDependency[T](rdd) {
 }
 
 
-/**
- * Extra functions available on RDDs for providing the RDD analogs of Scala drop,
- * dropRight and dropWhile, which return an RDD as a result
- */
+/** Enriched methods for providing the RDD analogs of Scala drop, dropRight and dropWhile,
+  * which return an RDD as a result
+  * {{{
+  * import com.redhat.et.silex.rdd.drop.implicits._
+  * }}}
+  */
 class DropRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializable {
 
-  /**
-   * Return a new RDD formed by dropping the first (n) elements of the input RDD
-   */
-  def drop(n: Int):RDD[T] = {
+  /** Obtain a new RDD formed by dropping the first (n) elements of the input RDD
+    *
+    * @param n The number of rows to drop
+    * @return an RDD formed from dropping the first 'n' rows of the input
+    */
+  def drop(n: Int): RDD[T] = {
     if (n <= 0) return self
 
     // locate partition that includes the nth element
@@ -85,10 +89,11 @@ class DropRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializa
     }
   }
 
-
-  /**
-   * Return a new RDD formed by dropping the last (n) elements of the input RDD
-   */
+  /** Obtain a new RDD formed by dropping the last (n) elements of the input RDD
+    *
+    * @param n The number of rows to drop
+    * @return an RDD formed from dropping the last 'n' rows of the input
+    */
   def dropRight(n: Int):RDD[T] = {
     if (n <= 0) return self
 
@@ -130,10 +135,11 @@ class DropRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializa
     }
   }  
 
-
-  /**
-   * Return a new RDD formed by dropping leading elements until predicate function (f) returns false
-   */
+  /** Obtain a new RDD formed by dropping leading rows until predicate function (f) returns false
+    *
+    * @param f Predicate function.  Input rows are dropped until f returns false
+    * @return An RDD formed by dropping leading rows until predicate function (f) returns false
+    */
   def dropWhile(f: T=>Boolean):RDD[T] = {
 
     val locate = (partitions: Array[Partition], input: RDD[T], ctx: TaskContext) => {
@@ -170,9 +176,14 @@ class DropRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializa
       }
     }    
   }
-
 }
 
+/** Provides implicit enrichment of an RDD with methods from [[DropRDDFunctions]]
+  *
+  * {{{
+  * import com.redhat.et.silex.rdd.drop.implicits._
+  * }}}
+  */
 object implicits {
   import scala.language.implicitConversions
   implicit def rddToDropRDD[T :ClassTag](rdd: RDD[T]) = new DropRDDFunctions(rdd)
