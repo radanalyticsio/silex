@@ -24,7 +24,7 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkContext, Logging, Partition, TaskContext}
 import org.apache.spark.{Dependency, NarrowDependency, OneToOneDependency}
 
-import com.redhat.et.silex.rdd.promise.PromiseArgPartition
+import com.redhat.et.silex.rdd.promise.{ PromiseRDD, PromiseArgPartition }
 import com.redhat.et.silex.rdd.promise.implicits._
 
 private [rdd]
@@ -66,7 +66,7 @@ class DropRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializa
       }
     }
 
-    val locRDD = self.promiseFromPartitionArray(locate)
+    val locRDD = self.promiseFromPartitionArray(locate).asInstanceOf[PromiseRDD[(Int,Int)]]
 
     new RDD[T](self.context, List(new OneToOneDependency(self), new FanInDep(locRDD))) {
       override def getPartitions: Array[Partition] = 
@@ -111,7 +111,7 @@ class DropRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializa
       }
     }
 
-    val locRDD = self.promiseFromPartitionArray(locate)
+    val locRDD = self.promiseFromPartitionArray(locate).asInstanceOf[PromiseRDD[(Int,Int)]]
 
     new RDD[T](self.context, List(new OneToOneDependency(self), new FanInDep(locRDD))) {
       override def getPartitions: Array[Partition] = 
@@ -152,7 +152,7 @@ class DropRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializa
       }
     }
 
-    val locRDD = self.promiseFromPartitionArray(locate)
+    val locRDD = self.promiseFromPartitionArray(locate).asInstanceOf[PromiseRDD[(Int,Int)]]
 
     new RDD[T](self) {
       override def getPartitions: Array[Partition] = 

@@ -92,7 +92,7 @@ class PromiseRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serial
     * @param f Function that maps RDD partitions to some promised value
     * @return An RDD that will contain a single row having the promised value
     */
-  def promiseFromPartitions[V :ClassTag](f: Seq[Iterator[T]] => V): PromiseRDD[V] = {
+  def promiseFromPartitions[V :ClassTag](f: Seq[Iterator[T]] => V): RDD[V] = {
     val rdd = self
     val plist = rdd.partitions
     val expr = util.clean(
@@ -111,7 +111,7 @@ class PromiseRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serial
     * [[promiseFromPartitions]] unless lower-level access is needed.
     */
   def promiseFromPartitionArray[V :ClassTag](f: (Array[Partition], 
-                                             RDD[T], TaskContext) => V): PromiseRDD[V] = {
+                                             RDD[T], TaskContext) => V): RDD[V] = {
     val rdd = self
     val plist = rdd.partitions
     val expr = util.clean(self.context, (ctx: TaskContext) => f(plist, rdd, ctx))
