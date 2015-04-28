@@ -114,7 +114,7 @@ class KMedoids[T] private (
 
     var s = Set.empty[T]
     while (s.size < k) {
-      s = s + distinct(rng.nextInt)
+      s = s + distinct(rng.nextInt(distinct.length))
     }
     var current = s.toSeq
     var currentCost = cost(current, sample)
