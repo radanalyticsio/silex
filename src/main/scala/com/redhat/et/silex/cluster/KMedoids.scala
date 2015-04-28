@@ -225,7 +225,7 @@ object KMedoids extends Logging {
       val nextCost = cost(next, data)
 
       val curSeconds = (System.nanoTime - itrTime) / 1e9
-      logInfo(f"KMedoids.refine: iteration elapsed= $curSeconds%.1f")
+      logInfo(f"KMedoids.refine: updated cost= $nextCost  elapsed= $curSeconds%.1f sec")
 
       val delta = currentCost - nextCost
       val fractionDelta = if (currentCost > 0.0) delta / currentCost else 0.0
