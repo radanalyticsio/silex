@@ -151,7 +151,7 @@ class KMedoids[T] private (
 
       val refSeconds = (System.nanoTime - itrTime) / 1e9
       logInfo(f"KMedoids: refined cost= $nextCost  elapsed= $refSeconds%.1f sec")
-      itr += refItr
+      itr += refItr - 1
 
       // output of refinement guaranteed to be at least as good as input
       current = next
