@@ -103,6 +103,7 @@ class KMedoids[T] private (
     val ss = math.min(sampleSize, n).toInt
     val fraction = math.min(1.0, ss.toDouble / n.toDouble)
 
+    val runStartTime = System.nanoTime
     logInfo(s"KMedoids: collecting initial data sample. Sample fraction= $fraction")
     var sample: Array[T] = data.sample(false, fraction, seed = rng.nextLong).collect
 
@@ -118,10 +119,16 @@ class KMedoids[T] private (
     var current = s.toSeq
     var currentCost = cost(current, sample)
 
+    val itrStartTime = System.nanoTime
+    val initSeconds = (itrStartTime - runStartTime) / 1e9
+    logInfo(f"KMedoids: model initialization completed $initSeconds%.1f sec")
+
     var itr = 1
     var halt = itr > maxIterations
     while (!halt) {
-      logInfo(s"KMedoids: iteration $itr  cost= $currentCost")
+      val itrTime = System.nanoTime
+      val itrSeconds = (itrTime - itrStartTime) / 1e9
+      logInfo(f"KMedoids: iteration $itr  cost= $currentCost  elapsed= $itrSeconds%.1f sec")
 
       if (fraction < 1.0  &&  itr > 1) {
         logInfo(s"KMedoids: updating data sample")
@@ -142,7 +149,8 @@ class KMedoids[T] private (
         epsilon,
         fractionEpsilon)
 
-      logInfo(s"KMedoids: refined cost= $nextCost")
+      val refSeconds = (System.nanoTime - itrTime) / 1e9
+      logInfo(f"KMedoids: refined cost= $nextCost  elapsed= $refSeconds%.1f sec")
       itr += refItr
 
       // output of refinement guaranteed to be at least as good as input
@@ -158,7 +166,10 @@ class KMedoids[T] private (
       }
     }
 
-    logInfo(s"KMedoids: finished at $itr iterations with model cost $currentCost")
+    val runTime = System.nanoTime
+    val runSeconds = (runTime - runStartTime) / 1e9
+    val avgSeconds = (runTime - itrStartTime) / 1e9 / itr
+    logInfo(f"KMedoids: finished at $itr iterations with model cost= $currentCost  elapsed= $runSeconds%.1f  sec  avg sec per iteration= $avgSeconds%.1f")
     new KMedoidsModel(current, metric)
   }
 }
@@ -191,6 +202,8 @@ object KMedoids extends Logging {
     require(epsilon >= 0.0, s"epsilon= $epsilon must be >= 0.0")
     require(fractionEpsilon >= 0.0, s"fractionEpsilon= $fractionEpsilon must be >= 0.0")
 
+    val runStartTime = System.nanoTime
+
     val k = initial.length
     val medoidIdx = (e: T, mv: Seq[T]) => mv.iterator.map(metric(e, _)).zipWithIndex.min._2
     val medoid = (data: Seq[T]) => data.iterator.minBy(medoidCost(_, data))
@@ -199,12 +212,20 @@ object KMedoids extends Logging {
     var currentCost = initialCost
     var converged = false
 
+    val itrStartTime = System.nanoTime
+
     var itr = 1
     var halt = itr > maxIterations
     while (!halt) {
-      logInfo(s"KMedoids.refine: iteration $itr  cost= $currentCost")
+      val itrTime = System.nanoTime
+      val itrSeconds = (itrTime - itrStartTime) / 1e9
+      logInfo(f"KMedoids.refine: iteration $itr  cost= $currentCost  elapsed= $itrSeconds%.1f")
+
       val next = data.groupBy(medoidIdx(_, current)).toVector.sortBy(_._1).map(_._2).map(medoid)
       val nextCost = cost(next, data)
+
+      val curSeconds = (System.nanoTime - itrTime) / 1e9
+      logInfo(f"KMedoids.refine: iteration elapsed= $curSeconds%.1f")
 
       val delta = currentCost - nextCost
       val fractionDelta = if (currentCost > 0.0) delta / currentCost else 0.0
@@ -232,7 +253,9 @@ object KMedoids extends Logging {
       }
     }
 
-    logInfo(s"KMedoids.refine: finished at iteration $itr  cost= $currentCost")
+    val runTime = System.nanoTime
+    val runSeconds = (runTime - runStartTime) / 1e9
+    logInfo(f"KMedoids.refine: finished at iteration $itr  cost= $currentCost  elapsed= $runSeconds%.1f")
     (current, currentCost, itr, converged)
   }
 }
