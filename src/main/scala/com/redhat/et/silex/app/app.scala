@@ -129,14 +129,16 @@ private [silex] class TestConsoleApp(val suppliedMaster: String = "local[2]") ex
   }
 }
 
-object ReplApp {
+trait ReplAppLike {
   import scala.tools.nsc.interpreter._
   import scala.tools.nsc.Settings
+  
+  def makeApp: AppCommon = new com.redhat.et.silex.app.ConsoleApp()
   
   def main(args: Array[String]) {
     val repl = new ILoop {
       override def loop(): Unit = {
-        val app = new com.redhat.et.silex.app.ConsoleApp()
+        val app = makeApp
         intp.addImports("org.apache.spark.SparkConf")
         intp.addImports("org.apache.spark.SparkContext")
         intp.addImports("org.apache.spark.SparkContext._")
@@ -165,3 +167,5 @@ object ReplApp {
     repl.process(settings)
   }
 }
+
+object ReplApp extends ReplAppLike {}
