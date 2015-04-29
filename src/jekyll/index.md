@@ -1,9 +1,9 @@
 ---
 layout: default
-title: Silex
+title:
 ---
 
-[silex](https://github.com/willb/silex) is a library of reusable code for Spark applications, factored out of applications we've built at Red Hat.  It will grow in the future but for now we have an application skeleton, some added functionality for data frames, and a histogramming RDD.
+[silex](https://github.com/willb/silex) is a library of reusable code for Spark applications, factored out of applications we've built at Red Hat.  It will grow in the future but for now we have an application skeleton, some added functionality for data frames, and a histogramming RDD.  [Pull requests](https://github.com/willb/silex/pulls) and [issue reports](https://github.com/willb/silex/issues) are welcome!
 
 ### Recent news
 

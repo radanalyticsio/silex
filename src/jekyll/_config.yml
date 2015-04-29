@@ -1,5 +1,5 @@
 # Site settings
-title: silex
+title: Silex
 email: willb@acm.org
 description: "Silex is a library of reusable code for Spark applications."
 baseurl: "http://silex.freevariable.com/"
@@ -23,6 +23,8 @@ safe: true
 # All Jekyll-Bootstrap specific configurations are namespaced into this hash
 #
 JB :
+  site:
+    title: Silex
   version : 0.3.0
 
   # All links will be namespaced by BASE_PATH if defined.
