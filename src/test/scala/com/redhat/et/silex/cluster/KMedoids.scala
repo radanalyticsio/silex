@@ -52,15 +52,20 @@ class KMedoidsSpec extends FlatSpec with Matchers with PerTestSparkContext {
     }.min
   }
 
-  it should "identify two simple clusters" in {
+  it should "identify 2 clusters" in {
     val centers = List(
       Vector(0.0, 0.0),
       Vector(3.0, 3.0)
     )
-    val data = context.parallelize(generateClusters(centers, 1000, seed=42))
+    val data = generateClusters(centers, 1000, seed=42)
     val km = new KMedoids(vectorAbs).setK(2).setSeed(73)
-    val model = km.run(data)
+    val model = km.run(context.parallelize(data))
+    model.k should be (2)
     maxCenterDistance(model.medoids, centers) should be < (0.15)
+
+    val model2 = km.run(data)
+    model2.k should be (model.k)
+    maxCenterDistance(model.medoids, model2.medoids) should be (0.0)
   }
 
   it should "identify 5 clusters" in {
@@ -71,14 +76,19 @@ class KMedoidsSpec extends FlatSpec with Matchers with PerTestSparkContext {
       Vector(-3.0,  3.0, -3.0),
       Vector( 3.0, -3.0,  3.0)
     )
-    val data = context.parallelize(generateClusters(centers, 1000, seed=42))
+    val data = generateClusters(centers, 3000, seed=42)
     val km = new KMedoids(vectorAbs)
       .setK(5)
       .setSeed(73)
       .setFractionEpsilon(0.0)
-      .setSampleSize(1000)
+      .setSampleSize(3000)
       .setMaxIterations(20)
-    val model = km.run(data)
-    maxCenterDistance(model.medoids, centers) should be < (0.0)
+    val model = km.run(context.parallelize(data))
+    model.k should be (5)
+    maxCenterDistance(model.medoids, centers) should be < (0.25)
+
+    val model2 = km.run(data)
+    model2.k should be (model.k)
+    maxCenterDistance(model.medoids, model2.medoids) should be (0.0)
   }
 }
