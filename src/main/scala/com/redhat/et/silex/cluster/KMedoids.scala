@@ -107,9 +107,9 @@ class KMedoids[T] private (
   }
 
   private def doRun(data: Seq[T], rng: scala.util.Random) = {
-    val minDist = (e: T, mv: Seq[T]) => mv.view.map(metric(e, _)).min
-    val cost = (mv: Seq[T], data: Seq[T]) => data.view.map(minDist(_, mv)).sum
-    val medoidCost = (e: T, data: Seq[T]) => data.view.map(metric(e, _)).sum
+    val minDist = (e: T, mv: Seq[T]) => mv.iterator.map(metric(e, _)).min
+    val cost = (mv: Seq[T], data: Seq[T]) => data.iterator.map(minDist(_, mv)).sum
+    val medoidCost = (e: T, data: Seq[T]) => data.iterator.map(metric(e, _)).sum
 
     val startTime = System.nanoTime
     logInfo(s"KMedoids: initializing model from $k random elements")
