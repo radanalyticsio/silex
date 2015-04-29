@@ -31,7 +31,6 @@ class KMedoids[T] private (
   private var epsilon: Double,
   private var fractionEpsilon: Double,
   private var sampleSize: Int,
-  private var resampleInterval: Int,
   private var seed: Long) extends Serializable with Logging {
 
   def this(metric: (T, T) => Double) = this(
@@ -41,7 +40,6 @@ class KMedoids[T] private (
     KMedoids.default.epsilon,
     KMedoids.default.fractionEpsilon,
     KMedoids.default.sampleSize,
-    KMedoids.default.resampleInterval,
     KMedoids.default.seed)
 
   def setMetric(metric: (T, T) => Double): this.type = {
@@ -79,98 +77,65 @@ class KMedoids[T] private (
     this
   }
 
-  def setResampleInterval(resampleInterval: Int): this.type = {
-    require(resampleInterval > 0, s"resampleInterval= $resampleInterval must be > 0")
-    this.resampleInterval = resampleInterval
-    this
-  }
-
   def setSeed(seed: Long): this.type = {
     this.seed = seed
     this
   }
 
   def run(data: RDD[T]) = {
-    val n = data.count
-    require(n >= k, s"data size= $n must be >= k= $k")
-
+    val runStartTime = System.nanoTime
     val rng = new scala.util.Random(seed)
+    logInfo(s"KMedoids: collecting data sample")
+    val sample = KMedoids.sampleBySize(data, sampleSize, rng.nextLong)
+    logInfo(s"KMedoids: sample size= ${sample.length}")
+    val model = doRun(sample, rng)
+    val runSeconds = (System.nanoTime - runStartTime) / 1e9
+    logInfo(f"KMedoids: total clustering time= $runSeconds%.1f sec")
+    model
+  }
 
+  def run(data: Seq[T]) = {
+    val runStartTime = System.nanoTime
+    val rng = new scala.util.Random(seed)
+    logInfo(s"KMedoids: collecting data sample")
+    val sample = KMedoids.sampleBySize(data, sampleSize, rng.nextLong)
+    logInfo(s"KMedoids: sample size= ${sample.length}")
+    val model = doRun(sample, rng)
+    val runSeconds = (System.nanoTime - runStartTime) / 1e9
+    logInfo(f"KMedoids: total clustering time= $runSeconds%.1f sec")
+    model
+  }
+
+  private def doRun(data: Seq[T], rng: scala.util.Random) = {
     val minDist = (e: T, mv: Seq[T]) => mv.view.map(metric(e, _)).min
     val cost = (mv: Seq[T], data: Seq[T]) => data.view.map(minDist(_, mv)).sum
     val medoidCost = (e: T, data: Seq[T]) => data.view.map(metric(e, _)).sum
 
-    val ss = math.min(sampleSize, n).toInt
-    val fraction = math.min(1.0, ss.toDouble / n.toDouble)
-
-    val runStartTime = System.nanoTime
-    logInfo(s"KMedoids: collecting initial data sample. Sample fraction= $fraction")
-    var sample: Array[T] = data.sample(false, fraction, seed = rng.nextLong).collect
-
-    // initialize medoids to a set of (k) random and unique elements
+    val startTime = System.nanoTime
     logInfo(s"KMedoids: initializing model from $k random elements")
-    val distinct = sample.toSeq.distinct
-    require(distinct.length >= k, s"data must have at least k= $k distinct values")
-
-    var s = Set.empty[T]
-    while (s.size < k) {
-      s = s + distinct(rng.nextInt(distinct.length))
-    }
-    var current = s.toSeq
-    var currentCost = cost(current, sample)
+    var current = KMedoids.sampleDistinct(data, k, rng)
+    var currentCost = cost(current, data)
 
     val itrStartTime = System.nanoTime
-    val initSeconds = (itrStartTime - runStartTime) / 1e9
+    val initSeconds = (itrStartTime - startTime) / 1e9
     logInfo(f"KMedoids: model initialization completed $initSeconds%.1f sec")
 
-    var itr = 1
-    var halt = itr > maxIterations
-    while (!halt) {
-      val itrTime = System.nanoTime
-      val itrSeconds = (itrTime - itrStartTime) / 1e9
-      logInfo(f"KMedoids: iteration $itr  cost= $currentCost  elapsed= $itrSeconds%.1f sec")
+    logInfo(s"KMedoids: refining model")
+    val (refined, refinedCost, itr, converged) = 
+    KMedoids.refine(
+      data,
+      metric,
+      current,
+      currentCost,
+      cost,
+      medoidCost,
+      maxIterations,
+      epsilon,
+      fractionEpsilon)
 
-      if (fraction < 1.0  &&  itr > 1) {
-        logInfo(s"KMedoids: updating data sample")
-        sample = data.sample(false, fraction, seed = rng.nextLong).collect
-      }
-
-      val maxItr = math.min(1 + maxIterations - itr, resampleInterval)
-      logInfo(s"KMedoids: refining model (maximum $maxItr iterations)")
-      val (next, nextCost, refItr, converged) = 
-      KMedoids.refine(
-        sample,
-        metric,
-        current,
-        currentCost,
-        cost,
-        medoidCost,
-        maxItr,
-        epsilon,
-        fractionEpsilon)
-
-      val refSeconds = (System.nanoTime - itrTime) / 1e9
-      logInfo(f"KMedoids: refined cost= $nextCost  elapsed= $refSeconds%.1f sec")
-      itr += refItr - 1
-
-      // output of refinement guaranteed to be at least as good as input
-      current = next
-      currentCost = nextCost
-
-      if (converged) {
-        logInfo(s"KMedoids: converged at iteration $itr")
-        halt = true
-      } else if (itr >= maxIterations) {
-        logInfo(s"KMedoids: halting at maximum iteration $itr")
-        halt = true
-      }
-    }
-
-    val runTime = System.nanoTime
-    val runSeconds = (runTime - runStartTime) / 1e9
-    val avgSeconds = (runTime - itrStartTime) / 1e9 / itr
-    logInfo(f"KMedoids: finished at $itr iterations with model cost= $currentCost  elapsed= $runSeconds%.1f  sec  avg sec per iteration= $avgSeconds%.1f")
-    new KMedoidsModel(current, metric)
+    val avgSeconds = (System.nanoTime - itrStartTime) / 1e9 / itr
+    logInfo(f"KMedoids: finished at $itr iterations with model cost= $currentCost   avg sec per iteration= $avgSeconds%.1f")
+    new KMedoidsModel(refined, metric)
   }
 }
 
@@ -183,7 +148,6 @@ object KMedoids extends Logging {
     def epsilon = 0.0
     def fractionEpsilon = 0.01
     def sampleSize = 1000
-    def resampleInterval = Int.MaxValue
     def seed = scala.util.Random.nextLong()
   }
 
