@@ -1,0 +1,13 @@
+---
+layout: post
+title:  "New in Silex v0.0.5"
+date:   2015-04-29 16:23:44
+categories: news
+---
+
+We've just released Silex version 0.0.5.  Here are the main changes:
+
+* Added support for creating [histograms from RDDs](http://silex.freevariable.com/latest/api/#com.redhat.et.silex.histogram.HistogramMethods).  If the implicit conversions from `com.redhat.et.silex.histogram.implicits` are in scope, then the `countBy`, `countByFlat`, `histBy`, and `histByFlat` methods will be available on every RDD.
+* Factored [`ReplApp`](http://silex.freevariable.com/latest/api/#com.redhat.et.silex.app.ReplApp$) functionality [to a trait](http://silex.freevariable.com/latest/api/#com.redhat.et.silex.app.ReplAppLike), to allow REPLs running with custom Spark configurations.  This is useful if you need to interact with something like ElasticSearch that depends on a particular Spark configuration.  (See [here](http://chapeau.freevariable.com/2015/04/spark-sql-repl.html) for more on why you might care about `ReplApp`.)
+* Silex apps should now play more nicely with `spark-submit`.
+
