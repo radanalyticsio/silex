@@ -62,4 +62,23 @@ class KMedoidsSpec extends FlatSpec with Matchers with PerTestSparkContext {
     val model = km.run(data)
     maxCenterDistance(model.medoids, centers) should be < (0.15)
   }
+
+  it should "identify 5 clusters" in {
+    val centers = List(
+      Vector( 0.0,  0.0,  0.0),
+      Vector(-3.0, -3.0, -3.0),
+      Vector( 3.0,  3.0,  3.0),
+      Vector(-3.0,  3.0, -3.0),
+      Vector( 3.0, -3.0,  3.0)
+    )
+    val data = context.parallelize(generateClusters(centers, 1000, seed=42))
+    val km = new KMedoids(vectorAbs)
+      .setK(5)
+      .setSeed(73)
+      .setFractionEpsilon(0.0)
+      .setSampleSize(1000)
+      .setMaxIterations(20)
+    val model = km.run(data)
+    maxCenterDistance(model.medoids, centers) should be < (0.0)
+  }
 }
