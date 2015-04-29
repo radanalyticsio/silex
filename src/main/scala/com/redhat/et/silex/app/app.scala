@@ -40,7 +40,7 @@ trait AppCommon {
     val initialConf = new SparkConf()
      .setAppName(appName)
      .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
-     .set("spark.kryoserializer.buffer.mb", "256")
+     .set("spark.kryoserializer.buffer.mb", "16")
 
     configHooks.reverse.foldLeft(initialConf) {(c, f) => f(c)}
   }
@@ -118,22 +118,27 @@ class ConsoleApp extends AppCommon {
   }
 }
 
-private [silex] class TestConsoleApp(val suppliedMaster: String = "local[*]") extends AppCommon { 
+private [silex] class TestConsoleApp(val suppliedMaster: String = "local[2]") extends AppCommon { 
   override def master = suppliedMaster
   override def appName = "console"
+  
+  addConfig( {(conf: SparkConf) => conf.set("spark.kryoserializer.buffer.mb", "2")})
+  
   def appMain(args: Array[String]) {
     // this never runs
   }
 }
 
-object ReplApp {
+trait ReplAppLike {
   import scala.tools.nsc.interpreter._
   import scala.tools.nsc.Settings
+  
+  def makeApp: AppCommon = new com.redhat.et.silex.app.ConsoleApp()
   
   def main(args: Array[String]) {
     val repl = new ILoop {
       override def loop(): Unit = {
-        val app = new com.redhat.et.silex.app.ConsoleApp()
+        val app = makeApp
         intp.addImports("org.apache.spark.SparkConf")
         intp.addImports("org.apache.spark.SparkContext")
         intp.addImports("org.apache.spark.SparkContext._")
@@ -162,3 +167,5 @@ object ReplApp {
     repl.process(settings)
   }
 }
+
+object ReplApp extends ReplAppLike {}

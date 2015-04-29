@@ -2,17 +2,17 @@ name := "silex"
 
 organization := "com.redhat.et"
 
-version := "0.0.4"
+version := "0.0.5"
 
-val SPARK_VERSION = "1.3.0"
+val SPARK_VERSION = "1.3.1"
 
 scalaVersion := "2.10.4"
 
-libraryDependencies += "org.apache.spark" %% "spark-core" % SPARK_VERSION
+libraryDependencies += "org.apache.spark" %% "spark-core" % SPARK_VERSION % "provided"
 
-libraryDependencies += "org.apache.spark" %% "spark-sql" % SPARK_VERSION
+libraryDependencies += "org.apache.spark" %% "spark-sql" % SPARK_VERSION % "provided"
 
-libraryDependencies += "org.apache.spark" %% "spark-mllib" % SPARK_VERSION
+libraryDependencies += "org.apache.spark" %% "spark-mllib" % SPARK_VERSION % "provided"
 
 libraryDependencies ++= Seq("joda-time" % "joda-time" % "2.7", "org.joda" % "joda-convert" % "1.7")
 
