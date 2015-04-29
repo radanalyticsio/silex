@@ -215,7 +215,7 @@ object KMedoids extends Logging {
     val itrStartTime = System.nanoTime
 
     var itr = 1
-    var halt = itr > maxIterations
+    var halt = false
     while (!halt) {
       val itrTime = System.nanoTime
       val itrSeconds = (itrTime - itrStartTime) / 1e9
