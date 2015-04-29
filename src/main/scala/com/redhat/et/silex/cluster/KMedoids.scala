@@ -258,4 +258,80 @@ object KMedoids extends Logging {
     logInfo(f"KMedoids.refine: finished at iteration $itr  cost= $currentCost  elapsed= $runSeconds%.1f")
     (current, currentCost, itr, converged)
   }
+
+  def sampleFraction[N :Numeric](n: N, sampleSize: Int): Double = {
+    val num = implicitly[Numeric[N]]
+    require(num.gteq(n, num.zero), "n must be >= 0")
+    require(sampleSize >= 0, "sampleSize must be >= 0")
+    if (sampleSize <= 0 || num.lteq(n, num.zero)) {
+      0.0
+    } else {
+      val nD = num.toDouble(n)
+      val ss = math.min(sampleSize.toDouble, nD)
+      val fraction = math.min(1.0, ss / nD)
+      fraction
+    }
+  }
+
+  def sampleBySize[T](data: RDD[T], sampleSize: Int, seed: Long): Seq[T] = {
+    require(sampleSize >= 0, "sampleSize must be >= 0")
+    val fraction = sampleFraction(data.count, sampleSize)
+    if (fraction <= 0.0) {
+      Seq.empty[T]
+    } else if (fraction >= 1.0) {
+      data.collect.toSeq
+    } else {
+      data.sample(false, math.min(fraction * 1.1, 1.0), seed = seed).take(sampleSize).toSeq
+    }
+  }
+
+  def sampleBySize[T](data: RDD[T], sampleSize: Int): Seq[T] =
+    sampleBySize(data, sampleSize, scala.util.Random.nextLong())
+
+  def sampleBySize[T](data: Seq[T], sampleSize: Int, seed: Long): Seq[T] = {
+    require(sampleSize >= 0, "sampleSize must be >= 0")
+    val fraction = sampleFraction(data.length, sampleSize)
+    if (fraction <= 0.0) {
+      Seq.empty[T]
+    } else if (fraction >= 1.0) {
+      data
+    } else {
+      val rng = new scala.util.Random(seed)
+      val t = math.min(fraction * 1.1, 1.0)
+      data.filter(x => rng.nextDouble() < t).take(sampleSize)
+    }
+  }
+
+  def sampleBySize[T](data: Seq[T], sampleSize: Int): Seq[T] =
+    sampleBySize(data, sampleSize, scala.util.Random.nextLong())
+
+  def sampleDistinct[T](data: Seq[T], k: Int, rng: scala.util.Random): Seq[T] = {
+    require(k >= 0, "k must be >= 0")
+    require(data.length >= k, s"data did not have >= $k distinct elements")
+    var s = Set.empty[T]
+    var tries = 0
+    while (s.size < k  &&  tries <= 2*k) {
+      s = s + data(rng.nextInt(data.length))
+      tries += 1
+    }
+    if (s.size < k) {
+      // if we are having trouble getting distinct elements, try it the hard way
+      val ds = (data.toSet -- s).toSeq
+      require((ds.length + s.size) >= k, s"data did not have >= $k distinct elements")
+      val kr = k - s.size
+      s = s ++ (if (kr <= (ds.length / 2)) {
+        sampleDistinct(ds, kr, rng).toSet
+      } else {
+        ds.toSet -- sampleDistinct(ds, ds.length - kr, rng).toSet
+      })
+    }
+    require(s.size == k, "logic error in sampleDistinct")
+    s.toSeq
+  }
+
+  def sampleDistinct[T](data: Seq[T], k: Int, seed: Long): Seq[T] = 
+    sampleDistinct(data, k, new scala.util.Random(seed))
+
+  def sampleDistinct[T](data: Seq[T], k: Int): Seq[T] =
+    sampleDistinct(data, k, scala.util.Random.nextLong())
 }
