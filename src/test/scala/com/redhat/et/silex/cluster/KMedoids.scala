@@ -107,6 +107,8 @@ class KMedoidsSpec extends FlatSpec with Matchers with PerTestSparkContext {
   import com.redhat.et.silex.testing.matchers._
   import KMedoidsSpecSupport._
 
+  scala.util.Random.setSeed(23571113)
+
   it should "sample RDD by size" in {
     val data = (0 until 1000).toVector
     val rdd = context.parallelize(data)
