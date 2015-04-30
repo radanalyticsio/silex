@@ -141,6 +141,15 @@ class SparklessKMedoidsSpec extends FlatSpec with Matchers {
       sampleStream { refSample(data, 0.99) }
     ) should be < KSTesting.D
   }
+
+  it should "sample distinct values at boundaries" in {
+    val data = (0 until 100).toVector
+    an [IllegalArgumentException] should be thrownBy (KMedoids.sampleDistinct(data, -1))
+    an [IllegalArgumentException] should be thrownBy (KMedoids.sampleDistinct(data, 101))
+    KMedoids.sampleDistinct(data, 0).length should be (0)
+    KMedoids.sampleDistinct(data, 100).length should be (100)
+    KMedoids.sampleDistinct(data, 100).toSet should equal (data.toSet)
+  }  
 }
 
 class KMedoidsSpec extends FlatSpec with Matchers with PerTestSparkContext {
