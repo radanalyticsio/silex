@@ -107,6 +107,31 @@ class KMedoidsSpec extends FlatSpec with Matchers with PerTestSparkContext {
   import com.redhat.et.silex.testing.matchers._
   import KMedoidsSpecSupport._
 
+  it should "sample RDD by size" in {
+    val data = (0 until 1000).toVector
+    val rdd = context.parallelize(data)
+
+    KSTesting.medianKSD(
+      sampleStream { KMedoids.sampleBySize(rdd, 200) },
+      sampleStream { refSample(data, 0.2) }
+    ) should be < KSTesting.D
+
+/*
+    This requires running an RDD sample a thousand times, which takes way too long
+
+    KSTesting.medianKSD(
+      sampleStream { KMedoids.sampleBySize(rdd, 300).length :: Nil },
+      sampleStream { refSample(data, 0.1).size :: Nil }
+    ) should be < KSTesting.D
+*/
+
+    val n = 100 * KSTesting.sampleSize
+    KSTesting.medianKSD(
+      gaps((KMedoids.sampleBySize(context.parallelize(0 until n), n / 10))),
+      gaps(refSample((0 until n).toSeq, 0.1))
+    ) should be < KSTesting.D
+  }
+
   it should "identify 2 clusters" in {
     val centers = List(
       Vector(0.0, 0.0),
