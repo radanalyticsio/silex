@@ -102,6 +102,13 @@ class SparklessKMedoidsSpec extends FlatSpec with Matchers {
     ) should be < KSTesting.D
   }
 
+  it should "sample Seq by size at boundaries" in {
+    val data = (0 until 100).toVector
+    an [IllegalArgumentException] should be thrownBy (KMedoids.sampleBySize(data, -1))
+    KMedoids.sampleBySize(data, 0).length should be (0)
+    KMedoids.sampleBySize(data, 100) should equal (data)
+  }
+
   it should "sample distinct values" in {
     val data = (0 until 100).toVector
     KSTesting.medianKSD(
@@ -165,6 +172,14 @@ class KMedoidsSpec extends FlatSpec with Matchers with PerTestSparkContext {
       gaps((KMedoids.sampleBySize(context.parallelize(0 until n), n / 10))),
       gaps(refSample((0 until n).toSeq, 0.1))
     ) should be < KSTesting.D
+  }
+
+  it should "sample RDD by size at boundaries" in {
+    val data = (0 until 100).toVector
+    val rdd = context.parallelize(data)
+    an [IllegalArgumentException] should be thrownBy (KMedoids.sampleBySize(rdd, -1))
+    KMedoids.sampleBySize(rdd, 0).length should be (0)
+    KMedoids.sampleBySize(rdd, 100) should equal (data)
   }
 
   it should "identify 2 clusters" in {
