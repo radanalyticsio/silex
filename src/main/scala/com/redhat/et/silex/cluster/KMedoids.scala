@@ -134,7 +134,7 @@ class KMedoids[T] private (
       fractionEpsilon)
 
     val avgSeconds = (System.nanoTime - itrStartTime) / 1e9 / itr
-    logInfo(f"finished at $itr iterations with model cost= $refinedCost   avg sec per iteration= $avgSeconds%.1f")
+    logInfo(f"finished at $itr iterations with model cost= $refinedCost%.6g   avg sec per iteration= $avgSeconds%.1f")
     new KMedoidsModel(refined, metric)
   }
 }
@@ -183,13 +183,13 @@ object KMedoids extends Logging {
     while (!halt) {
       val itrTime = System.nanoTime
       val itrSeconds = (itrTime - itrStartTime) / 1e9
-      logInfo(f"iteration $itr  cost= $currentCost  elapsed= $itrSeconds%.1f")
+      logInfo(f"iteration $itr  cost= $currentCost%.6g  elapsed= $itrSeconds%.1f")
 
       val next = data.groupBy(medoidIdx(_, current)).toVector.sortBy(_._1).map(_._2).map(medoid)
       val nextCost = cost(next, data)
 
       val curSeconds = (System.nanoTime - itrTime) / 1e9
-      logInfo(f"updated cost= $nextCost  elapsed= $curSeconds%.1f sec")
+      logInfo(f"updated cost= $nextCost%.6g  elapsed= $curSeconds%.1f sec")
 
       val delta = currentCost - nextCost
       val fractionDelta = if (currentCost > 0.0) delta / currentCost else 0.0
@@ -219,7 +219,7 @@ object KMedoids extends Logging {
 
     val runTime = System.nanoTime
     val runSeconds = (runTime - runStartTime) / 1e9
-    logInfo(f"refined over $itr iterations  final cost= $currentCost  elapsed= $runSeconds%.1f")
+    logInfo(f"refined over $itr iterations  final cost= $currentCost%.6g  elapsed= $runSeconds%.1f")
     (current, currentCost, itr, converged)
   }
 
