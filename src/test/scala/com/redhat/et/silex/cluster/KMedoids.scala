@@ -207,6 +207,32 @@ class KMedoidsSpec extends FlatSpec with Matchers with PerTestSparkContext {
     maxCenterDistance(model.medoids, model2.medoids) should be (0.0)
   }
 
+  it should "respect random seeds" in {
+    val centers = List(
+      Vector(0.0, 0.0),
+      Vector(3.0, 3.0),
+      Vector(0.0, 3.0)
+    )
+    val data = generateClusters(centers, 1000, seed=42)
+    val rdd = context.parallelize(data)
+
+    val km1 = new KMedoids(vectorAbs).setK(2).setMaxIterations(5).setSeed(73)
+    val model1 = km1.run(rdd)
+
+    val km2 = new KMedoids(vectorAbs).setK(2).setMaxIterations(5).setSeed(73)
+    val model2 = km2.run(rdd)
+
+    val km3 = new KMedoids(vectorAbs).setK(2).setMaxIterations(5).setSeed(37)
+    val model3 = km3.run(rdd)
+
+    // identical model with same random seed
+    model1.medoids should equal (model2.medoids)
+    maxCenterDistance(model1.medoids, model2.medoids) should be (0.0)
+
+    // different model with a different seed
+    maxCenterDistance(model1.medoids, model3.medoids) should be > 0.0
+  }
+
   it should "identify 5 clusters" in {
     val centers = List(
       Vector( 0.0,  0.0,  0.0),
