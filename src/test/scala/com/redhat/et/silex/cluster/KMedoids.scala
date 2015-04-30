@@ -101,6 +101,19 @@ class SparklessKMedoidsSpec extends FlatSpec with Matchers {
       gaps(refSample((0 until n).toSeq, 0.1))
     ) should be < KSTesting.D
   }
+
+  it should "sample distinct values" in {
+    val data = (0 until 100).toVector
+    KSTesting.medianKSD(
+      sampleStream {
+        val s = KMedoids.sampleDistinct(data, 10)
+        s.length should be (10)
+        s.toSet.size should be (10)
+        s
+      },
+      sampleStream { refSample(data, 0.1) }
+    ) should be < KSTesting.D
+  }
 }
 
 class KMedoidsSpec extends FlatSpec with Matchers with PerTestSparkContext {
