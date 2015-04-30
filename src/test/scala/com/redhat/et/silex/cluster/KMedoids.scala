@@ -24,6 +24,7 @@ import org.scalatest._
 import org.apache.spark.rdd.RDD
 
 import com.redhat.et.silex.testing.PerTestSparkContext
+import com.redhat.et.silex.testing.KSTesting
 
 object KMedoidsSpecSupport {
   def generateClusters(
@@ -49,11 +50,28 @@ object KMedoidsSpecSupport {
       }.max
     }.min
   }
+
+  // Reference sampler, known to be correct
+  def refSample[T](data: TraversableOnce[T], f: Double): Iterator[T] =
+    data.toIterator.filter(u => scala.util.Random.nextDouble() < f)
+
+  // Returns iterator over gap lengths between samples.
+  // This function assumes input data is integers sampled from the sequence of
+  // increasing integers: {0, 1, 2, ...}.
+  def gaps(data: TraversableOnce[Int]): Iterator[Int] = {
+    data.toIterator.sliding(2).withPartial(false).map { x => x(1) - x(0) }
+  }
+
+  // Generate an endless sampling stream from a block that generates a TraversableOnce
+  def sampleStream[T](blk: => TraversableOnce[T]) =
+    Iterator.from(0).flatMap { u => blk.toIterator }
 }
 
 class SparklessKMedoidsSpec extends FlatSpec with Matchers {
   import com.redhat.et.silex.testing.matchers._
   import KMedoidsSpecSupport._
+
+  scala.util.Random.setSeed(23571113)
 
   it should "except on bad inputs" in {
     val km = new KMedoids((a: Double, b: Double) => 0.0 )
@@ -62,6 +80,26 @@ class SparklessKMedoidsSpec extends FlatSpec with Matchers {
     an [IllegalArgumentException] should be thrownBy (km.setEpsilon(-0.01))
     an [IllegalArgumentException] should be thrownBy (km.setFractionEpsilon(-0.01))
     an [IllegalArgumentException] should be thrownBy (km.setSampleSize(0))
+  }
+
+  it should "sample Seq by size" in {
+    val data = (0 until 100).toVector
+
+    KSTesting.medianKSD(
+      sampleStream { KMedoids.sampleBySize(data, 25) },
+      sampleStream { refSample(data, 0.25) }
+    ) should be < KSTesting.D
+
+    KSTesting.medianKSD(
+      sampleStream { KMedoids.sampleBySize(data, 25).length :: Nil },
+      sampleStream { refSample(data, 0.25).size :: Nil }
+    ) should be < KSTesting.D
+
+    val n = 100 * KSTesting.sampleSize
+    KSTesting.medianKSD(
+      gaps(KMedoids.sampleBySize((0 until n).toSeq, n / 10)),
+      gaps(refSample((0 until n).toSeq, 0.1))
+    ) should be < KSTesting.D
   }
 }
 
