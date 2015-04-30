@@ -134,7 +134,7 @@ class KMedoids[T] private (
       fractionEpsilon)
 
     val avgSeconds = (System.nanoTime - itrStartTime) / 1e9 / itr
-    logInfo(f"KMedoids: finished at $itr iterations with model cost= $currentCost   avg sec per iteration= $avgSeconds%.1f")
+    logInfo(f"KMedoids: finished at $itr iterations with model cost= $refinedCost   avg sec per iteration= $avgSeconds%.1f")
     new KMedoidsModel(refined, metric)
   }
 }
