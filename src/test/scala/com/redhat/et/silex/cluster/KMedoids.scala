@@ -52,6 +52,15 @@ class KMedoidsSpec extends FlatSpec with Matchers with PerTestSparkContext {
     }.min
   }
 
+  it should "except on bad inputs" in {
+    val km = new KMedoids((a: Double, b: Double) => 0.0 )
+    an [IllegalArgumentException] should be thrownBy (km.setK(-1))
+    an [IllegalArgumentException] should be thrownBy (km.setMaxIterations(0))
+    an [IllegalArgumentException] should be thrownBy (km.setEpsilon(-0.01))
+    an [IllegalArgumentException] should be thrownBy (km.setFractionEpsilon(-0.01))
+    an [IllegalArgumentException] should be thrownBy (km.setSampleSize(0))
+  }
+
   it should "identify 2 clusters" in {
     val centers = List(
       Vector(0.0, 0.0),
