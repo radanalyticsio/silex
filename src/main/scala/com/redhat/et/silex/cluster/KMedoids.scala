@@ -245,7 +245,7 @@ object KMedoids extends Logging {
     } else if (fraction >= 1.0) {
       data.collect.toSeq
     } else {
-      data.sample(false, fraction, seed = seed).take(sampleSize).toSeq
+      data.sample(false, fraction, seed = seed).collect.toSeq
     }
   }
 
@@ -261,7 +261,7 @@ object KMedoids extends Logging {
       data
     } else {
       val rng = new scala.util.Random(seed)
-      data.filter(x => rng.nextDouble() < fraction).take(sampleSize)
+      data.filter(x => rng.nextDouble() < fraction)
     }
   }
 
