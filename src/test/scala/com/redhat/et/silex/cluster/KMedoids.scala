@@ -113,6 +113,26 @@ class SparklessKMedoidsSpec extends FlatSpec with Matchers {
       },
       sampleStream { refSample(data, 0.1) }
     ) should be < KSTesting.D
+
+    KSTesting.medianKSD(
+      sampleStream {
+        val s = KMedoids.sampleDistinct(data, 90)
+        s.length should be (90)
+        s.toSet.size should be (90)
+        s
+      },
+      sampleStream { refSample(data, 0.9) }
+    ) should be < KSTesting.D
+
+    KSTesting.medianKSD(
+      sampleStream {
+        val s = KMedoids.sampleDistinct(data, 99)
+        s.length should be (99)
+        s.toSet.size should be (99)
+        s
+      },
+      sampleStream { refSample(data, 0.99) }
+    ) should be < KSTesting.D
   }
 }
 
