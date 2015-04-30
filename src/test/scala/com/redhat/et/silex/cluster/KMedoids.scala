@@ -25,9 +25,7 @@ import org.apache.spark.rdd.RDD
 
 import com.redhat.et.silex.testing.PerTestSparkContext
 
-class KMedoidsSpec extends FlatSpec with Matchers with PerTestSparkContext {
-  import com.redhat.et.silex.testing.matchers._
-
+object KMedoidsSpecSupport {
   def generateClusters(
     centers: Seq[Seq[Double]],
     n: Int,
@@ -51,6 +49,11 @@ class KMedoidsSpec extends FlatSpec with Matchers with PerTestSparkContext {
       }.max
     }.min
   }
+}
+
+class SparklessKMedoidsSpec extends FlatSpec with Matchers {
+  import com.redhat.et.silex.testing.matchers._
+  import KMedoidsSpecSupport._
 
   it should "except on bad inputs" in {
     val km = new KMedoids((a: Double, b: Double) => 0.0 )
@@ -60,6 +63,11 @@ class KMedoidsSpec extends FlatSpec with Matchers with PerTestSparkContext {
     an [IllegalArgumentException] should be thrownBy (km.setFractionEpsilon(-0.01))
     an [IllegalArgumentException] should be thrownBy (km.setSampleSize(0))
   }
+}
+
+class KMedoidsSpec extends FlatSpec with Matchers with PerTestSparkContext {
+  import com.redhat.et.silex.testing.matchers._
+  import KMedoidsSpecSupport._
 
   it should "identify 2 clusters" in {
     val centers = List(
