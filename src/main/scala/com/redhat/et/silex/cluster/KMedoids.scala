@@ -144,9 +144,9 @@ object KMedoids extends Logging {
 
   private[cluster] object default {
     def k = 2
-    def maxIterations = 10
+    def maxIterations = 25
     def epsilon = 0.0
-    def fractionEpsilon = 0.01
+    def fractionEpsilon = 0.0001
     def sampleSize = 1000
     def seed = scala.util.Random.nextLong()
   }
