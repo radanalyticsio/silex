@@ -195,11 +195,11 @@ object KMedoids extends Logging {
       val fractionDelta = if (currentCost > 0.0) delta / currentCost else 0.0
 
       if (delta <= epsilon) {
-        logInfo(s"converged with delta= $delta")
+        logInfo(f"converged with delta= $delta%.4g")
         halt = true
         converged = true
       } else if (fractionDelta <= fractionEpsilon) {
-        logInfo(s"converged with fractionDelta= $fractionDelta")
+        logInfo(f"converged with fractionDelta= $fractionDelta%.4g")
         halt = true
         converged = true
       } else if (itr >= maxIterations) {
