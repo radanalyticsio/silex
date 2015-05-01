@@ -24,6 +24,11 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.Logging
 import org.apache.spark.util.random.XORShiftRandom
 
+/** An object for training a K-Medoid clustering model on Seq or RDD data.
+  *
+  * Data is required to have a metric function defined on it, but it does not require an algebra
+  * over data elements, as K-Means clustering does.
+  */
 class KMedoids[T] private (
   private var metric: (T, T) => Double,
   private var k: Int,
@@ -33,6 +38,10 @@ class KMedoids[T] private (
   private var sampleSize: Int,
   private var seed: Long) extends Serializable with Logging {
 
+  /** Constructs a KMedoids instance from a given metric function
+    *
+    * @param metric A metric function defined on data elements
+    */
   def this(metric: (T, T) => Double) = this(
     metric,
     KMedoids.default.k,
@@ -48,46 +57,94 @@ class KMedoids[T] private (
   def medoid(data: Seq[T]) = data.iterator.minBy(medoidCost(_, data))
   def modelCost(mv: Seq[T], data: Seq[T]) = data.iterator.map(medoidDist(_, mv)).sum
 
+  /** Set the distance metric to use over data elements
+    *
+    * @param metric The distance metric
+    * @return This instance after setting metric
+    */
   def setMetric(metric: (T, T) => Double): this.type = {
     this.metric = metric
     this
   }
 
+  /** Set the number of clusters to train
+    *
+    * @param k The number of clusters.  Must be > 0.
+    * @return This instance, after setting k
+    */
   def setK(k: Int): this.type = {
     require(k > 0, s"k= $k must be > 0")
     this.k = k
     this
   }
 
+  /** Set the maximum number of iterations to allow before halting cluster refinement.
+    *
+    * @param maxIterations The maximum number of refinement iterations.  Must be > 0.
+    * @return This instance, after setting maxIterations
+    */
   def setMaxIterations(maxIterations: Int): this.type = {
     require(maxIterations > 0, s"maxIterations= $maxIterations must be > 0")
     this.maxIterations = maxIterations
     this
   }
 
+  /** Set epsilon halting threshold for clustering cost improvement between refinements.
+    *
+    * If c1 is the current clustering model cost, and c0 is the cost of the previous model,
+    * then refinement halts when (c0 - c1) <= epsilon (Lower cost is better).
+    *
+    * @param epsilon The epsilon threshold to use.  Must be >= 0.
+    * @return This instance, after setting epsilon
+    */
   def setEpsilon(epsilon: Double): this.type = {
     require(epsilon >= 0.0, s"epsilon= $epsilon must be >= 0.0")
     this.epsilon = epsilon
     this
   }
 
+  /** Set fractionEpsilon threshold for clustering cost improvement between refinements.
+    *
+    * If c1 is the current clustering model cost, and c0 is the cost of the previous model,
+    * then refinement halts when (c0 - c1) / c0 <= fractionEpsilon (Lower cost is better).
+    * @param fractionEpsilon The fractionEpsilon threshold to use.  Must be >= 0.
+    * @return This instance, after setting fractionEpsilon
+    */
   def setFractionEpsilon(fractionEpsilon: Double): this.type = {
     require(fractionEpsilon >= 0.0, s"fractionEpsilon= $fractionEpsilon must be >= 0.0")
     this.fractionEpsilon = fractionEpsilon
     this
   }
 
+  /** Set the size of the random sample to take from input data to use for clustering.
+    *
+    * @param sampleSize The target size of the random sample.  Must be > 0.
+    * @return This instance, after setting sampleSize
+    */
   def setSampleSize(sampleSize: Int): this.type = {
     require(sampleSize > 0, s"sampleSize= $sampleSize must be > 0")
     this.sampleSize = sampleSize
     this
   }
 
+  /** Set the random number generation (RNG) seed.
+    *
+    * Cluster training runs with the same starting random seed will be the same.  By default,
+    * training runs will vary randomly.
+    *
+    * @param seed The random seed to use for RNG
+    * @return This instance, after setting seed
+    */
   def setSeed(seed: Long): this.type = {
     this.seed = seed
     this
   }
 
+  /** Perform a K-Medoid clustering model training run on some input data
+    *
+    * @param data The input data to train the clustering model on.
+    * @return A [[KMedoidsModel]] object representing the clustering model.
+    */
   def run(data: RDD[T]) = {
     val runStartTime = System.nanoTime
     val rng = new scala.util.Random(seed)
@@ -100,6 +157,11 @@ class KMedoids[T] private (
     model
   }
 
+  /** Perform a K-Medoid clustering model training run on some input data
+    *
+    * @param data The input data to train the clustering model on.
+    * @return A [[KMedoidsModel]] object representing the clustering model.
+    */
   def run(data: Seq[T]) = {
     val runStartTime = System.nanoTime
     val rng = new scala.util.Random(seed)
