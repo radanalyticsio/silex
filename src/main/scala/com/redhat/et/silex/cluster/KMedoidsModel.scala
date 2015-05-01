@@ -20,28 +20,75 @@ package com.redhat.et.silex.cluster
 
 import org.apache.spark.rdd.RDD
 
+/** Represents a K-Medoids clustering model
+  *
+  * @param medoids The collection of cluster medoids that embodies the model
+  * @param metric The metric function over data elements asumed by the model
+  */
 class KMedoidsModel[T](
   val medoids: Seq[T],
   val metric: (T, T) => Double) extends Serializable {
 
+  /** The model prediction function: maps an element to the index of the closest medoid */
   @transient val predictor = KMedoidsModel.predictor(medoids, metric)
+
+  /** The model distance function: maps an element to its distance to the closest medoid */
   @transient val distance = KMedoidsModel.distance(medoids, metric)
 
+  /** The number of medoids in the model */
   def k = medoids.length
 
+  /** Return the index of the medoid closest to the input
+    *
+    * @param point An element of the data space
+    * @return The index of the medoid closest to the input
+    */
   def predict(point: T): Int = predictor(point)
 
+  /** Return an RDD produced by predicting the closest medoid to each row
+    *
+    * @param points An RDD whose rows are elements of the data space
+    * @return An RDD whose rows are the corresponding indices of the closest medoids
+    */
   def predict(points: RDD[T]): RDD[Int] = points.map(predictor)
 
+  /** Return the model cost with respect to the given data
+    *
+    * Model cost is defined as the sum of closest-distances over the data elements
+    *
+    * @param data The input data to compute the cost over
+    * @return The sum of closest-distances over the data elements
+    */
   def cost(data: RDD[T]) = data.map(distance).sum()
 
+  /** Return the model cost with respect to the given data
+    *
+    * Model cost is defined as the sum of closest-distances over the data elements
+    *
+    * @param data The input data to compute the cost over
+    * @return The sum of closest-distances over the data elements
+    */
   def computeCost(data: RDD[T]) = cost(data)
 }
 
+/** Utility functions for KMedoidsModel */
 object KMedoidsModel {
+
+  /** Return a predictor function with respect to a collection of medoids and a metric
+    *
+    * @param medoids A collection of elements representing clustering medoids
+    * @param metric The distance metric over the element space
+    * @return A function that maps an element to the index of the nearest medoid
+    */
   def predictor[T](medoids: Seq[T], metric: (T, T) => Double) =
     (point: T) => medoids.iterator.map(e => metric(e, point)).zipWithIndex.minBy(_._1)._2
 
+  /** Return a distance function with respect to a collection of medoids and a metric
+    *
+    * @param medoids A collection of elements representing clustering medoids
+    * @param metric The distance metric over the element space
+    * @return A function that maps an element to its distance to the closest medoid
+    */
   def distance[T](medoids: Seq[T], metric: (T, T) => Double) =
     (point: T) => medoids.iterator.map(e => metric(e, point)).min
 }
