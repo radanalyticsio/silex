@@ -42,6 +42,12 @@ class KMedoids[T] private (
     KMedoids.default.sampleSize,
     KMedoids.default.seed)
 
+  private val medoidDist = (e: T, mv: Seq[T]) => mv.iterator.map(metric(e, _)).min
+  private val medoidIdx = (e: T, mv: Seq[T]) => mv.iterator.map(metric(e, _)).zipWithIndex.min._2
+  private val medoidCost = (e: T, data: Seq[T]) => data.iterator.map(metric(e, _)).sum
+  private val medoid = (data: Seq[T]) => data.iterator.minBy(medoidCost(_, data))
+  private val modelCost = (mv: Seq[T], data: Seq[T]) => data.iterator.map(medoidDist(_, mv)).sum
+
   def setMetric(metric: (T, T) => Double): this.type = {
     this.metric = metric
     this
@@ -107,68 +113,29 @@ class KMedoids[T] private (
   }
 
   private def doRun(data: Seq[T], rng: scala.util.Random) = {
-    val minDist = (e: T, mv: Seq[T]) => mv.iterator.map(metric(e, _)).min
-    val cost = (mv: Seq[T], data: Seq[T]) => data.iterator.map(minDist(_, mv)).sum
-    val medoidCost = (e: T, data: Seq[T]) => data.iterator.map(metric(e, _)).sum
-
     val startTime = System.nanoTime
     logInfo(s"initializing model from $k random elements")
     var current = KMedoids.sampleDistinct(data, k, rng)
-    var currentCost = cost(current, data)
+    var currentCost = modelCost(current, data)
 
     val itrStartTime = System.nanoTime
     val initSeconds = (itrStartTime - startTime) / 1e9
     logInfo(f"model initialization completed $initSeconds%.1f sec")
 
     logInfo(s"refining model")
-    val (refined, refinedCost, itr, converged) = 
-    KMedoids.refine(
-      data,
-      metric,
-      current,
-      currentCost,
-      cost,
-      medoidCost,
-      maxIterations,
-      epsilon,
-      fractionEpsilon)
+    val (refined, refinedCost, itr, converged) = refine(data, current, currentCost)
 
     val avgSeconds = (System.nanoTime - itrStartTime) / 1e9 / itr
     logInfo(f"finished at $itr iterations with model cost= $refinedCost%.6g   avg sec per iteration= $avgSeconds%.1f")
     new KMedoidsModel(refined, metric)
   }
-}
 
-object KMedoids extends Logging {
-  private[cluster] object default {
-    def k = 2
-    def maxIterations = 25
-    def epsilon = 0.0
-    def fractionEpsilon = 0.0001
-    def sampleSize = 1000
-    def seed = scala.util.Random.nextLong()
-  }
-
-  private[cluster] def refine[T](
+  private def refine(
     data: Seq[T],
-    metric: (T, T) => Double,
     initial: Seq[T],
-    initialCost: Double,
-    cost: (Seq[T], Seq[T]) => Double,
-    medoidCost: (T, Seq[T]) => Double,
-    maxIterations: Int,
-    epsilon: Double,
-    fractionEpsilon: Double): (Seq[T], Double, Int, Boolean) = {
-
-    require(maxIterations > 0, s"maxIterations= $maxIterations must be > 0")
-    require(epsilon >= 0.0, s"epsilon= $epsilon must be >= 0.0")
-    require(fractionEpsilon >= 0.0, s"fractionEpsilon= $fractionEpsilon must be >= 0.0")
+    initialCost: Double): (Seq[T], Double, Int, Boolean) = {
 
     val runStartTime = System.nanoTime
-
-    val k = initial.length
-    val medoidIdx = (e: T, mv: Seq[T]) => mv.iterator.map(metric(e, _)).zipWithIndex.min._2
-    val medoid = (data: Seq[T]) => data.iterator.minBy(medoidCost(_, data))
 
     var current = initial
     var currentCost = initialCost
@@ -184,7 +151,7 @@ object KMedoids extends Logging {
       logInfo(f"iteration $itr  cost= $currentCost%.6g  elapsed= $itrSeconds%.1f")
 
       val next = data.groupBy(medoidIdx(_, current)).toVector.sortBy(_._1).map(_._2).map(medoid)
-      val nextCost = cost(next, data)
+      val nextCost = modelCost(next, data)
 
       val curSeconds = (System.nanoTime - itrTime) / 1e9
       logInfo(f"updated cost= $nextCost%.6g  elapsed= $curSeconds%.1f sec")
@@ -219,6 +186,17 @@ object KMedoids extends Logging {
     val runSeconds = (runTime - runStartTime) / 1e9
     logInfo(f"refined over $itr iterations  final cost= $currentCost%.6g  elapsed= $runSeconds%.1f")
     (current, currentCost, itr, converged)
+  }
+}
+
+object KMedoids extends Logging {
+  private[cluster] object default {
+    def k = 2
+    def maxIterations = 25
+    def epsilon = 0.0
+    def fractionEpsilon = 0.0001
+    def sampleSize = 1000
+    def seed = scala.util.Random.nextLong()
   }
 
   def sampleFraction[N :Numeric](n: N, sampleSize: Int): Double = {
