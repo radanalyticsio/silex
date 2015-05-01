@@ -51,11 +51,11 @@ class KMedoids[T] private (
     KMedoids.default.sampleSize,
     KMedoids.default.seed)
 
-  def medoidDist(e: T, mv: Seq[T]) = mv.iterator.map(metric(e, _)).min
-  def medoidIdx(e: T, mv: Seq[T]) = mv.iterator.map(metric(e, _)).zipWithIndex.min._2
-  def medoidCost(e: T, data: Seq[T]) = data.iterator.map(metric(e, _)).sum
-  def medoid(data: Seq[T]) = data.iterator.minBy(medoidCost(_, data))
-  def modelCost(mv: Seq[T], data: Seq[T]) = data.iterator.map(medoidDist(_, mv)).sum
+  private def medoidDist(e: T, mv: Seq[T]) = mv.iterator.map(metric(e, _)).min
+  private def medoidIdx(e: T, mv: Seq[T]) = mv.iterator.map(metric(e, _)).zipWithIndex.min._2
+  private def medoidCost(e: T, data: Seq[T]) = data.iterator.map(metric(e, _)).sum
+  private def medoid(data: Seq[T]) = data.iterator.minBy(medoidCost(_, data))
+  private def modelCost(mv: Seq[T], data: Seq[T]) = data.iterator.map(medoidDist(_, mv)).sum
 
   /** Set the distance metric to use over data elements
     *
