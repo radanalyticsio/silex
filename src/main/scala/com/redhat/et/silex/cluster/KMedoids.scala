@@ -251,6 +251,7 @@ class KMedoids[T] private (
   }
 }
 
+/** Utilities used by K-Medoids clustering */
 object KMedoids extends Logging {
   private[cluster] object default {
     def k = 2
@@ -261,6 +262,14 @@ object KMedoids extends Logging {
     def seed = scala.util.Random.nextLong()
   }
 
+  /** Return the random sampling fraction corresponding to a desired number of samples
+    *
+    * @param n The size of data being sampled from
+    * @param sampleSize The desired sample size
+    * @return A sampling fraction, >= 0.0 and <= 1.0 that will yield the desired sample size
+    * @note When used with typical Bernoulli sampling the returned samping fraction will yield
+    * a sample size that varies randomly, with a mean of 'sampleSize'
+    */
   def sampleFraction[N :Numeric](n: N, sampleSize: Int): Double = {
     val num = implicitly[Numeric[N]]
     require(num.gteq(n, num.zero), "n must be >= 0")
@@ -275,6 +284,13 @@ object KMedoids extends Logging {
     }
   }
 
+  /** Return a random sample of data having an expected sample size of the requested amount.
+    *
+    * @param data The input data to sample
+    * @param sampleSize The desired sample size.
+    * @param seed Seed for RNG
+    * @return A sample whose expected mean size is sampleSize.
+    */
   def sampleBySize[T](data: RDD[T], sampleSize: Int, seed: Long): Seq[T] = {
     require(sampleSize >= 0, "sampleSize must be >= 0")
     val fraction = sampleFraction(data.count, sampleSize)
@@ -287,9 +303,22 @@ object KMedoids extends Logging {
     }
   }
 
+  /** Return a random sample of data having an expected sample size of the requested amount.
+    *
+    * @param data The input data to sample
+    * @param sampleSize The desired sample size.
+    * @return A sample whose expected mean size is sampleSize.
+    */
   def sampleBySize[T](data: RDD[T], sampleSize: Int): Seq[T] =
     sampleBySize(data, sampleSize, scala.util.Random.nextLong())
 
+  /** Return a random sample of data having an expected sample size of the requested amount.
+    *
+    * @param data The input data to sample
+    * @param sampleSize The desired sample size.
+    * @param seed Seed for RNG
+    * @return A sample whose expected mean size is sampleSize.
+    */
   def sampleBySize[T](data: Seq[T], sampleSize: Int, seed: Long): Seq[T] = {
     require(sampleSize >= 0, "sampleSize must be >= 0")
     val fraction = sampleFraction(data.length, sampleSize)
@@ -303,9 +332,23 @@ object KMedoids extends Logging {
     }
   }
 
+  /** Return a random sample of data having an expected sample size of the requested amount.
+    *
+    * @param data The input data to sample
+    * @param sampleSize The desired sample size.
+    * @return A sample whose expected mean size is sampleSize.
+    */
   def sampleBySize[T](data: Seq[T], sampleSize: Int): Seq[T] =
     sampleBySize(data, sampleSize, scala.util.Random.nextLong())
 
+  /** Return a given number of distinct elements randomly selected from data
+    *
+    * @param data The data to sample from
+    * @param k The number of distinct samples to return.
+    * @param rng Random number generator to use when sampling
+    * @return A collection of k distinct elements randomly selected from the data
+    * @note If the number of distinct elements in the data is < k, an exception will be thrown
+    */
   def sampleDistinct[T](data: Seq[T], k: Int, rng: scala.util.Random): Seq[T] = {
     require(k >= 0, "k must be >= 0")
     require(data.length >= k, s"data did not have >= $k distinct elements")
@@ -330,9 +373,24 @@ object KMedoids extends Logging {
     s.toSeq
   }
 
+  /** Return a given number of distinct elements randomly selected from data
+    *
+    * @param data The data to sample from
+    * @param k The number of distinct samples to return
+    * @param seed A seed to use for RNG when sampling
+    * @return A collection of k distinct elements randomly selected from the data
+    * @note If the number of distinct elements in the data is < k, an exception will be thrown
+    */
   def sampleDistinct[T](data: Seq[T], k: Int, seed: Long): Seq[T] = 
     sampleDistinct(data, k, new scala.util.Random(seed))
 
+  /** Return a given number of distinct elements randomly selected from data
+    *
+    * @param data The data to sample from
+    * @param k The number of distinct samples to return
+    * @return A collection of k distinct elements randomly selected from the data
+    * @note If the number of distinct elements in the data is < k, an exception will be thrown
+    */
   def sampleDistinct[T](data: Seq[T], k: Int): Seq[T] =
     sampleDistinct(data, k, scala.util.Random.nextLong())
 }
