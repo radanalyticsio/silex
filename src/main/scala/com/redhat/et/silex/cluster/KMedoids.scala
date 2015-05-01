@@ -140,8 +140,6 @@ class KMedoids[T] private (
 }
 
 object KMedoids extends Logging {
-  def wrt[T](rdd: RDD[T])(metric: (T, T) => Double) = new KMedoids(metric)
-
   private[cluster] object default {
     def k = 2
     def maxIterations = 25
