@@ -39,8 +39,16 @@ object KMedoidsSpecSupport {
     }
   }
 
-  val vectorAbs =
-    (x: Vector[Double], y: Vector[Double]) => x.zip(y).map(p => math.abs(p._1 - p._2)).sum
+  val vectorAbs = (x: Vector[Double], y: Vector[Double]) => {
+    val n = x.length
+    var j = 0
+    var s = 0.0
+    while (j < n) {
+      s += math.abs(x(j) - y(j))
+      j += 1
+    }
+    s
+  }
 
   def maxCenterDistance(model: Seq[Seq[Double]], centers: Seq[Seq[Double]]) = {
     model.permutations.map { e =>
