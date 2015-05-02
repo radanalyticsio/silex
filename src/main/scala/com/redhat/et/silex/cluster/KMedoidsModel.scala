@@ -80,8 +80,23 @@ object KMedoidsModel {
     * @param metric The distance metric over the element space
     * @return A function that maps an element to the index of the nearest medoid
     */
-  def predictor[T](medoids: Seq[T], metric: (T, T) => Double) =
-    (point: T) => medoids.iterator.map(e => metric(e, point)).zipWithIndex.minBy(_._1)._2
+  def predictor[T](medoids: Seq[T], metric: (T, T) => Double) = {
+    val n = medoids.length
+    (point: T) => {
+      var mMin = Double.MaxValue
+      var jMin = -1
+      var j = 0
+      while (j < n) {
+        val m = metric(point, medoids(j))
+        if (m < mMin) {
+          mMin = m
+          jMin = j
+        }
+        j += 1
+      }
+      jMin
+    }
+  }
 
   /** Return a distance function with respect to a collection of medoids and a metric
     *
@@ -89,6 +104,17 @@ object KMedoidsModel {
     * @param metric The distance metric over the element space
     * @return A function that maps an element to its distance to the closest medoid
     */
-  def distance[T](medoids: Seq[T], metric: (T, T) => Double) =
-    (point: T) => medoids.iterator.map(e => metric(e, point)).min
+  def distance[T](medoids: Seq[T], metric: (T, T) => Double) = {
+    val n = medoids.length
+    (point: T) => {
+      var mMin = Double.MaxValue
+      var j = 0
+      while (j < n) {
+        val m = metric(point, medoids(j))
+        if (m < mMin) { mMin = m }
+        j += 1
+      }
+      mMin
+    }
+  }
 }
