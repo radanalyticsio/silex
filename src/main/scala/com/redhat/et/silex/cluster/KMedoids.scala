@@ -51,8 +51,34 @@ class KMedoids[T] private (
     KMedoids.default.sampleSize,
     KMedoids.default.seed)
 
-  private def medoidDist(e: T, mv: Seq[T]) = mv.iterator.map(metric(e, _)).min
-  private def medoidIdx(e: T, mv: Seq[T]) = mv.iterator.map(metric(e, _)).zipWithIndex.min._2
+  private def medoidDist(e: T, mv: Seq[T]) = {
+    val n = mv.length
+    var mMin = Double.MaxValue
+    var j = 0
+    while (j < n) {
+      val m = metric(e, mv(j))
+      if (m < mMin) { mMin = m }
+      j += 1
+    }
+    mMin
+  }
+
+  private def medoidIdx(e: T, mv: Seq[T]) = {
+    val n = mv.length
+    var mMin = Double.MaxValue
+    var jMin = 0
+    var j = 0
+    while (j < n) {
+      val m = metric(e, mv(j))
+      if (m < mMin) {
+        mMin = m
+        jMin = j
+      }
+      j += 1
+    }
+    jMin
+  }
+
   private def medoidCost(e: T, data: Seq[T]) = data.iterator.map(metric(e, _)).sum
   private def medoid(data: Seq[T]) = data.iterator.minBy(medoidCost(_, data))
   private def modelCost(mv: Seq[T], data: Seq[T]) = data.iterator.map(medoidDist(_, mv)).sum
