@@ -370,7 +370,7 @@ object KMedoids extends Logging {
       })
     }
     require(s.size == k, "logic error in sampleDistinct")
-    s.toSeq
+    s.toVector
   }
 
   /** Return a given number of distinct elements randomly selected from data
