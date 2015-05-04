@@ -26,19 +26,33 @@ import org.json4s._
 import org.json4s.jackson.JsonMethods._
 
 class TransformerSpec extends FlatSpec with Matchers with PerTestSparkContext {
-  private[frame] val carsExample = JArray(
-    JObject(List(("make", "Jeep"), ("model", "Grand Cherokee"), ("color", "silver"),
-      ("year", "2005"))),
-    JObject(List(("make", "Ford"), ("model", "Fiesta"), ("color", "blue"),
-      ("year", "2011")))
-  )
+  private[frame] val carsExample = JArray(List(
+    JObject(List(
+      JField("make", JString("Jeep")),
+      JField("model", JString("Grand Cherokee")),
+      JField("color", JString("silver")),
+      JField("year", JString("2005")))),
+    JObject(List(
+      JField("make", JString("Ford")),
+      JField("model", JString("Fiesta")),
+      JField("color", JString("blue")),
+      JField("year", JString("2011"))))
+  ))
 
-  private[frame] val carsDescriptionExample = JArray(
-    JObject(List(("make", "Jeep"), ("model", "Grand Cherokee"), ("color", "silver"),
-      ("year", 2005), ("description", "Jeep Grand Cherokee - Silver - 2005"))),
-      JObject(List(("make", "Ford"), ("model", "Fiesta"), ("color", "blue"),
-        ("year", 2011), ("description", "Ford Fiesta - Blue - 2011")))
-  )
+  private[frame] val carsDescriptionExample = JArray(List(
+    JObject(List(
+      JField("make", JString("Jeep")),
+      JField("model", JString("Grand Cherokee")),
+      JField("color", JString("silver")),
+      JField("year", JInt(2005)),
+      JField("description", JString("Jeep Grand Cherokee - Silver - 2005")))),
+    JObject(List(
+      JField("make", JString("Ford")),
+      JField("model", JString("Fiesta")),
+      JField("color", JString("blue")),
+      JField("year", JInt(2011)),
+      JField("description", JString("Ford Fiesta - Blue - 2011"))))
+  ))
 
 
   "JSONTransformer" should "convert years to numbers and add description fields" in {
