@@ -26,7 +26,7 @@ import org.json4s._
 import org.json4s.jackson.JsonMethods._
 
 class TransformerSpec extends FlatSpec with Matchers with PerTestSparkContext {
-  private[frame] val carsExample = JArray(List(
+  private[frame] val carsStringExample = JArray(List(
     JObject(List(
       JField("make", JString("Jeep")),
       JField("model", JString("Grand Cherokee")),
@@ -39,24 +39,35 @@ class TransformerSpec extends FlatSpec with Matchers with PerTestSparkContext {
       JField("year", JString("2011"))))
   ))
 
-  private[frame] val carsDescriptionExample = JArray(List(
+  private[frame] val carsIntExample = JArray(List(
     JObject(List(
       JField("make", JString("Jeep")),
       JField("model", JString("Grand Cherokee")),
       JField("color", JString("silver")),
-      JField("year", JInt(2005)),
-      JField("description", JString("Jeep Grand Cherokee - Silver - 2005")))),
+      JField("year", JInt(2005)))),
     JObject(List(
       JField("make", JString("Ford")),
       JField("model", JString("Fiesta")),
       JField("color", JString("blue")),
-      JField("year", JInt(2011)),
-      JField("description", JString("Ford Fiesta - Blue - 2011"))))
+      JField("year", JInt(2011))))
   ))
 
 
-  "JSONTransformer" should "convert years to numbers and add description fields" in {
-    val exampleString = compact(render(carsExample))
+  "JSONTransformer" should "convert years to numbers" in {
+    val exampleString = compact(render(carsStringExample))
+    val exampleInt = compact(render(carsIntExample))
+
+    val exampleStringRDD = context.parallelize((List(exampleString)))
+    val exampleIntRDD = context.parallelize((List(exampleInt)))
+
+    val transformer: PartialFunction[JValue, JValue] = 
+    { case o: JObject if o.values.get("model").isDefined &&
+      o.values.get("model").get.toInt.isDefined =>
+      o.values.get("model").get.toInt.get
+    }
+    val transformedRDD = exampleStringRDD.transform(transformer)
+
+    assert(transformedRDD.collect().toSet == exampleIntRDD.collect().toSet)
   }
 }
 
