@@ -61,7 +61,7 @@ class DropRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializa
         p += 1
       }
 
-      if (rem > 0  ||  (rem == 0  &&  p >= partitions.length)) {
+      if (rem > 0  ||  (rem == 0  &&  p == partitions.length)) {
         // all elements were dropped
         (p, 0)
       } else {
@@ -145,12 +145,12 @@ class DropRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializa
     val locate = (partitions: Array[Partition], input: RDD[T], ctx: TaskContext) => {
       var p = 0
       var np = 0
-      while (np <= 0  &&  p < partitions.length) {
+      while (np == 0  &&  p < partitions.length) {
         np = input.iterator(partitions(p), ctx).dropWhile(f).length
         p += 1
       }
 
-      if (np <= 0  &&  p >= partitions.length) {
+      if (np == 0  &&  p == partitions.length) {
         // all elements were dropped
         p
       } else {
