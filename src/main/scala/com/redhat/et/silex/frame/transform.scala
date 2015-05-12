@@ -16,18 +16,15 @@
  * limitations under the License.c
  */
 
-package com.redhat.et.silex.frame
-
-import scala.language.implicitConversions
+package com.redhat.et.silex.frame.transform
 
 import org.apache.spark.rdd._
+
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
 
-trait Transformer {
-  def transform(data: RDD[String], transformer: PartialFunction[JValue, JValue]): 
-      RDD[String] = {
-
+object JSONTransformer {
+  def transform(data: RDD[String], transformer: PartialFunction[JValue, JValue]): RDD[String] = {
     data.map { recordString =>
       val jsonAST = parse(recordString)
       val transformedAST = jsonAST.transform(transformer)
@@ -36,13 +33,3 @@ trait Transformer {
   }
 }
 
-private[frame] case class RDDWithTransform(data: RDD[String]) extends Transformer {
-  def transform(transform: PartialFunction[JValue, JValue]):
-      RDD[String] = super.transform(data, transform)
-}
-
-object Transform extends Transformer {  
-  object implicits {
-    implicit def rddWithTransform(data: RDD[String]) = RDDWithTransform(data)
-  }
-}
