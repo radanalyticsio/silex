@@ -19,6 +19,7 @@
 package com.redhat.et.silex.frame
 
 import com.redhat.et.silex.frame.transform._
+import com.redhat.et.silex.frame.transform.JSONTransform.implicits._
 import com.redhat.et.silex.testing.PerTestSparkContext
 
 import org.scalatest._
@@ -71,7 +72,7 @@ class TransformerSpec extends FlatSpec with Matchers with PerTestSparkContext {
       }
     }
 
-    val transformedRDD = JSONTransformer.transform(exampleStringRDD, transformer)
+    val transformedRDD = exampleStringRDD.transform(transformer)
 
     assert(transformedRDD.collect().toSet == exampleIntRDD.collect().toSet)
   }
@@ -88,7 +89,7 @@ class TransformerSpec extends FlatSpec with Matchers with PerTestSparkContext {
           JField("year", scala.util.Try(year.toInt).map(JInt(_)).getOrElse(orig))
     }
 
-    val transformedRDD = JSONTransformer.transformField(exampleStringRDD, transformer)
+    val transformedRDD = exampleStringRDD.transformField(transformer)
 
     assert(transformedRDD.collect().toSet == exampleIntRDD.collect().toSet)
   }

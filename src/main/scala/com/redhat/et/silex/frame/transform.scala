@@ -23,10 +23,12 @@ import org.apache.spark.rdd._
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
 
+import scala.language.implicitConversions
+
 /**
   * Utility methods for massaging JSON-encoded data.
   */
-object JSONTransformer {
+trait JSONTransformer {
 
   /**
     * Apply the given PartialFunction to values in serialized, JSON records.  New
@@ -57,3 +59,28 @@ object JSONTransformer {
   }
 }
 
+private[transform] case class RDDWithTransform(data: RDD[String]) extends JSONTransformer {
+  /**
+    * Apply the given PartialFunction to values in serialized, JSON records.  New
+    * records are returned with the original values replaced by the results of the 
+    * PartialFunction for values on which the PartialFunction matched. See unit the
+    * the for examples.
+    */
+  def transform(transform: PartialFunction[JValue, JValue]): RDD[String] =
+    super.transform(data, transform)
+
+  /**
+    * Apply the given PartialFunction to object fields in serialized, JSON records.
+    * New records are returned with the original fields replaced by the results of the 
+    * PartialFunction for fields on which the PartialFunction matched. See unit the
+    * the for examples.
+    */
+  def transformField(transform: PartialFunction[JField, JField]): RDD[String] =
+    super.transformField(data, transform)
+}
+
+object JSONTransform extends JSONTransformer {
+  object implicits {
+    implicit def rddWithTransform(data: RDD[String]) = RDDWithTransform(data)
+  }
+}
