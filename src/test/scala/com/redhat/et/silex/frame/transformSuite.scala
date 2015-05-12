@@ -18,12 +18,15 @@
 
 package com.redhat.et.silex.frame
 
+import com.redhat.et.silex.frame.transform._
 import com.redhat.et.silex.testing.PerTestSparkContext
 
 import org.scalatest._
 
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
+
+import org.apache.spark._
 
 class TransformerSpec extends FlatSpec with Matchers with PerTestSparkContext {
   private[frame] val carsStringExample = JArray(List(
@@ -61,11 +64,14 @@ class TransformerSpec extends FlatSpec with Matchers with PerTestSparkContext {
     val exampleIntRDD = context.parallelize((List(exampleInt)))
 
     val transformer: PartialFunction[JValue, JValue] = 
-    { case o: JObject if o.values.get("model").isDefined &&
-      o.values.get("model").get.toInt.isDefined =>
-      o.values.get("model").get.toInt.get
+    { case jo: JObject =>
+      jo.transformField {
+        case JField("year", orig @ JString(year)) =>
+          JField("year", scala.util.Try(year.toInt).map(JInt(_)).getOrElse(orig))
+      }
     }
-    val transformedRDD = exampleStringRDD.transform(transformer)
+
+    val transformedRDD = JSONTransformer.transform(exampleStringRDD, transformer)
 
     assert(transformedRDD.collect().toSet == exampleIntRDD.collect().toSet)
   }
