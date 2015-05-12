@@ -23,7 +23,17 @@ import org.apache.spark.rdd._
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
 
+/**
+  * Utility methods for massaging JSON-encoded data.
+  */
 object JSONTransformer {
+
+  /**
+    * Apply the given PartialFunction to values in serialized, JSON records.  New
+    * records are returned with the original values replaced by the results of the 
+    * PartialFunction for values on which the PartialFunction matched. See unit the
+    * the for examples.
+    */
   def transform(data: RDD[String], transformer: PartialFunction[JValue, JValue]): RDD[String] = {
     data.map { recordString =>
       val jsonAST = parse(recordString)
@@ -32,6 +42,12 @@ object JSONTransformer {
     }
   }
 
+  /**
+    * Apply the given PartialFunction to object fields in serialized, JSON records.
+    * New records are returned with the original fields replaced by the results of the 
+    * PartialFunction for fields on which the PartialFunction matched. See unit the
+    * the for examples.
+    */
   def transformField(data: RDD[String], transformer: PartialFunction[JField, JField]): RDD[String] = {
     data.map { recordString =>
       val jsonAST = parse(recordString)
