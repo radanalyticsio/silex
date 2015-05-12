@@ -31,5 +31,13 @@ object JSONTransformer {
       compact(render(transformedAST))
     }
   }
+
+  def transformField(data: RDD[String], transformer: PartialFunction[JField, JField]): RDD[String] = {
+    data.map { recordString =>
+      val jsonAST = parse(recordString)
+      val transformedAST = jsonAST.transformField(transformer)
+      compact(render(transformedAST))
+    }
+  }
 }
 

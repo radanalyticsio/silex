@@ -56,7 +56,7 @@ class TransformerSpec extends FlatSpec with Matchers with PerTestSparkContext {
   ))
 
 
-  "JSONTransformer" should "convert years to numbers" in {
+  "JSONTransformer.transform" should "convert years to numbers" in {
     val exampleString = compact(render(carsStringExample))
     val exampleInt = compact(render(carsIntExample))
 
@@ -72,6 +72,23 @@ class TransformerSpec extends FlatSpec with Matchers with PerTestSparkContext {
     }
 
     val transformedRDD = JSONTransformer.transform(exampleStringRDD, transformer)
+
+    assert(transformedRDD.collect().toSet == exampleIntRDD.collect().toSet)
+  }
+
+  "JSONTransformer.transformField" should "convert years to numbers" in {
+    val exampleString = compact(render(carsStringExample))
+    val exampleInt = compact(render(carsIntExample))
+
+    val exampleStringRDD = context.parallelize((List(exampleString)))
+    val exampleIntRDD = context.parallelize((List(exampleInt)))
+
+    val transformer: PartialFunction[JField, JField] = 
+    {   case JField("year", orig @ JString(year)) =>
+          JField("year", scala.util.Try(year.toInt).map(JInt(_)).getOrElse(orig))
+    }
+
+    val transformedRDD = JSONTransformer.transformField(exampleStringRDD, transformer)
 
     assert(transformedRDD.collect().toSet == exampleIntRDD.collect().toSet)
   }
