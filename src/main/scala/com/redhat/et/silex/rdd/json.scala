@@ -16,7 +16,7 @@
  * limitations under the License.c
  */
 
-package com.redhat.et.silex.frame.json
+package com.redhat.et.silex.rdd.json
 
 import org.apache.spark.rdd._
 

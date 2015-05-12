@@ -16,10 +16,9 @@
  * limitations under the License.c
  */
 
-package com.redhat.et.silex.frame
+package com.redhat.et.silex.rdd.json
 
-import com.redhat.et.silex.frame.json._
-import com.redhat.et.silex.frame.json.JSONTransform.implicits._
+import com.redhat.et.silex.rdd.json.JSONTransform.implicits._
 import com.redhat.et.silex.testing.PerTestSparkContext
 
 import org.scalatest._
@@ -30,7 +29,7 @@ import org.json4s.jackson.JsonMethods._
 import org.apache.spark._
 
 class JSONTransformerSpec extends FlatSpec with Matchers with PerTestSparkContext {
-  private[frame] val carsStringExample = JArray(List(
+  private[json] val carsStringExample = JArray(List(
     JObject(List(
       JField("make", JString("Jeep")),
       JField("model", JString("Grand Cherokee")),
@@ -43,7 +42,7 @@ class JSONTransformerSpec extends FlatSpec with Matchers with PerTestSparkContex
       JField("year", JString("2011"))))
   ))
 
-  private[frame] val carsIntExample = JArray(List(
+  private[json] val carsIntExample = JArray(List(
     JObject(List(
       JField("make", JString("Jeep")),
       JField("model", JString("Grand Cherokee")),
