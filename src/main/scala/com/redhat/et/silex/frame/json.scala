@@ -16,7 +16,7 @@
  * limitations under the License.c
  */
 
-package com.redhat.et.silex.frame.transform
+package com.redhat.et.silex.frame.json
 
 import org.apache.spark.rdd._
 
@@ -59,7 +59,7 @@ trait JSONTransformer {
   }
 }
 
-private[transform] case class RDDWithTransform(data: RDD[String]) extends JSONTransformer {
+private[json] case class RDDWithTransform(data: RDD[String]) extends JSONTransformer {
   /**
     * Apply the given PartialFunction to values in serialized, JSON records.  New
     * records are returned with the original values replaced by the results of the 

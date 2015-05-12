@@ -18,8 +18,8 @@
 
 package com.redhat.et.silex.frame
 
-import com.redhat.et.silex.frame.transform._
-import com.redhat.et.silex.frame.transform.JSONTransform.implicits._
+import com.redhat.et.silex.frame.json._
+import com.redhat.et.silex.frame.json.JSONTransform.implicits._
 import com.redhat.et.silex.testing.PerTestSparkContext
 
 import org.scalatest._
@@ -29,7 +29,7 @@ import org.json4s.jackson.JsonMethods._
 
 import org.apache.spark._
 
-class TransformerSpec extends FlatSpec with Matchers with PerTestSparkContext {
+class JSONTransformerSpec extends FlatSpec with Matchers with PerTestSparkContext {
   private[frame] val carsStringExample = JArray(List(
     JObject(List(
       JField("make", JString("Jeep")),
