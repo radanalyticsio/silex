@@ -82,7 +82,7 @@ class SparklessKMedoidsSpec extends FlatSpec with Matchers {
   scala.util.Random.setSeed(23571113)
 
   it should "except on bad inputs" in {
-    val km = new KMedoids((a: Double, b: Double) => 0.0 )
+    val km = KMedoids((a: Double, b: Double) => 0.0 )
     an [IllegalArgumentException] should be thrownBy (km.setK(-1))
     an [IllegalArgumentException] should be thrownBy (km.setMaxIterations(0))
     an [IllegalArgumentException] should be thrownBy (km.setEpsilon(-0.01))
@@ -205,7 +205,7 @@ class KMedoidsSpec extends FlatSpec with Matchers with PerTestSparkContext {
       Vector(3.0, 3.0)
     )
     val data = generateClusters(centers, 1000, seed=42)
-    val km = new KMedoids(vectorAbs).setK(2).setSeed(73)
+    val km = KMedoids(vectorAbs).setK(2).setSeed(73)
     val model = km.run(context.parallelize(data))
     model.k should be (2)
     maxCenterDistance(model.medoids, centers) should be < (0.15)
@@ -224,13 +224,13 @@ class KMedoidsSpec extends FlatSpec with Matchers with PerTestSparkContext {
     val data = generateClusters(centers, 1000, seed=42)
     val rdd = context.parallelize(data)
 
-    val km1 = new KMedoids(vectorAbs).setK(2).setMaxIterations(5).setSeed(73)
+    val km1 = KMedoids(vectorAbs).setK(2).setMaxIterations(5).setSeed(73)
     val model1 = km1.run(rdd)
 
-    val km2 = new KMedoids(vectorAbs).setK(2).setMaxIterations(5).setSeed(73)
+    val km2 = KMedoids(vectorAbs).setK(2).setMaxIterations(5).setSeed(73)
     val model2 = km2.run(rdd)
 
-    val km3 = new KMedoids(vectorAbs).setK(2).setMaxIterations(5).setSeed(37)
+    val km3 = KMedoids(vectorAbs).setK(2).setMaxIterations(5).setSeed(37)
     val model3 = km3.run(rdd)
 
     // identical model with same random seed
@@ -250,7 +250,7 @@ class KMedoidsSpec extends FlatSpec with Matchers with PerTestSparkContext {
       Vector( 3.0, -3.0,  3.0)
     )
     val data = generateClusters(centers, 3000, seed=42)
-    val km = new KMedoids(vectorAbs)
+    val km = KMedoids(vectorAbs)
       .setK(5)
       .setSeed(73)
       .setFractionEpsilon(0.0)

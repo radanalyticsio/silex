@@ -28,28 +28,96 @@ import org.apache.spark.util.random.XORShiftRandom
   *
   * Data is required to have a metric function defined on it, but it does not require an algebra
   * over data elements, as K-Means clustering does.
+  *
+  * @param metric The distance metric imposed on data elements
+  * @param k The number of clusters to use
+  * @param maxIterations The maximum number of model refinement iterations to run
+  * @param epsilon The epsilon threshold to use.  Must be >= 0.
+  *
+  * If c1 is the current clustering model cost, and c0 is the cost of the previous model,
+  * then refinement halts when (c0 - c1) <= epsilon (Lower cost is better).
+  * @param fractionEpsilon The fractionEpsilon threshold to use.  Must be >= 0.
+  *
+  * If c1 is the current clustering model cost, and c0 is the cost of the previous model,
+  * then refinement halts when (c0 - c1) / c0 <= fractionEpsilon (Lower cost is better).
+  * @param sampleSize The target size of the random sample.  Must be > 0.
+  * @param seed The random seed to use for RNG.
+  *
+  * Cluster training runs with the same starting random seed will be the same.  By default,
+  * training runs will vary randomly.
   */
-class KMedoids[T] private (
-  private var metric: (T, T) => Double,
-  private var k: Int,
-  private var maxIterations: Int,
-  private var epsilon: Double,
-  private var fractionEpsilon: Double,
-  private var sampleSize: Int,
-  private var seed: Long) extends Serializable with Logging {
+case class KMedoids[T](
+  metric: (T, T) => Double,
+  k: Int,
+  maxIterations: Int,
+  epsilon: Double,
+  fractionEpsilon: Double,
+  sampleSize: Int,
+  seed: Long
+  ) extends Serializable with Logging {
 
-  /** Constructs a KMedoids instance from a given metric function
+  require(k > 0, s"k= ${k} must be > 0")
+  require(maxIterations > 0, s"maxIterations= ${maxIterations} must be > 0")
+  require(epsilon >= 0.0, s"epsilon= ${epsilon} must be >= 0.0")
+  require(fractionEpsilon >= 0.0, s"fractionEpsilon= ${fractionEpsilon} must be >= 0.0")
+  require(sampleSize > 0, s"sampleSize= ${sampleSize} must be > 0")
+
+  /** Set the distance metric to use over data elements
     *
-    * @param metric A metric function defined on data elements
+    * @param metric_ The distance metric
+    * @return Copy of this instance with new metric
     */
-  def this(metric: (T, T) => Double) = this(
-    metric,
-    KMedoids.default.k,
-    KMedoids.default.maxIterations,
-    KMedoids.default.epsilon,
-    KMedoids.default.fractionEpsilon,
-    KMedoids.default.sampleSize,
-    KMedoids.default.seed)
+  def setMetric(metric_ : (T, T) => Double) = this.copy(metric = metric_)
+
+  /** Set the number of clusters to train
+    *
+    * @param k_ The number of clusters.  Must be > 0.
+    * @return Copy of this instance with new value for k
+    */
+  def setK(k_ : Int) = this.copy(k = k_)
+
+  /** Set the maximum number of iterations to allow before halting cluster refinement.
+    *
+    * @param maxIterations_ The maximum number of refinement iterations.  Must be > 0.
+    * @return Copy of this instance, with updated value for maxIterations
+    */
+  def setMaxIterations(maxIterations_ : Int) = this.copy(maxIterations = maxIterations_)
+
+  /** Set epsilon halting threshold for clustering cost improvement between refinements.
+    *
+    * If c1 is the current clustering model cost, and c0 is the cost of the previous model,
+    * then refinement halts when (c0 - c1) <= epsilon (Lower cost is better).
+    *
+    * @param epsilon_ The epsilon threshold to use.  Must be >= 0.
+    * @return Copy of this instance, with updated value of epsilon
+    */
+  def setEpsilon(epsilon_ : Double) = this.copy(epsilon = epsilon_)
+
+  /** Set fractionEpsilon threshold for clustering cost improvement between refinements.
+    *
+    * If c1 is the current clustering model cost, and c0 is the cost of the previous model,
+    * then refinement halts when (c0 - c1) / c0 <= fractionEpsilon (Lower cost is better).
+    * @param fractionEpsilon_ The fractionEpsilon threshold to use.  Must be >= 0.
+    * @return Copy of this instance, with updated fractionEpsilon setting
+    */
+  def setFractionEpsilon(fractionEpsilon_ : Double) = this.copy(fractionEpsilon = fractionEpsilon_)
+
+  /** Set the size of the random sample to take from input data to use for clustering.
+    *
+    * @param sampleSize_ The target size of the random sample.  Must be > 0.
+    * @return Copy of this instance, with updated value of sampleSize
+    */
+  def setSampleSize(sampleSize_ : Int) = this.copy(sampleSize = sampleSize_)
+
+  /** Set the random number generation (RNG) seed.
+    *
+    * Cluster training runs with the same starting random seed will be the same.  By default,
+    * training runs will vary randomly.
+    *
+    * @param seed_ The random seed to use for RNG
+    * @return Copy of this instance, with updated random seed
+    */
+  def setSeed(seed_ : Long) = this.copy(seed = seed_)
 
   private def medoidDist(e: T, mv: Seq[T]) = {
     val n = mv.length
@@ -82,89 +150,6 @@ class KMedoids[T] private (
   private def medoidCost(e: T, data: Seq[T]) = data.iterator.map(metric(e, _)).sum
   private def medoid(data: Seq[T]) = data.iterator.minBy(medoidCost(_, data))
   private def modelCost(mv: Seq[T], data: Seq[T]) = data.iterator.map(medoidDist(_, mv)).sum
-
-  /** Set the distance metric to use over data elements
-    *
-    * @param metric The distance metric
-    * @return This instance after setting metric
-    */
-  def setMetric(metric: (T, T) => Double): this.type = {
-    this.metric = metric
-    this
-  }
-
-  /** Set the number of clusters to train
-    *
-    * @param k The number of clusters.  Must be > 0.
-    * @return This instance, after setting k
-    */
-  def setK(k: Int): this.type = {
-    require(k > 0, s"k= $k must be > 0")
-    this.k = k
-    this
-  }
-
-  /** Set the maximum number of iterations to allow before halting cluster refinement.
-    *
-    * @param maxIterations The maximum number of refinement iterations.  Must be > 0.
-    * @return This instance, after setting maxIterations
-    */
-  def setMaxIterations(maxIterations: Int): this.type = {
-    require(maxIterations > 0, s"maxIterations= $maxIterations must be > 0")
-    this.maxIterations = maxIterations
-    this
-  }
-
-  /** Set epsilon halting threshold for clustering cost improvement between refinements.
-    *
-    * If c1 is the current clustering model cost, and c0 is the cost of the previous model,
-    * then refinement halts when (c0 - c1) <= epsilon (Lower cost is better).
-    *
-    * @param epsilon The epsilon threshold to use.  Must be >= 0.
-    * @return This instance, after setting epsilon
-    */
-  def setEpsilon(epsilon: Double): this.type = {
-    require(epsilon >= 0.0, s"epsilon= $epsilon must be >= 0.0")
-    this.epsilon = epsilon
-    this
-  }
-
-  /** Set fractionEpsilon threshold for clustering cost improvement between refinements.
-    *
-    * If c1 is the current clustering model cost, and c0 is the cost of the previous model,
-    * then refinement halts when (c0 - c1) / c0 <= fractionEpsilon (Lower cost is better).
-    * @param fractionEpsilon The fractionEpsilon threshold to use.  Must be >= 0.
-    * @return This instance, after setting fractionEpsilon
-    */
-  def setFractionEpsilon(fractionEpsilon: Double): this.type = {
-    require(fractionEpsilon >= 0.0, s"fractionEpsilon= $fractionEpsilon must be >= 0.0")
-    this.fractionEpsilon = fractionEpsilon
-    this
-  }
-
-  /** Set the size of the random sample to take from input data to use for clustering.
-    *
-    * @param sampleSize The target size of the random sample.  Must be > 0.
-    * @return This instance, after setting sampleSize
-    */
-  def setSampleSize(sampleSize: Int): this.type = {
-    require(sampleSize > 0, s"sampleSize= $sampleSize must be > 0")
-    this.sampleSize = sampleSize
-    this
-  }
-
-  /** Set the random number generation (RNG) seed.
-    *
-    * Cluster training runs with the same starting random seed will be the same.  By default,
-    * training runs will vary randomly.
-    *
-    * @param seed The random seed to use for RNG
-    * @return This instance, after setting seed
-    */
-  def setSeed(seed: Long): this.type = {
-    this.seed = seed
-    this
-  }
 
   /** Perform a K-Medoid clustering model training run on some input data
     *
@@ -287,6 +272,34 @@ object KMedoids extends Logging {
     def sampleSize = 1000
     def seed = scala.util.Random.nextLong()
   }
+
+  /** Return a KMedoids object with the given metric function, and other parameters defaulted.
+    *
+    * Defaults are as follows:
+    *
+    * k = 2
+    *
+    * maxIterations = 25
+    *
+    * epsilon = 0.0
+    *
+    * fractionEpsilon = 0.0001
+    *
+    * sampleSize = 1000
+    *
+    * seed = randomly initialized seed value
+    *
+    * @param metric The metric function to impose on elements of the data space
+    */
+  def apply[T](metric : (T, T) => Double): KMedoids[T] =
+    KMedoids(
+      metric,
+      default.k,
+      default.maxIterations,
+      default.epsilon,
+      default.fractionEpsilon,
+      default.sampleSize,
+      default.seed)
 
   /** Return the random sampling fraction corresponding to a desired number of samples
     *
