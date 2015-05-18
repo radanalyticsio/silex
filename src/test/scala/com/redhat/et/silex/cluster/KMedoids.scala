@@ -88,6 +88,7 @@ class SparklessKMedoidsSpec extends FlatSpec with Matchers {
     an [IllegalArgumentException] should be thrownBy (km.setEpsilon(-0.01))
     an [IllegalArgumentException] should be thrownBy (km.setFractionEpsilon(-0.01))
     an [IllegalArgumentException] should be thrownBy (km.setSampleSize(0))
+    an [IllegalArgumentException] should be thrownBy (km.setNumThreads(0))
   }
 
   it should "sample Seq by size" in {
@@ -259,5 +260,26 @@ class KMedoidsSpec extends FlatSpec with Matchers with PerTestSparkContext {
     val model = km.run(context.parallelize(data))
     model.k should be (5)
     maxCenterDistance(model.medoids, centers) should be < (0.25)
+  }
+
+  it should "support multithreading" in {
+    val centers = List(
+      Vector(0.0, 0.0),
+      Vector(3.0, 3.0)
+    )
+    val data = generateClusters(centers, 1000, seed=42)
+
+    // Run with a single thread
+    val km1 = KMedoids(vectorAbs).setK(2).setNumThreads(1).setSeed(73)
+    val model1 = km1.run(context.parallelize(data))
+    model1.k should be (2)
+
+    // Ideally I'd like to at least check that this runs faster than one thread
+    // However I have no control over the available cores, and so I will check that
+    // it just runs, doesn't fall over, and yields the exact same result given the
+    // same random seed
+    val model2 = km1.setNumThreads(2).run(context.parallelize(data))
+    model2.k should be (model1.k)
+    maxCenterDistance(model1.medoids, model2.medoids) should be (0.0)
   }
 }

@@ -20,6 +20,9 @@ package com.redhat.et.silex.cluster
 
 import scala.util.Random
 
+import scala.concurrent.forkjoin.ForkJoinPool
+import scala.collection.parallel.ForkJoinTaskSupport
+
 import org.apache.spark.rdd.RDD
 import org.apache.spark.Logging
 import org.apache.spark.util.random.XORShiftRandom
@@ -41,6 +44,7 @@ import org.apache.spark.util.random.XORShiftRandom
   * If c1 is the current clustering model cost, and c0 is the cost of the previous model,
   * then refinement halts when (c0 - c1) / c0 <= fractionEpsilon (Lower cost is better).
   * @param sampleSize The target size of the random sample.  Must be > 0.
+  * @param numThreads The number of threads to use while clustering
   * @param seed The random seed to use for RNG.
   *
   * Cluster training runs with the same starting random seed will be the same.  By default,
@@ -53,6 +57,7 @@ case class KMedoids[T](
   epsilon: Double,
   fractionEpsilon: Double,
   sampleSize: Int,
+  numThreads: Int,
   seed: Long
   ) extends Serializable with Logging {
 
@@ -61,6 +66,7 @@ case class KMedoids[T](
   require(epsilon >= 0.0, s"epsilon= ${epsilon} must be >= 0.0")
   require(fractionEpsilon >= 0.0, s"fractionEpsilon= ${fractionEpsilon} must be >= 0.0")
   require(sampleSize > 0, s"sampleSize= ${sampleSize} must be > 0")
+  require(numThreads > 0, s"numThreads= $numThreads must be > 0")
 
   /** Set the distance metric to use over data elements
     *
@@ -109,6 +115,13 @@ case class KMedoids[T](
     */
   def setSampleSize(sampleSize_ : Int) = this.copy(sampleSize = sampleSize_)
 
+  /** Set the number of threads to use for clustering runs
+    *
+    * @param numThreads_ The number of threads to use while clustering.  Must be > 0.
+    * @return Copy of this instance with updated value of numThreads
+    */
+  def setNumThreads(numThreads_ : Int) = this.copy(numThreads = numThreads_)
+
   /** Set the random number generation (RNG) seed.
     *
     * Cluster training runs with the same starting random seed will be the same.  By default,
@@ -148,8 +161,13 @@ case class KMedoids[T](
   }
 
   private def medoidCost(e: T, data: Seq[T]) = data.iterator.map(metric(e, _)).sum
-  private def medoid(data: Seq[T]) = data.iterator.minBy(medoidCost(_, data))
   private def modelCost(mv: Seq[T], data: Seq[T]) = data.iterator.map(medoidDist(_, mv)).sum
+
+  private def medoid(data: Seq[T], threadPool: ForkJoinPool) = {
+    val pardata = data.par
+    pardata.tasksupport = new ForkJoinTaskSupport(threadPool)
+    pardata.minBy(medoidCost(_, data))
+  }
 
   /** Perform a K-Medoid clustering model training run on some input data
     *
@@ -187,6 +205,7 @@ case class KMedoids[T](
 
   private def doRun(data: Seq[T], rng: scala.util.Random) = {
     val startTime = System.nanoTime
+    val threadPool = new ForkJoinPool(numThreads)
     logInfo(s"initializing model from $k random elements")
     var current = KMedoids.sampleDistinct(data, k, rng)
     var currentCost = modelCost(current, data)
@@ -196,7 +215,7 @@ case class KMedoids[T](
     logInfo(f"model initialization completed $initSeconds%.1f sec")
 
     logInfo(s"refining model")
-    val (refined, refinedCost, itr, converged) = refine(data, current, currentCost)
+    val (refined, refinedCost, itr, converged) = refine(data, current, currentCost, threadPool)
 
     val avgSeconds = (System.nanoTime - itrStartTime) / 1e9 / itr
     logInfo(f"finished at $itr iterations with model cost= $refinedCost%.6g   avg sec per iteration= $avgSeconds%.1f")
@@ -206,7 +225,8 @@ case class KMedoids[T](
   private def refine(
     data: Seq[T],
     initial: Seq[T],
-    initialCost: Double): (Seq[T], Double, Int, Boolean) = {
+    initialCost: Double,
+    threadPool: ForkJoinPool): (Seq[T], Double, Int, Boolean) = {
 
     val runStartTime = System.nanoTime
 
@@ -223,7 +243,9 @@ case class KMedoids[T](
       val itrSeconds = (itrTime - itrStartTime) / 1e9
       logInfo(f"iteration $itr  cost= $currentCost%.6g  elapsed= $itrSeconds%.1f")
 
-      val next = data.groupBy(medoidIdx(_, current)).toVector.sortBy(_._1).map(_._2).map(medoid)
+      val clusters = data.groupBy(medoidIdx(_, current)).toVector.sortBy(_._1).map(_._2).par
+      clusters.tasksupport = new ForkJoinTaskSupport(threadPool)
+      val next = clusters.map(medoid(_, threadPool)).toVector
       val nextCost = modelCost(next, data)
 
       val curSeconds = (System.nanoTime - itrTime) / 1e9
@@ -270,6 +292,7 @@ object KMedoids extends Logging {
     def epsilon = 0.0
     def fractionEpsilon = 0.0001
     def sampleSize = 1000
+    def numThreads = 1
     def seed = scala.util.Random.nextLong()
   }
 
@@ -287,6 +310,8 @@ object KMedoids extends Logging {
     *
     * sampleSize = 1000
     *
+    * numThreads = 1
+    *
     * seed = randomly initialized seed value
     *
     * @param metric The metric function to impose on elements of the data space
@@ -299,6 +324,7 @@ object KMedoids extends Logging {
       default.epsilon,
       default.fractionEpsilon,
       default.sampleSize,
+      default.numThreads,
       default.seed)
 
   /** Return the random sampling fraction corresponding to a desired number of samples
