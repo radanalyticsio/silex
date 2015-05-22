@@ -30,10 +30,10 @@ class KMedoidsModel[T](
   val metric: (T, T) => Double) extends Serializable {
 
   /** The model prediction function: maps an element to the index of the closest medoid */
-  @transient val predictor = KMedoidsModel.predictor(medoids, metric)
+  @transient lazy val predictor = KMedoidsModel.predictor(medoids, metric)
 
   /** The model distance function: maps an element to its distance to the closest medoid */
-  @transient val distance = KMedoidsModel.distance(medoids, metric)
+  @transient lazy val distance = KMedoidsModel.distance(medoids, metric)
 
   /** The number of medoids in the model */
   def k = medoids.length
@@ -81,13 +81,14 @@ object KMedoidsModel {
     * @return A function that maps an element to the index of the nearest medoid
     */
   def predictor[T](medoids: Seq[T], metric: (T, T) => Double) = {
-    val n = medoids.length
+    val med = medoids.toVector
+    val n = med.length
     (point: T) => {
-      var mMin = Double.MaxValue
-      var jMin = -1
+      var mMin = Double.MaxValue  // distance from point to closest cluster medoid
+      var jMin = -1               // index of closest medoid
       var j = 0
       while (j < n) {
-        val m = metric(point, medoids(j))
+        val m = metric(point, med(j))
         if (m < mMin) {
           mMin = m
           jMin = j
@@ -105,12 +106,13 @@ object KMedoidsModel {
     * @return A function that maps an element to its distance to the closest medoid
     */
   def distance[T](medoids: Seq[T], metric: (T, T) => Double) = {
-    val n = medoids.length
+    val med = medoids.toVector
+    val n = med.length
     (point: T) => {
-      var mMin = Double.MaxValue
+      var mMin = Double.MaxValue  // distance from point to closest cluster medoids
       var j = 0
       while (j < n) {
-        val m = metric(point, medoids(j))
+        val m = metric(point, med(j))
         if (m < mMin) { mMin = m }
         j += 1
       }

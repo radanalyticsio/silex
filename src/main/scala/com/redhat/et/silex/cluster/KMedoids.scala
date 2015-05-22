@@ -131,9 +131,14 @@ case class KMedoids[T](
     */
   def setSeed(seed_ : Long) = this.copy(seed = seed_)
 
-  private def medoidDist(e: T, mv: Seq[T]) = {
-    val n = mv.length
-    var mMin = Double.MaxValue
+  /** Obtain the minimum distance from element (e) to a collection of cluster medoids (mv)
+    * @param e An element of the data space
+    * @param mv A collection of cluster medoids
+    * @return The minimum distance from (e) to one of the medoids in (mv)
+    */
+  private def medoidDist(e: T, mv: Vector[T]) = {
+    val n = mv.length            // number of cluster medoids
+    var mMin = Double.MaxValue   // maintains minimum distance
     var j = 0
     while (j < n) {
       val m = metric(e, mv(j))
@@ -143,10 +148,15 @@ case class KMedoids[T](
     mMin
   }
 
-  private def medoidIdx(e: T, mv: Seq[T]) = {
-    val n = mv.length
-    var mMin = Double.MaxValue
-    var jMin = 0
+  /** Obtain the index of a cluster medoid that is closest to element (e)
+    * @param e An element of the data space
+    * @param mv A collection of cluster medoids
+    * @return The index of medoid in (mv) with least distance to (e)
+    */
+  private def medoidIdx(e: T, mv: Vector[T]) = {
+    val n = mv.length            // number of cluster medoids
+    var mMin = Double.MaxValue   // maintain minimum distance
+    var jMin = 0                 // index of medoid with minimum distance
     var j = 0
     while (j < n) {
       val m = metric(e, mv(j))
@@ -160,7 +170,7 @@ case class KMedoids[T](
   }
 
   private def medoidCost(e: T, data: Seq[T]) = data.iterator.map(metric(e, _)).sum
-  private def modelCost(mv: Seq[T], data: Seq[T]) = data.iterator.map(medoidDist(_, mv)).sum
+  private def modelCost(mv: Vector[T], data: Seq[T]) = data.iterator.map(medoidDist(_, mv)).sum
 
   private def medoid(data: Seq[T], threadPool: ForkJoinPool) = {
     val pardata = data.par
@@ -206,7 +216,7 @@ case class KMedoids[T](
     val startTime = System.nanoTime
     val threadPool = new ForkJoinPool(numThreads)
     logInfo(s"initializing model from $k random elements")
-    var current = KMedoids.sampleDistinct(data, k, rng)
+    var current = KMedoids.sampleDistinct(data, k, rng).toVector
     var currentCost = modelCost(current, data)
 
     val itrStartTime = System.nanoTime
@@ -223,9 +233,9 @@ case class KMedoids[T](
 
   private def refine(
     data: Seq[T],
-    initial: Seq[T],
+    initial: Vector[T],
     initialCost: Double,
-    threadPool: ForkJoinPool): (Seq[T], Double, Int, Boolean) = {
+    threadPool: ForkJoinPool): (Vector[T], Double, Int, Boolean) = {
 
     val runStartTime = System.nanoTime
 
@@ -285,6 +295,11 @@ case class KMedoids[T](
 
 /** Utilities used by K-Medoids clustering */
 object KMedoids extends Logging {
+
+  /** Default values for KMedoids class paramers.
+    * @note If you alter these, make sure you update documentation, update the corresponding
+    * doc for the [[apply]] method below
+    */
   private[cluster] object default {
     def k = 2
     def maxIterations = 25
