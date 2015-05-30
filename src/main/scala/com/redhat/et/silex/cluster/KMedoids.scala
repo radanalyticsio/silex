@@ -170,7 +170,8 @@ case class KMedoids[T](
   }
 
   private def medoidCost(e: T, data: Seq[T]) = data.iterator.map(metric(e, _)).sum
-  private def modelCost(mv: Vector[T], data: Seq[T]) = data.iterator.map(medoidDist(_, mv)).sum
+  private def modelCost(mv: Vector[T], data: Seq[T]) =
+    data.iterator.map(medoidDist(_, mv)).sum / data.length.toDouble
 
   private def medoid(data: Seq[T], threadPool: ForkJoinPool) = {
     val pardata = data.par

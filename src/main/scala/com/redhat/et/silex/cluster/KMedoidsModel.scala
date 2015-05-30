@@ -57,18 +57,29 @@ class KMedoidsModel[T](
     * Model cost is defined as the sum of closest-distances over the data elements
     *
     * @param data The input data to compute the cost over
+    * @param normalized If true, compute cost normalized by number of data elements.
+    * Defaults to false.
     * @return The sum of closest-distances over the data elements
     */
-  def cost(data: RDD[T]) = data.map(distance).sum()
+  def cost(data: RDD[T], normalized: Boolean = false) = {
+    if (normalized) {
+      val n = data.count
+      if (n > 0) data.map(distance).sum() / n.toDouble else 0.0
+    } else {
+      data.map(distance).sum()
+    }
+  }
 
   /** Return the model cost with respect to the given data
     *
     * Model cost is defined as the sum of closest-distances over the data elements
     *
     * @param data The input data to compute the cost over
+    * @param normalized If true, compute cost normalized by number of data elements.
+    * Defaults to false.
     * @return The sum of closest-distances over the data elements
     */
-  def computeCost(data: RDD[T]) = cost(data)
+  def computeCost(data: RDD[T], normalized: Boolean = false) = cost(data, normalized)
 }
 
 /** Utility functions for KMedoidsModel */
