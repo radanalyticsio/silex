@@ -2,7 +2,7 @@ name := "silex"
 
 organization := "com.redhat.et"
 
-version := "0.0.5"
+version := "0.0.6"
 
 val SPARK_VERSION = "1.3.1"
 
