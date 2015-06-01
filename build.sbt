@@ -2,7 +2,7 @@ name := "silex"
 
 organization := "com.redhat.et"
 
-version := "0.0.5"
+version := "0.0.6"
 
 val SPARK_VERSION = "1.3.1"
 
@@ -17,6 +17,8 @@ libraryDependencies += "org.apache.spark" %% "spark-mllib" % SPARK_VERSION % "pr
 libraryDependencies ++= Seq("joda-time" % "joda-time" % "2.7", "org.joda" % "joda-convert" % "1.7")
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % Test
+
+libraryDependencies += "org.json4s" %% "json4s-jackson" % "3.2.11"
 
 seq(bintraySettings:_*)
 
