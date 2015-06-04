@@ -18,7 +18,7 @@ libraryDependencies ++= Seq("joda-time" % "joda-time" % "2.7", "org.joda" % "jod
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % Test
 
-libraryDependencies += "org.json4s" %% "json4s-jackson" % "3.2.11"
+libraryDependencies += "org.json4s" %% "json4s-jackson" % "3.2.10" % "provided"
 
 seq(bintraySettings:_*)
 
