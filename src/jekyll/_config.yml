@@ -7,7 +7,7 @@ url: "http://silex.freevariable.com/"
 author:
   name: William Benton and others
 
-silexVersion: 0.0.6
+silexVersion: 0.0.7
 
 # Build settings
 markdown: kramdown
