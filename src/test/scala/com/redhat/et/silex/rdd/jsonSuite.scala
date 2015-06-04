@@ -27,6 +27,7 @@ import org.json4s._
 import org.json4s.jackson.JsonMethods._
 
 import org.apache.spark._
+import org.apache.spark.sql._
 
 class JSONTransformerSpec extends FlatSpec with Matchers with PerTestSparkContext {
   private[json] val carsStringExample = JArray(List(
@@ -91,6 +92,15 @@ class JSONTransformerSpec extends FlatSpec with Matchers with PerTestSparkContex
     val transformedRDD = exampleStringRDD.transformField(transformer)
 
     assert(transformedRDD.collect().toSet == exampleIntRDD.collect().toSet)
+  }
+  
+  "JSONTransformer" should "not conflict with Spark SQL's use of JSON" in {
+    val sqlc = new SQLContext(context)
+    
+    import sqlc.implicits._
+    
+    val df = context.parallelize(1 to 100).toDF("i")
+    df.show(0)
   }
 }
 
