@@ -19,6 +19,8 @@
 package com.redhat.et.silex.sample.iid
 
 import org.apache.spark.rdd.RDD
+import org.apache.spark.Logging
+
 import com.redhat.et.silex.feature.extractor.FeatureSeq
 
 /** Interface for enriched i.i.d. feature sampling methods on sequence-like collections of
@@ -27,13 +29,13 @@ import com.redhat.et.silex.feature.extractor.FeatureSeq
   * marginal distributions as the input features.  The underlying feature vector representation
   * is not assumed by this interface; multiple representations might be supported
   */
-abstract class IIDFeatureSamplingMethods extends Serializable {
+abstract class IIDFeatureSamplingMethods extends Serializable with Logging {
   /** Generate a new synthetic RDD whose rows are i.i.d sampled from input feature vectors
     */
   def iidFeatureSeqRDD(
       n: Int,
-      iSS: Int = 1000,
-      oSS: Int = 1000
+      iSS: Int = 10000,
+      oSS: Int = 10000
       ): RDD[FeatureSeq]
 }
 
