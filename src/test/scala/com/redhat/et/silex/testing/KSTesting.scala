@@ -49,12 +49,12 @@ object KSTesting {
     require(n > 0)
     require(cdf1(n-1) == 1.0)
     require(cdf2(n-1) == 1.0)
-    cdf1.zip(cdf2).map { x => Math.abs(x._1 - x._2) }.max
+    cdf1.iterator.zip(cdf2.iterator).map { x => Math.abs(x._1 - x._2) }.max
   }
 
   // Returns the median KS 'D' statistic between two samples, over (m) sampling trials
-  // to-do: generalize to support any N <: Numeric
-  def medianKSD(data1: => Iterator[Int], data2: => Iterator[Int], m: Int = 5): Double = {
+  def medianKSD[N](data1: => Iterator[N], data2: => Iterator[N], m: Int = 5)
+      (implicit ord: math.Ordering[N]): Double = {
     val t = Array.fill[Double](m) {
       val (c1, c2) = cumulants(data1.take(sampleSize).toVector,
                                data2.take(sampleSize).toVector)
@@ -64,26 +64,63 @@ object KSTesting {
     t(m / 2)
   }
 
-  // Returns the cumulative distribution from a histogram
-  private def cumulativeDist(hist: Array[Int]): Array[Double] = {
-    val n = hist.sum.toDouble
-    require(n > 0.0)
-    hist.scanLeft(0)(_ + _).drop(1).map { _.toDouble / n }
-  }
-
   // Returns aligned cumulative distributions from two arrays of data
   // to-do: generalize to support any N <: Numeric
-  private def cumulants(d1: Seq[Int], d2: Seq[Int],
-      ss: Int = sampleSize): (Array[Double], Array[Double]) = {
+  private def cumulants[N](d1: Seq[N], d2: Seq[N],
+      ss: Int = sampleSize)(implicit ord: math.Ordering[N]) = {
     require(math.min(d1.length, d2.length) > 0)
-    require(math.min(d1.min, d2.min)  >=  0)
-    val m = 1 + math.max(d1.max, d2.max)
-    val h1 = Array.fill[Int](m)(0)
-    val h2 = Array.fill[Int](m)(0)
-    for (v <- d1) { h1(v) += 1 }
-    for (v <- d2) { h2(v) += 1 }
+    val (m1, m2) = (hist(d1), hist(d2))
+    val itr1 = m1.toVector.sortBy(_._1).iterator.buffered
+    val itr2 = m2.toVector.sortBy(_._1).iterator.buffered
+    val h1 = scala.collection.mutable.ArrayBuffer.empty[Int]
+    val h2 = scala.collection.mutable.ArrayBuffer.empty[Int]
+    // Construct aligned histograms
+    while (itr1.hasNext && itr2.hasNext) {
+      val (x1, c1) = itr1.head
+      val (x2, c2) = itr2.head
+      if (ord.lt(x1, x2)) {
+        h1 += c1
+        h2 += 0
+        itr1.next
+      } else if (ord.lt(x2, x1)) {
+        h1 += 0
+        h2 += c2
+        itr2.next
+      } else {
+        h1 += c1
+        h2 += c2
+        itr1.next
+        itr2.next
+      }
+    }
+    // At most one of these will have any data left after previous loop
+    while (itr1.hasNext) {
+      val (x1, c1) = itr1.next
+      h1 += c1
+      h2 += 0
+    }
+    while (itr2.hasNext) {
+      val (x2, c2) = itr2.next
+      h1 += 0
+      h2 += c2
+    }
     require(h1.sum == h2.sum)
     require(h1.sum == ss)
     (cumulativeDist(h1), cumulativeDist(h2))
+  }
+
+  // Returns the cumulative distribution from a histogram
+  private def cumulativeDist(hist: Seq[Int]) = {
+    val n = hist.sum.toDouble
+    require(n > 0.0)
+    hist.iterator.scanLeft(0)(_ + _).drop(1).map(_.toDouble / n).toVector
+  }
+
+  private def hist[N](data: Seq[N]) = {
+    val map = scala.collection.mutable.Map.empty[N, Int]
+    data.foreach { x =>
+      map += ((x, 1 + map.getOrElse(x, 0)))
+    }
+    map
   }
 }
