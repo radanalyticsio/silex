@@ -65,7 +65,7 @@ object KSTesting {
   }
 
   // Returns aligned cumulative distributions from two arrays of data
-  // to-do: generalize to support any N <: Numeric
+  // Type parameter 'N' can be any type with an Ordering
   private def cumulants[N](d1: Seq[N], d2: Seq[N],
       ss: Int = sampleSize)(implicit ord: math.Ordering[N]) = {
     require(math.min(d1.length, d2.length) > 0)
@@ -74,7 +74,8 @@ object KSTesting {
     val itr2 = m2.toVector.sortBy(_._1).iterator.buffered
     val h1 = scala.collection.mutable.ArrayBuffer.empty[Int]
     val h2 = scala.collection.mutable.ArrayBuffer.empty[Int]
-    // Construct aligned histograms
+    // Construct aligned histograms via merging logic
+    // Assumes a pair of buffered iterators, each in sorted order
     while (itr1.hasNext && itr2.hasNext) {
       val (x1, c1) = itr1.head
       val (x2, c2) = itr2.head
