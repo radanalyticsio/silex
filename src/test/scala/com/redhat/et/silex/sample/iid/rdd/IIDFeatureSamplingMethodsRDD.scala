@@ -23,7 +23,7 @@ import com.redhat.et.silex.testing.PerTestSparkContext
 import org.scalatest._
 
 import com.redhat.et.silex.testing.matchers._
-import com.redhat.et.silex.testing.KSTesting
+import com.redhat.et.silex.testing.KSTesting.{ medianKSD, SamplingIterator, D }
 
 class IIDFeatureSamplingMethodsRDDSpec extends FlatSpec with Matchers with PerTestSparkContext {
   import com.redhat.et.silex.sample.iid.implicits._
@@ -31,6 +31,17 @@ class IIDFeatureSamplingMethodsRDDSpec extends FlatSpec with Matchers with PerTe
   // Generate an endless sampling stream from a block that generates a TraversableOnce
   def sampleStream[T](blk: => TraversableOnce[T]) =
     Iterator.from(0).flatMap { u => blk.toIterator }
+
+/*
+  // Data is assumed to be infinite: hasNext will never return false
+  def iidTest(data: SamplingIterator[Seq[Double]]) {
+    val idxSet = (0 until data.head.length).toVector
+    idxSet.combinations(2).permutations.foreach { idxPair =>
+      val (j, r) = idxPair
+      val vals = data.
+    }
+  }
+*/
 
   scala.util.Random.setSeed(23571113)
 
@@ -44,18 +55,14 @@ class IIDFeatureSamplingMethodsRDDSpec extends FlatSpec with Matchers with PerTe
     val iid = rdd.iidFeatureSeqRDD(9999, iSS = 1000, oSS = 1000).collect
     iid.length should be (9999)
 
-    KSTesting.medianKSD(
-      sampleStream { iid.map(_(0)) },
-      sampleStream {
-        (1 to 1000).map { u => if (scala.util.Random.nextDouble() < 0.2) 0.0 else 1.0 }
-      }
-    ) should be < KSTesting.D
+    medianKSD(
+      SamplingIterator { iid.map(_(0)) },
+      SamplingIterator { Iterator.single(if (scala.util.Random.nextDouble() < 0.2) 0.0 else 1.0) }
+    ) should be < D
 
-    KSTesting.medianKSD(
-      sampleStream { iid.map(_(1)) },
-      sampleStream {
-        (1 to 1000).map { u => if (scala.util.Random.nextDouble() < 0.2) 1.0 else 0.0 }
-      }
-    ) should be < KSTesting.D
+    medianKSD(
+      SamplingIterator { iid.map(_(1)) },
+      SamplingIterator { Iterator.single(if (scala.util.Random.nextDouble() < 0.2) 1.0 else 0.0) }
+    ) should be < D
   }
 }

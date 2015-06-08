@@ -42,8 +42,39 @@ object KSTesting {
   val sampleSize = 1000
   val D = 0.0544280747619
 
-  // Computes the Kolmogorov-Smirnov 'D' statistic from two cumulative distributions
-  def KSD(cdf1: Seq[Double], cdf2: Seq[Double]): Double = {
+  // Designed to take a block of code that returns some sequence of values and 
+  // and iterate over it endlessly.  Values are intended to represent the output of some
+  // random process.
+  class SamplingIterator[T](blk: => TraversableOnce[T]) extends Iterator[T] {
+    val itr = Iterator.continually(()).flatMap { u => blk.toIterator }
+    def hasNext = itr.hasNext
+    def next = itr.next
+    def sample(n: Int) = Vector.fill(n) { itr.next }
+  }
+
+  object SamplingIterator {
+    def apply[T](blk: => TraversableOnce[T]) = new SamplingIterator(blk)
+  }
+
+  // Return a Kolmogorov-Smirnov 'D' value for two data samples
+  def KSD[N](data1: SamplingIterator[N], data2: SamplingIterator[N])
+      (implicit ord: math.Ordering[N]) = {
+    val (c1, c2) = cumulants(data1.sample(sampleSize), data2.sample(sampleSize))
+    KSDStatistic(c1, c2)
+  }
+
+  // Returns the median KS 'D' statistic between two samples, over (m) sampling trials
+  def medianKSD[N](data1: SamplingIterator[N], data2: SamplingIterator[N], m: Int = 5)
+      (implicit ord: math.Ordering[N]) = {
+    require(m > 0)
+    val ksd = (Vector.fill(m) { KSD(data1, data2) }).sorted
+    ksd(m/2)
+  }
+
+  // Computes the Kolmogorov-Smirnov 'D' statistic from two cumulative distributions.
+  // Assumes cdf1 and cdf2 are aligned: i.e. they are the same length and cdf1(j) 
+  // corresponds to cdf2(j) contain the cdf value at the same point for all (j).
+  def KSDStatistic(cdf1: Seq[Double], cdf2: Seq[Double]) = {
     require(cdf1.length == cdf2.length)
     val n = cdf1.length
     require(n > 0)
@@ -52,22 +83,9 @@ object KSTesting {
     cdf1.iterator.zip(cdf2.iterator).map { x => Math.abs(x._1 - x._2) }.max
   }
 
-  // Returns the median KS 'D' statistic between two samples, over (m) sampling trials
-  def medianKSD[N](data1: => Iterator[N], data2: => Iterator[N], m: Int = 5)
-      (implicit ord: math.Ordering[N]): Double = {
-    val t = Array.fill[Double](m) {
-      val (c1, c2) = cumulants(data1.take(sampleSize).toVector,
-                               data2.take(sampleSize).toVector)
-      KSD(c1, c2)
-    }.sorted
-    // return the median KS statistic
-    t(m / 2)
-  }
-
   // Returns aligned cumulative distributions from two arrays of data
   // Type parameter 'N' can be any type with an Ordering
-  private def cumulants[N](d1: Seq[N], d2: Seq[N],
-      ss: Int = sampleSize)(implicit ord: math.Ordering[N]) = {
+  private def cumulants[N](d1: Seq[N], d2: Seq[N])(implicit ord: math.Ordering[N]) = {
     require(math.min(d1.length, d2.length) > 0)
     val (m1, m2) = (hist(d1), hist(d2))
     val itr1 = m1.toVector.sortBy(_._1).iterator.buffered
@@ -106,7 +124,6 @@ object KSTesting {
       h2 += c2
     }
     require(h1.sum == h2.sum)
-    require(h1.sum == ss)
     (cumulativeDist(h1), cumulativeDist(h2))
   }
 

@@ -25,6 +25,7 @@ import org.apache.spark.rdd.RDD
 
 import com.redhat.et.silex.testing.PerTestSparkContext
 import com.redhat.et.silex.testing.KSTesting
+import KSTesting.SamplingIterator
 
 object KMedoidsSpecSupport {
   def generateClusters(
@@ -66,13 +67,9 @@ object KMedoidsSpecSupport {
   // Returns iterator over gap lengths between samples.
   // This function assumes input data is integers sampled from the sequence of
   // increasing integers: {0, 1, 2, ...}.
-  def gaps(data: TraversableOnce[Int]): Iterator[Int] = {
+  def gaps(data: TraversableOnce[Int]) = SamplingIterator {
     data.toIterator.sliding(2).withPartial(false).map { x => x(1) - x(0) }
   }
-
-  // Generate an endless sampling stream from a block that generates a TraversableOnce
-  def sampleStream[T](blk: => TraversableOnce[T]) =
-    Iterator.from(0).flatMap { u => blk.toIterator }
 }
 
 class SparklessKMedoidsSpec extends FlatSpec with Matchers {
@@ -95,13 +92,13 @@ class SparklessKMedoidsSpec extends FlatSpec with Matchers {
     val data = (0 until 100).toVector
 
     KSTesting.medianKSD(
-      sampleStream { KMedoids.sampleBySize(data, 25) },
-      sampleStream { refSample(data, 0.25) }
+      SamplingIterator { KMedoids.sampleBySize(data, 25) },
+      SamplingIterator { refSample(data, 0.25) }
     ) should be < KSTesting.D
 
     KSTesting.medianKSD(
-      sampleStream { KMedoids.sampleBySize(data, 25).length :: Nil },
-      sampleStream { refSample(data, 0.25).size :: Nil }
+      SamplingIterator { KMedoids.sampleBySize(data, 25).length :: Nil },
+      SamplingIterator { refSample(data, 0.25).size :: Nil }
     ) should be < KSTesting.D
 
     val n = 100 * KSTesting.sampleSize
@@ -121,33 +118,33 @@ class SparklessKMedoidsSpec extends FlatSpec with Matchers {
   it should "sample distinct values" in {
     val data = (0 until 100).toVector
     KSTesting.medianKSD(
-      sampleStream {
+      SamplingIterator {
         val s = KMedoids.sampleDistinct(data, 10)
         s.length should be (10)
         s.toSet.size should be (10)
         s
       },
-      sampleStream { refSample(data, 0.1) }
+      SamplingIterator { refSample(data, 0.1) }
     ) should be < KSTesting.D
 
     KSTesting.medianKSD(
-      sampleStream {
+      SamplingIterator {
         val s = KMedoids.sampleDistinct(data, 90)
         s.length should be (90)
         s.toSet.size should be (90)
         s
       },
-      sampleStream { refSample(data, 0.9) }
+      SamplingIterator { refSample(data, 0.9) }
     ) should be < KSTesting.D
 
     KSTesting.medianKSD(
-      sampleStream {
+      SamplingIterator {
         val s = KMedoids.sampleDistinct(data, 99)
         s.length should be (99)
         s.toSet.size should be (99)
         s
       },
-      sampleStream { refSample(data, 0.99) }
+      SamplingIterator { refSample(data, 0.99) }
     ) should be < KSTesting.D
   }
 
@@ -172,16 +169,16 @@ class KMedoidsSpec extends FlatSpec with Matchers with PerTestSparkContext {
     val rdd = context.parallelize(data)
 
     KSTesting.medianKSD(
-      sampleStream { KMedoids.sampleBySize(rdd, 200) },
-      sampleStream { refSample(data, 0.2) }
+      SamplingIterator { KMedoids.sampleBySize(rdd, 200) },
+      SamplingIterator { refSample(data, 0.2) }
     ) should be < KSTesting.D
 
 /*
     This requires running an RDD sample a thousand times, which takes way too long
 
     KSTesting.medianKSD(
-      sampleStream { KMedoids.sampleBySize(rdd, 300).length :: Nil },
-      sampleStream { refSample(data, 0.1).size :: Nil }
+      SamplingIterator { KMedoids.sampleBySize(rdd, 300).length :: Nil },
+      SamplingIterator { refSample(data, 0.1).size :: Nil }
     ) should be < KSTesting.D
 */
 
