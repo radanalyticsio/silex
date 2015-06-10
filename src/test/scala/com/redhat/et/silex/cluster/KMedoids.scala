@@ -61,14 +61,14 @@ object KMedoidsSpecSupport {
   }
 
   // Reference sampler, known to be correct
-  def refSample[T](data: TraversableOnce[T], f: Double): Iterator[T] =
-    data.toIterator.filter(u => scala.util.Random.nextDouble() < f)
+  def refSample[T](data: TraversableOnce[T], f: Double): Stream[T] =
+    data.toIterator.filter(u => scala.util.Random.nextDouble() < f).toStream
 
   // Returns iterator over gap lengths between samples.
   // This function assumes input data is integers sampled from the sequence of
   // increasing integers: {0, 1, 2, ...}.
   def gaps(data: TraversableOnce[Int]) = SamplingIterator {
-    data.toIterator.sliding(2).withPartial(false).map { x => x(1) - x(0) }
+    data.toIterator.sliding(2).withPartial(false).map(x => x(1) - x(0)).toStream
   }
 }
 

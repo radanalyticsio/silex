@@ -42,18 +42,38 @@ object KSTesting {
   val sampleSize = 1000
   val D = 0.0544280747619
 
-  // Designed to take a block of code that returns some sequence of values and 
-  // and iterate over it endlessly.  Values are intended to represent the output of some
-  // random process.
-  class SamplingIterator[T](blk: => TraversableOnce[T]) extends Iterator[T] {
-    val itr = Iterator.continually(()).flatMap { u => blk.toIterator }
-    def hasNext = itr.hasNext
-    def next = itr.next
-    def sample(n: Int) = Vector.fill(n) { itr.next }
+  // An Iterator model of a random variable.
+  // An infinite, lazy, memory-less stream of values that can be sampled from
+  // Note that I'm requiring Traversable[T] instead of TraversableOnce[T] for a reason:
+  // A block expression that produces an iterator can be problematic if it is something like:
+  // SamplingIterator { itr }
+  // because 'itr' will only yield data the first time, and then show up as empty thereafter.
+  class SamplingIterator[T](dataBlock: => Traversable[T]) extends Iterator[T] with Serializable {
+    var data = Iterator.continually(()).flatMap { u => dataBlock }
+
+    def hasNext = data.hasNext
+    def next = data.next
+
+    override def filter(f: T => Boolean) = new SamplingIterator(data.filter(f).toStream)
+    override def map[U](f: T => U) = new SamplingIterator(data.map(f).toStream)
+    override def flatMap[U](f: T => scala.collection.GenTraversableOnce[U]) =
+      new SamplingIterator(data.flatMap(f).toStream)
+
+    def sample(n: Int) = Vector.fill(n) { data.next }
+
+    def fork = {
+      val (dup1, dup2) = data.duplicate
+      data = dup1
+      new SamplingIterator(dup2.toStream)
+    }
   }
 
   object SamplingIterator {
-    def apply[T](blk: => TraversableOnce[T]) = new SamplingIterator(blk)
+    def apply[T](data: => Traversable[T]) = new SamplingIterator(data)
+    def continually[T](value: => T) = new SamplingIterator(Stream.continually(value))
+    implicit class ToSamplingIterator[T](data: TraversableOnce[T]) {
+      def toSamplingIterator = new SamplingIterator(data.toStream)
+    }
   }
 
   // Return a Kolmogorov-Smirnov 'D' value for two data samples

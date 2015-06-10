@@ -28,20 +28,15 @@ import com.redhat.et.silex.testing.KSTesting.{ medianKSD, SamplingIterator, D }
 class IIDFeatureSamplingMethodsRDDSpec extends FlatSpec with Matchers with PerTestSparkContext {
   import com.redhat.et.silex.sample.iid.implicits._
 
-  // Generate an endless sampling stream from a block that generates a TraversableOnce
-  def sampleStream[T](blk: => TraversableOnce[T]) =
-    Iterator.from(0).flatMap { u => blk.toIterator }
-
-/*
-  // Data is assumed to be infinite: hasNext will never return false
-  def iidTest(data: SamplingIterator[Seq[Double]]) {
-    val idxSet = (0 until data.head.length).toVector
-    idxSet.combinations(2).permutations.foreach { idxPair =>
-      val (j, r) = idxPair
-      val vals = data.
+  def iidTest(data: SamplingIterator[Seq[Double]]) = {
+    val idxSet = (0 until data.next.length).toVector
+    idxSet.combinations(2).flatMap(_.permutations).foreach { idxPair =>
+      val (j, r) = (idxPair(0), idxPair(1))
+      val rvals = data.sample(1000).map(_(r)).distinct
+      val du = data.map(_(j))
     }
+    true
   }
-*/
 
   scala.util.Random.setSeed(23571113)
 
@@ -57,12 +52,14 @@ class IIDFeatureSamplingMethodsRDDSpec extends FlatSpec with Matchers with PerTe
 
     medianKSD(
       SamplingIterator { iid.map(_(0)) },
-      SamplingIterator { Iterator.single(if (scala.util.Random.nextDouble() < 0.2) 0.0 else 1.0) }
+      SamplingIterator.continually { if (scala.util.Random.nextDouble() < 0.2) 0.0 else 1.0 }
     ) should be < D
 
     medianKSD(
       SamplingIterator { iid.map(_(1)) },
-      SamplingIterator { Iterator.single(if (scala.util.Random.nextDouble() < 0.2) 1.0 else 0.0) }
+      SamplingIterator.continually { if (scala.util.Random.nextDouble() < 0.2) 1.0 else 0.0 }
     ) should be < D
+
+    iidTest(SamplingIterator { iid }) should be (true)
   }
 }
