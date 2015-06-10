@@ -25,10 +25,12 @@ import org.apache.spark.rdd.RDD
 import com.redhat.et.silex.sample.iid.IIDFeatureSamplingMethods
 import com.redhat.et.silex.feature.extractor.FeatureSeq
 
+/** Implementation-specific subclass of [[IIDFeatureSamplingMethods]] for RDDs */
 class IIDFeatureSamplingMethodsRDD(data: RDD[Seq[Double]]) extends IIDFeatureSamplingMethods {
 
   import com.redhat.et.silex.sample.iid.infra._
 
+  /** @inheritdoc */
   def iidFeatureSeqRDD(
       n: Int,
       iSS: Int = 10000,
