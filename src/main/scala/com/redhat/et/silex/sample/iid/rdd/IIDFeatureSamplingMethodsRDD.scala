@@ -75,8 +75,7 @@ class IIDFeatureSamplingMethodsRDD(data: RDD[Seq[Double]]) extends IIDFeatureSam
       val nn = math.min(remaining, oSS)
       logInfo("Constructing $nn i.i.d. samples")
       val cse = new CompactSamplerExtractor(csa.map(_.sampler(sample.length)))
-      val iid = ArrayBuffer.empty[FeatureSeq]
-      while (iid.length < nn) { iid += cse(()) }
+      val iid = Vector.fill(nn) { cse(()) }
 
       parts += data.sparkContext.parallelize(iid)
       remaining -= nn
