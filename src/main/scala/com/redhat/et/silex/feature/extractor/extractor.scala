@@ -147,7 +147,7 @@ object FeatureSeq {
     * @param obj The object to create a feature sequence from
     * @return A new feature sequence created from the argument object
     */
-  def apply[T <% FeatureSeq](obj: T) = obj:FeatureSeq
+  def apply[T](obj: T)(implicit toFS: T => FeatureSeq) = obj:FeatureSeq
 
   /** Create a feature sequence from the given sequence of zero or more feature values.
     *
