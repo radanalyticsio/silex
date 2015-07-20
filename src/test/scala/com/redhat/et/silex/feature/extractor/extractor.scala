@@ -198,7 +198,7 @@ object ExtractorSpecSupport extends FlatSpec with Matchers {
   import com.redhat.et.silex.scalatest.matchers._
   import com.redhat.et.silex.feature.indexfunction.{
     IndexFunctionSpecSupport,
-    InvertableIndexFunctionSpecSupport
+    InvertibleIndexFunctionSpecSupport
   }
 
   def drTest[D](e: Extractor[D])(implicit d: Seq[D]) {
@@ -223,7 +223,7 @@ object ExtractorSpecSupport extends FlatSpec with Matchers {
   def opTest[D](e1: Extractor[D], e2: Extractor[D])(implicit d: Seq[D]) {
     val r = e1 ++ e2
     r.width should be (e1.width + e2.width)
-    InvertableIndexFunctionSpecSupport.equalTest(r.names, e1.names ++ e2.names)
+    InvertibleIndexFunctionSpecSupport.equalTest(r.names, e1.names ++ e2.names)
     IndexFunctionSpecSupport.equalTest(r.categoryInfo, e1.categoryInfo ++ e2.categoryInfo)
     d.foreach { x =>
       FeatureSeqSpecSupport.equalTest(r(x), e1(x) ++ e2(x))
@@ -233,7 +233,7 @@ object ExtractorSpecSupport extends FlatSpec with Matchers {
 
   def equalTest[D](e1: Extractor[D], e2: Extractor[D])(implicit d: Seq[D]) {
     e1.width should be (e2.width)
-    InvertableIndexFunctionSpecSupport.equalTest(e1.names, e2.names)
+    InvertibleIndexFunctionSpecSupport.equalTest(e1.names, e2.names)
     IndexFunctionSpecSupport.equalTest(e1.categoryInfo, e2.categoryInfo)
     d.foreach { x =>
       FeatureSeqSpecSupport.equalTest(e1(x), e2(x))
@@ -274,9 +274,9 @@ class ExtractorSpec extends FlatSpec with Matchers {
   import ExtractorSpecSupport._
   import com.redhat.et.silex.feature.indexfunction.{
     IndexFunction,
-    InvertableIndexFunction,
+    InvertibleIndexFunction,
     IndexFunctionSpecSupport,
-    InvertableIndexFunctionSpecSupport
+    InvertibleIndexFunctionSpecSupport
   }
 
   object domainImplicits {
@@ -398,13 +398,13 @@ class ExtractorSpec extends FlatSpec with Matchers {
 
   it should "support withNames" in {
     val e1 = Extractor.constant[Int](1.0, 2.0)
-    InvertableIndexFunctionSpecSupport.undefinedTest(e1.names)
+    InvertibleIndexFunctionSpecSupport.undefinedTest(e1.names)
     val e2 = e1.withNames("a", "b")
     e2.names(0) should equal("a")
     e2.names(1) should equal("b")
     propertyTest(
       Extractor.constant[Int](1.0, 2.0).withNames("a", "b"),
-      Extractor.constant[Int](3.0).withNames(InvertableIndexFunction(Vector("c"))),
+      Extractor.constant[Int](3.0).withNames(InvertibleIndexFunction(Vector("c"))),
       Extractor.constant[Int](4.0, 5.0, 6.0).withNames("d", "e", "f"))
   }
 

@@ -18,7 +18,7 @@
 
 package com.redhat.et.silex.feature
 
-/** Provides [[IndexFunction]] and [[InvertableIndexFunction]], specialized subclasses of Scala 
+/** Provides [[IndexFunction]] and [[InvertibleIndexFunction]], specialized subclasses of Scala 
   * functions Int => V that map integers over an interval to some value type, and which may be
   * concatenated with monoidal operator [[IndexFunction!.++ ++]], defined as follows:
   * {{{

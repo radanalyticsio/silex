@@ -102,8 +102,8 @@ object IndexFunctionSpecSupport extends FlatSpec with Matchers {
   }
 }
 
-object InvertableIndexFunctionSpecSupport extends FlatSpec with Matchers {
-  def drTest[V](f: InvertableIndexFunction[V]) {
+object InvertibleIndexFunctionSpecSupport extends FlatSpec with Matchers {
+  def drTest[V](f: InvertibleIndexFunction[V]) {
     IndexFunctionSpecSupport.drTest(f)
     f.width should be (f.inverse.width)
     f.domain.size should be (f.range.size)
@@ -118,20 +118,20 @@ object InvertableIndexFunctionSpecSupport extends FlatSpec with Matchers {
     }
   }
 
-  def undefinedTest[V](f: InvertableIndexFunction[V]) {
+  def undefinedTest[V](f: InvertibleIndexFunction[V]) {
     IndexFunctionSpecSupport.undefinedTest(f)
     f.width should be (f.inverse.width)
     f.inverse.domain.size should be (0)
     f.inverse.range.size should be (0)
   }
 
-  def identityTest[V](f: InvertableIndexFunction[V]) {
+  def identityTest[V](f: InvertibleIndexFunction[V]) {
     undefinedTest(f)
     f.width should be (0)
     f.inverse.width should be (0)
   }
 
-  def opTest[V](f1: InvertableIndexFunction[V], f2: InvertableIndexFunction[V]) {
+  def opTest[V](f1: InvertibleIndexFunction[V], f2: InvertibleIndexFunction[V]) {
     IndexFunctionSpecSupport.opTest(f1, f2)
     val r = f1 ++ f2
     drTest(r)
@@ -139,7 +139,7 @@ object InvertableIndexFunctionSpecSupport extends FlatSpec with Matchers {
     f2.range.map(r.inverse).toSet should equal (f2.domain.map(_ + f1.width).toSet)
   }
 
-  def equalTest[V](f1: InvertableIndexFunction[V], f2: InvertableIndexFunction[V]) {
+  def equalTest[V](f1: InvertibleIndexFunction[V], f2: InvertibleIndexFunction[V]) {
     IndexFunctionSpecSupport.equalTest(f1, f2)
     val i1 = f1.inverse
     val i2 = f2.inverse
@@ -152,9 +152,9 @@ object InvertableIndexFunctionSpecSupport extends FlatSpec with Matchers {
     i2.domain.map(i1).toList should equal (i2.domain.map(i2).toList)
   }
 
-  def opIdentityTest[V](f: InvertableIndexFunction[V]) {
+  def opIdentityTest[V](f: InvertibleIndexFunction[V]) {
     IndexFunctionSpecSupport.opIdentityTest(f)
-    val z = InvertableIndexFunction.empty[V]
+    val z = InvertibleIndexFunction.empty[V]
     identityTest(z)
     List (z ++ f, f ++ z, z ++ f ++ z).foreach { t =>
       equalTest(f, t)
@@ -164,13 +164,13 @@ object InvertableIndexFunctionSpecSupport extends FlatSpec with Matchers {
   }
 
   def associativeTest[V](
-    f1: InvertableIndexFunction[V],
-    f2: InvertableIndexFunction[V],
-    f3: InvertableIndexFunction[V]) {
+    f1: InvertibleIndexFunction[V],
+    f2: InvertibleIndexFunction[V],
+    f3: InvertibleIndexFunction[V]) {
     equalTest((f1 ++ f2) ++ f3, f1 ++ (f2 ++ f3))
   }
 
-  def propertyTest[V](fs: InvertableIndexFunction[V]*) {
+  def propertyTest[V](fs: InvertibleIndexFunction[V]*) {
     fs.foreach { drTest(_) }
     fs.foreach { opIdentityTest(_) }
     fs.combinations(2).flatMap(_.permutations).foreach { f => opTest(f(0), f(1)) }
@@ -180,7 +180,7 @@ object InvertableIndexFunctionSpecSupport extends FlatSpec with Matchers {
     fs.combinations(3).flatMap(_.permutations).foreach { f => associativeTest(f(0), f(1), f(2)) }
   }
 
-  def xyTest[V](f: InvertableIndexFunction[V], xy: (Int, V)*) {
+  def xyTest[V](f: InvertibleIndexFunction[V], xy: (Int, V)*) {
     IndexFunctionSpecSupport.xyTest(f, xy:_*)
     val i = f.inverse
     xy.foreach { xy =>
@@ -289,96 +289,96 @@ class IndexFunctionSpec extends FlatSpec with Matchers {
   }
 }
 
-class InvertableIndexFunctionSpec extends FlatSpec with Matchers {
-  import InvertableIndexFunctionSpecSupport._
+class InvertibleIndexFunctionSpec extends FlatSpec with Matchers {
+  import InvertibleIndexFunctionSpecSupport._
 
   it should "enforce range type consistency during concatenation" in {
-    "InvertableIndexFunction.empty[Int] ++ InvertableIndexFunction.empty[String]" shouldNot typeCheck
+    "InvertibleIndexFunction.empty[Int] ++ InvertibleIndexFunction.empty[String]" shouldNot typeCheck
   }
 
-  it should "provide InvertableIndexFunction.empty factory method" in {
-    identityTest(InvertableIndexFunction.empty[Nothing])
-    identityTest(InvertableIndexFunction.empty[Int])
-    identityTest(InvertableIndexFunction.empty[String])
-    identityTest(InvertableIndexFunction.empty[String] ++ InvertableIndexFunction.empty[String])
+  it should "provide InvertibleIndexFunction.empty factory method" in {
+    identityTest(InvertibleIndexFunction.empty[Nothing])
+    identityTest(InvertibleIndexFunction.empty[Int])
+    identityTest(InvertibleIndexFunction.empty[String])
+    identityTest(InvertibleIndexFunction.empty[String] ++ InvertibleIndexFunction.empty[String])
     propertyTest(
-      InvertableIndexFunction.empty[String],
-      InvertableIndexFunction.empty[String],
-      InvertableIndexFunction.empty[String])
+      InvertibleIndexFunction.empty[String],
+      InvertibleIndexFunction.empty[String],
+      InvertibleIndexFunction.empty[String])
   }
 
-  it should "provide InvertableIndexFunction.undefined factory method" in {
-    an [Exception] should be thrownBy InvertableIndexFunction.undefined(-1)
-    identityTest(InvertableIndexFunction.undefined[Int](0))
-    undefinedTest(InvertableIndexFunction.undefined[Int](5))
-    undefinedTest(InvertableIndexFunction.undefined[String](1))
-    undefinedTest(InvertableIndexFunction.undefined[String](1) ++ InvertableIndexFunction.undefined[String](3))
+  it should "provide InvertibleIndexFunction.undefined factory method" in {
+    an [Exception] should be thrownBy InvertibleIndexFunction.undefined(-1)
+    identityTest(InvertibleIndexFunction.undefined[Int](0))
+    undefinedTest(InvertibleIndexFunction.undefined[Int](5))
+    undefinedTest(InvertibleIndexFunction.undefined[String](1))
+    undefinedTest(InvertibleIndexFunction.undefined[String](1) ++ InvertibleIndexFunction.undefined[String](3))
     propertyTest(
-      InvertableIndexFunction.undefined[Int](4),
-      InvertableIndexFunction.undefined[Int](77),
-      InvertableIndexFunction.undefined[Int](1000))
+      InvertibleIndexFunction.undefined[Int](4),
+      InvertibleIndexFunction.undefined[Int](77),
+      InvertibleIndexFunction.undefined[Int](1000))
   }
 
-  it should "provide InvertableIndexFunction.apply method on IndexedSeq" in {
-    identityTest(InvertableIndexFunction(Vector()))
+  it should "provide InvertibleIndexFunction.apply method on IndexedSeq" in {
+    identityTest(InvertibleIndexFunction(Vector()))
 
-    val f1 = InvertableIndexFunction(Vector(2, 3, 5, 7))
+    val f1 = InvertibleIndexFunction(Vector(2, 3, 5, 7))
     f1.width should be (4)
     f1.domain.toSet should equal ((0 until f1.width).toSet)
     f1.range.toSet should equal (Set(2, 3, 5, 7))
     xyTest(f1, (0, 2), (1, 3), (2, 5), (3, 7))
     propertyTest(
-      InvertableIndexFunction(Vector(1)),
-      InvertableIndexFunction(Vector(2, 3, 5)),
-      InvertableIndexFunction(Vector(7, 11, 13)))
+      InvertibleIndexFunction(Vector(1)),
+      InvertibleIndexFunction(Vector(2, 3, 5)),
+      InvertibleIndexFunction(Vector(7, 11, 13)))
 
-    val f2 = InvertableIndexFunction(Vector('a, 'c, 'f, 'j))
+    val f2 = InvertibleIndexFunction(Vector('a, 'c, 'f, 'j))
     f2.width should be (4)
     f2.domain.toSet should equal ((0 until f2.width).toSet)
     f2.range.toSet should equal (Set('a, 'c, 'f, 'j))
     xyTest(f2, (0, 'a), (1, 'c), (2, 'f), (3, 'j))
     propertyTest(
-      InvertableIndexFunction(Vector('a, 'c, 'f)),
-      InvertableIndexFunction(Vector('u)),
-      InvertableIndexFunction(Vector('j, 'r, 'z)))
+      InvertibleIndexFunction(Vector('a, 'c, 'f)),
+      InvertibleIndexFunction(Vector('u)),
+      InvertibleIndexFunction(Vector('j, 'r, 'z)))
   }
 
-  it should "provide InvertableIndexFunction.apply method on ordered pairs" in {
-    an [Exception] should be thrownBy InvertableIndexFunction(5, (1, 'a), (2, 'c), (4, 'f), (10, 'j))
-    an [Exception] should be thrownBy InvertableIndexFunction(-1, (1, 'a), (2, 'c), (4, 'f))
-    an [Exception] should be thrownBy InvertableIndexFunction(5, (1, 'a), (2, 'c), (4, 'a))
-    val f1 = InvertableIndexFunction(5, (1, 'a), (2, 'c), (4, 'f))
+  it should "provide InvertibleIndexFunction.apply method on ordered pairs" in {
+    an [Exception] should be thrownBy InvertibleIndexFunction(5, (1, 'a), (2, 'c), (4, 'f), (10, 'j))
+    an [Exception] should be thrownBy InvertibleIndexFunction(-1, (1, 'a), (2, 'c), (4, 'f))
+    an [Exception] should be thrownBy InvertibleIndexFunction(5, (1, 'a), (2, 'c), (4, 'a))
+    val f1 = InvertibleIndexFunction(5, (1, 'a), (2, 'c), (4, 'f))
     f1.width should be (5)
     f1.domain.toSet should equal (Set(1, 2, 4))
     f1.range.toSet should equal (Set('a, 'c, 'f))
     xyTest(f1, (1, 'a), (2, 'c), (4, 'f))
     propertyTest(
       f1,
-      InvertableIndexFunction(Vector('g)),
-      InvertableIndexFunction(Vector('j, 'r, 'z)))
+      InvertibleIndexFunction(Vector('g)),
+      InvertibleIndexFunction(Vector('j, 'r, 'z)))
   }
 
-  it should "provide InvertableIndexFunction.apply method on a map" in {
-    an [Exception] should be thrownBy InvertableIndexFunction(5, Map((1, 'a), (2, 'c), (4, 'f), (10, 'j)))
-    an [Exception] should be thrownBy InvertableIndexFunction(-1, Map((1, 'a), (2, 'c), (4, 'f)))
-    an [Exception] should be thrownBy InvertableIndexFunction(-1, Map((1, 'a), (2, 'c), (4, 'a)))
-    identityTest(InvertableIndexFunction(0, Map.empty[Int, Double]))
+  it should "provide InvertibleIndexFunction.apply method on a map" in {
+    an [Exception] should be thrownBy InvertibleIndexFunction(5, Map((1, 'a), (2, 'c), (4, 'f), (10, 'j)))
+    an [Exception] should be thrownBy InvertibleIndexFunction(-1, Map((1, 'a), (2, 'c), (4, 'f)))
+    an [Exception] should be thrownBy InvertibleIndexFunction(-1, Map((1, 'a), (2, 'c), (4, 'a)))
+    identityTest(InvertibleIndexFunction(0, Map.empty[Int, Double]))
     val m = Map((1, 'a), (2, 'c), (4, 'f))
-    val f1 = InvertableIndexFunction(5, m)
+    val f1 = InvertibleIndexFunction(5, m)
     f1.width should be (5)
     f1.domain.toSet should equal (Set(1, 2, 4))
     f1.range.toSet should equal (Set('a, 'c, 'f))
     xyTest(f1, (1, 'a), (2, 'c), (4, 'f))
     propertyTest(
       f1,
-      InvertableIndexFunction(3, (1, 'y)),
-      InvertableIndexFunction(Vector('j, 'r, 'z)))
+      InvertibleIndexFunction(3, (1, 'y)),
+      InvertibleIndexFunction(Vector('j, 'r, 'z)))
   }
 
-  it should "provide InvertableIndexFunction.serialName method" in {
-    an [Exception] should be thrownBy InvertableIndexFunction.serialName("foo", -1)
-    identityTest(InvertableIndexFunction.serialName("foo", 0))
-    val f1 = InvertableIndexFunction.serialName("foo", 3)
+  it should "provide InvertibleIndexFunction.serialName method" in {
+    an [Exception] should be thrownBy InvertibleIndexFunction.serialName("foo", -1)
+    identityTest(InvertibleIndexFunction.serialName("foo", 0))
+    val f1 = InvertibleIndexFunction.serialName("foo", 3)
     f1.width should be (3)
     f1.domain.toSet should equal (Set(0, 1, 2))
     f1.range.toSet should equal (Set("foo0", "foo1", "foo2"))
@@ -387,7 +387,7 @@ class InvertableIndexFunctionSpec extends FlatSpec with Matchers {
     f1.inverse.isDefinedAt("goo1") should be (false)
     propertyTest(
       f1,
-      InvertableIndexFunction.serialName("cow", 33),
-      InvertableIndexFunction(Vector("a", "b", "z")))
+      InvertibleIndexFunction.serialName("cow", 33),
+      InvertibleIndexFunction(Vector("a", "b", "z")))
   }
 }

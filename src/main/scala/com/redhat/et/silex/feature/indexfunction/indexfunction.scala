@@ -85,29 +85,29 @@ abstract class IndexFunction[V] extends PartialFunction[Int, V] with Serializabl
   }
 }
 
-/** The inverse of an [[InvertableIndexFunction]].
+/** The inverse of an [[InvertibleIndexFunction]].
   *
   * @tparam V The [[domain]] type of this function.  Also the
-  * [[InvertableIndexFunction!.range range]] of the parent [[InvertableIndexFunction]].
+  * [[InvertibleIndexFunction!.range range]] of the parent [[InvertibleIndexFunction]].
   */
 abstract class InverseIndexFunction[V] extends PartialFunction[V, Int] with Serializable {
 
-  /** The width of index range. Corresponds to the [[InvertableIndexFunction!.width width]]
-    * of the parent [[InvertableIndexFunction]].
+  /** The width of index range. Corresponds to the [[InvertibleIndexFunction!.width width]]
+    * of the parent [[InvertibleIndexFunction]].
     */
   def width: Int
 
   /** Obtain a new iterator over the domain of this function.
     *
     * @return An iterator over the domain values of this function.  Equivalent to the range of the
-    * parent [[InvertableIndexFunction]].
+    * parent [[InvertibleIndexFunction]].
     */
   def domain: Iterator[V]
 
   /** Obtain a new iterator over the range values of this function.
     *
     * @return An iterator over the range values of this function.  Equivalent to the domain of
-    * the parent [[InvertableIndexFunction]].
+    * the parent [[InvertibleIndexFunction]].
     */
   final def range: Iterator[Int] = domain.map(this)
 
@@ -124,11 +124,11 @@ abstract class InverseIndexFunction[V] extends PartialFunction[V, Int] with Seri
   }
 }
 
-/** An [[IndexFunction]] that is also invertable (and so 1-1).
+/** An [[IndexFunction]] that is also invertible (and so 1-1).
   *
   * @tparam V The [[range]] value type of this function.
   */
-abstract class InvertableIndexFunction[V] extends IndexFunction[V] { self =>
+abstract class InvertibleIndexFunction[V] extends IndexFunction[V] { self =>
 
   /** Obtain the inverse of this function.
     *
@@ -138,7 +138,7 @@ abstract class InvertableIndexFunction[V] extends IndexFunction[V] { self =>
 
   final def range = domain.map(this)
 
-  /** Concatenate two invertable index functions.
+  /** Concatenate two invertible index functions.
     *
     * @note The [[range]] values of the argument functions must be disjoint, in order to
     * preserve the invertability of their concatenation.
@@ -149,14 +149,14 @@ abstract class InvertableIndexFunction[V] extends IndexFunction[V] { self =>
     * (f1 ++ f2)(j) = if (j < f1.width) f1(j) else f2(j - f1.width)
     * }}}
     */
-  final def ++(that: InvertableIndexFunction[V]) = {
-    // check up front that ranges are disjoint, such that concatenation is invertable
+  final def ++(that: InvertibleIndexFunction[V]) = {
+    // check up front that ranges are disjoint, such that concatenation is invertible
     val iself = self.inverse
     val ithat = that.inverse
     val cv = findCommon(iself, ithat)
     if (!cv.isEmpty) throw new Exception(s"Value ${cv.get} present in both ranges")
 
-    new InvertableIndexFunction[V] {
+    new InvertibleIndexFunction[V] {
       def width = self.width + that.width
       def domain = self.domain ++ that.domain.map(_ + self.width)
       def apply(j: Int) = if (j < self.width) self.apply(j) else that.apply(j - self.width)
@@ -265,22 +265,22 @@ object IndexFunction {
   }
 }
 
-object InvertableIndexFunction {
-  /** Obtain an empty invertable index function.
+object InvertibleIndexFunction {
+  /** Obtain an empty invertible index function.
     *
-    * @return An invertable index function over the empty interval [0, 0), defined over no values
+    * @return An invertible index function over the empty interval [0, 0), defined over no values
     */
   def empty[V] = undefined[V](0)
 
-  /** Obtain an invertable index function that is undefined over its interval
+  /** Obtain an invertible index function that is undefined over its interval
     *
     * @param wid The function's index interval width
-    * @return An invertable index function that is not defined over any indices on its
+    * @return An invertible index function that is not defined over any indices on its
     * interval [0, wid)
     */
-  def undefined[V](wid: Int): InvertableIndexFunction[V] = {
+  def undefined[V](wid: Int): InvertibleIndexFunction[V] = {
     require(wid >= 0)
-    new InvertableIndexFunction[V] {
+    new InvertibleIndexFunction[V] {
       var dummy: V = _
       def width = wid
       def domain: Iterator[Int] = Iterator.empty
@@ -296,15 +296,15 @@ object InvertableIndexFunction {
     }
   }
 
-  /** Create an invertable index function from a Scala IndexedSeq
+  /** Create an invertible index function from a Scala IndexedSeq
     *
     * @param vals The indexed sequence of unique values
-    * @return An invertable index function over interval [0, vals.length) where f(j) = vals(j)
+    * @return An invertible index function over interval [0, vals.length) where f(j) = vals(j)
     */
-  def apply[V](vals: IndexedSeq[V]): InvertableIndexFunction[V] = {
+  def apply[V](vals: IndexedSeq[V]): InvertibleIndexFunction[V] = {
     checkRange(vals.iterator)
     val v2i = v2iMap(vals)
-    new InvertableIndexFunction[V] {
+    new InvertibleIndexFunction[V] {
       def width = vals.length
       def domain = (0 until width).iterator
       def isDefinedAt(j: Int) = (j >= 0)  &&  (j < width)
@@ -319,25 +319,25 @@ object InvertableIndexFunction {
     }
   }
 
-  /** Create an invertable index function from ordered pairs (j0, v0), (j1, v1), ...
+  /** Create an invertible index function from ordered pairs (j0, v0), (j1, v1), ...
     *
     * @param wid The index interval width
     * @param pairs Zero or more pairs (j0, v0), (j1, v1), ...
-    * @return An invertable index function with [[domain]] { j0, j1, ...} a subset of [0, wid),
+    * @return An invertible index function with [[domain]] { j0, j1, ...} a subset of [0, wid),
     * where f(j0) = v0, f(j1 = v1), ...  and undefined elsewhere
     */
-  def apply[V](wid: Int, pairs: (Int, V)*): InvertableIndexFunction[V] = this(wid, Map(pairs:_*))
+  def apply[V](wid: Int, pairs: (Int, V)*): InvertibleIndexFunction[V] = this(wid, Map(pairs:_*))
 
-  /** Create an invertable index function from a Scala Map of indices to values
+  /** Create an invertible index function from a Scala Map of indices to values
     *
     * @param wid The index inverval width
     * @param map The Scala Map
-    * @return An invertable index function with [[domain]] equivalent to map.keysIterator, and
+    * @return An invertible index function with [[domain]] equivalent to map.keysIterator, and
     * subset of [0, wid), where f(j) = map(j), for any j defined on the map, and undefined elsewhere
     */
-  def apply[V](wid: Int, map: Map[Int, V]): InvertableIndexFunction[V] = {
+  def apply[V](wid: Int, map: Map[Int, V]): InvertibleIndexFunction[V] = {
     checkRange(map.valuesIterator)
-    new InvertableIndexFunction[V] { self =>
+    new InvertibleIndexFunction[V] { self =>
       require(wid >= 0)
       require(!map.keysIterator.exists(k => (k < 0  ||  k >= wid)))
       def width = wid
@@ -359,7 +359,7 @@ object InvertableIndexFunction {
   // f.inverse("foo5") => 5
   def serialName(baseName: String, wid: Int) = {
     require(wid >= 0)
-    new InvertableIndexFunction[String] { self =>
+    new InvertibleIndexFunction[String] { self =>
       def width = wid
       def domain = (0 until width).iterator
       def isDefinedAt(j: Int) = (j >= 0)  &&  (j < width)

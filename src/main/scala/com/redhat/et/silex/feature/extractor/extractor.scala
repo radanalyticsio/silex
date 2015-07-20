@@ -171,7 +171,7 @@ object FeatureSeq {
 case class Extractor[D](
     width: Int,
     function: D => FeatureSeq,
-    names: InvertableIndexFunction[String],
+    names: InvertibleIndexFunction[String],
     categoryInfo: IndexFunction[Int])
   extends Function[D, FeatureSeq] with Serializable {
 
@@ -225,7 +225,7 @@ case class Extractor[D](
     * @param nf The new [[names]] function to use
     * @return A new extractor that is a copy of the current, except for new [[names]] function.
     */
-  final def withNames(nf: InvertableIndexFunction[String]): Extractor[D] = {
+  final def withNames(nf: InvertibleIndexFunction[String]): Extractor[D] = {
     require(nf.width == width, "names width does not match extractor width")
     this.copy(names = nf)
   }
@@ -238,7 +238,7 @@ case class Extractor[D](
     * @return A new extractor that is a copy of the current, except for new feature names.
     */
   final def withNames(fnames: String*): Extractor[D] = {
-    withNames(InvertableIndexFunction(fnames.toVector))
+    withNames(InvertibleIndexFunction(fnames.toVector))
   }
 
   /** Obtain a new extractor with new [[categoryInfo]] mappings
@@ -276,7 +276,7 @@ object Extractor {
     Extractor(
      width,
      function,
-     InvertableIndexFunction.undefined[String](width),
+     InvertibleIndexFunction.undefined[String](width),
      IndexFunction.undefined[Int](width))
 
   /** Obtain a new empty extractor: an extractor returning [[FeatureSeq]] of zero length
