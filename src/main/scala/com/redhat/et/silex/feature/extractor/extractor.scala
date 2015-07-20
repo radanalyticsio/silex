@@ -162,42 +162,31 @@ object FeatureSeq {
   *
   * @tparam D The domain type of the function.
   * This is the type of object features are to be extracted from.
+  *
+  * @param width The logical width, aka dimension, of the output feature space
+  * @param function The function that maps values of domain type D to a feature sequence
+  * @param names A function from feature indices to number of feature category values. By default, names is undefined over the feature space.  The function may define names for none, some, or all of the feature indices.
+  * @param categoryInfo A mapping from feature indices to numbers of categorical values.  By default, undefined over space of features. The function may define category info for none, some, or all of the feature indices.
   */
-abstract class Extractor[D] extends Function[D, FeatureSeq] with Serializable { self =>
+case class Extractor[D](
+    width: Int,
+    function: D => FeatureSeq,
+    names: InvertableIndexFunction[String],
+    categoryInfo: IndexFunction[Int])
+  extends Function[D, FeatureSeq] with Serializable {
 
-  /** The width, or dimension, of the output feature space
-    *
-    * @return The dimension of the output feature space.  i.e. the length of the output
-    * feature sequence.
-    */
-  def width: Int
+  require(width >= 0, "Extractor width must be non-negative")
+  require(names.width == width, "names width does not match extractor width")
+  require(categoryInfo.width == width, "categoryInfo width does not match extractor width")
 
-  /** Obtain the function from domain D to a feature sequence of length [[width]].
+  /** Evaluate the extractor on an input argument.
     *
-    * @return A function that maps values of domain type D to a feature sequence.
+    * Note: extractor(d) is equivalent to extractor.function(d)
+    *
+    * @param d The input argument
+    * @return The feature sequence resulting from applying the extractor [[function]]
     */
-  def function: D => FeatureSeq
-
-  /** Obtain an invertable function from feature indices to corresponding feature names.
-    *
-    * By default, no index => name mappings are defined, unless set via [[withNames]].
-    * Any subset of feature indices may be defined with a name.  Names must be unique
-    * to maintain invertability.
-    *
-    * @return An invertable function from indices to feature names.
-    */
-  def names: InvertableIndexFunction[String] = names_
-  private lazy val names_ = InvertableIndexFunction.undefined[String](width)
-
-  /** Obtain a function from feature indices to number of feature category values.
-    *
-    * By default, no index => num-category mappings are defined, unless set via [[withCategoryInfo]].
-    * Any subset of feature indices may be defined with a number of categories.
-    *
-    * @return A mapping from feature indices to numbers of categorical values.
-    */
-  def categoryInfo: IndexFunction[Int] = catInfo_
-  private lazy val catInfo_ = IndexFunction.undefined[Int](width)
+  final def apply(d: D): FeatureSeq = function(d)
 
   /** Compose an extractor with another function.
     *
@@ -208,23 +197,8 @@ abstract class Extractor[D] extends Function[D, FeatureSeq] with Serializable { 
     * @return A new extractor with domain type G equivalent to applying g and then applying
     * the original extractor.
     */
-  final override def compose[G](g: G => D) = new Extractor[G] {
-    def width = self.width
-    def function = function_
-    private lazy val function_ = self.function.compose(g)
-    override def categoryInfo = self.categoryInfo
-    override def names = self.names
-  }
-
-  /** Evaluate the extractor on an input argument.
-    *
-    * Note: extractor(d) is equivalent to extractor.function(d)
-    *
-    * @param d The input argument
-    * @return The feature sequence resulting from applying the extractor [[function]]
-    */
-  final def apply(d: D): FeatureSeq = function_ (d)
-  private lazy val function_ = this.function
+  final override def compose[G](g: G => D) =
+    Extractor(width, function.compose(g), names, categoryInfo)
 
   /** Concatenate two extractors.
     *
@@ -237,52 +211,12 @@ abstract class Extractor[D] extends Function[D, FeatureSeq] with Serializable { 
     * @param that The right hand side of the concatenation.
     * @return The concatenation of left and right extractors.
     */
-  final def ++(that: Extractor[D]): Extractor[D] = new Extractor[D] {
-    def width = self.width + that.width
-
-    def function = function_
-    private lazy val function_ = {
-      val (f1, f2) = (self.function, that.function)
-      (data: D) => f1(data) ++ f2(data)
-    }
-
-    override def categoryInfo = catInfo_
-    private lazy val catInfo_ = self.categoryInfo ++ that.categoryInfo
-
-    override def names = names_
-    private lazy val names_ = self.names ++ that.names
-  }
-
-  /** Obtain a new extractor with new [[categoryInfo]] mappings
-    *
-    * Creates a copy of the current extractor with a new [[categoryInfo]] function.
-    *
-    * @param info The new [[categoryInfo]] function to use
-    * @return A new extractor that is a copy of the current, except for new categoryInfo function.
-    */
-  final def withCategoryInfo(info: IndexFunction[Int]): Extractor[D] = new Extractor[D] {
-    require(info.width == self.width)
-    def width = self.width
-    def function = self.function
-    override def categoryInfo = info
-    override def names = self.names
-  }
-
-  /** Obtain a new extractor with new [[categoryInfo]] mappings
-    *
-    * Creates a copy of the current extractor with a new [[categoryInfo]] function.
-    *
-    * @param pairs Zero or more pairs (name, num-categories).  Feature names that are not defined
-    * in [[names]] are ignored.
-    * @return A new extractor that is a copy of the current, except for new categoryInfo function.
-    */
-  final def withCategoryInfo(pairs: (String, Int)*): Extractor[D] = {
-    val n2i = self.names.inverse
-    val cif = IndexFunction(
-      self.width,
-      pairs.filter(p => n2i.isDefinedAt(p._1)).map(p => (n2i(p._1), p._2)):_*)
-    self.withCategoryInfo(cif)
-  }
+  final def ++(that: Extractor[D]) =
+    Extractor(
+      this.width + that.width,
+      (d: D) => this.function(d) ++ that.function(d),
+      this.names ++ that.names,
+      this.categoryInfo ++ that.categoryInfo)
 
   /** Obtain a new extractor with new feature [[names]] mappings
     *
@@ -291,12 +225,9 @@ abstract class Extractor[D] extends Function[D, FeatureSeq] with Serializable { 
     * @param nf The new [[names]] function to use
     * @return A new extractor that is a copy of the current, except for new [[names]] function.
     */
-  final def withNames(nf: InvertableIndexFunction[String]): Extractor[D] = new Extractor[D] {
-    require(nf.width == self.width)
-    def width = self.width
-    def function = self.function
-    override def categoryInfo = self.categoryInfo
-    override def names = nf
+  final def withNames(nf: InvertableIndexFunction[String]): Extractor[D] = {
+    require(nf.width == width, "names width does not match extractor width")
+    this.copy(names = nf)
   }
 
   /** Obtain a new extractor with new feature [[names]] mappings
@@ -309,19 +240,50 @@ abstract class Extractor[D] extends Function[D, FeatureSeq] with Serializable { 
   final def withNames(fnames: String*): Extractor[D] = {
     withNames(InvertableIndexFunction(fnames.toVector))
   }
+
+  /** Obtain a new extractor with new [[categoryInfo]] mappings
+    *
+    * Creates a copy of the current extractor with a new [[categoryInfo]] function.
+    *
+    * @param info The new [[categoryInfo]] function to use
+    * @return A new extractor that is a copy of the current, except for new categoryInfo function.
+    */
+  final def withCategoryInfo(info: IndexFunction[Int]): Extractor[D] = {
+    require(info.width == width, "categoryInfo width does not match extractor width")
+    this.copy(categoryInfo = info)
+  }
+
+  /** Obtain a new extractor with new [[categoryInfo]] mappings
+    *
+    * Creates a copy of the current extractor with a new [[categoryInfo]] function.
+    *
+    * @param pairs Zero or more pairs (name, num-categories).  Feature names that are not defined
+    * in [[names]] are ignored.
+    * @return A new extractor that is a copy of the current, except for new categoryInfo function.
+    */
+  final def withCategoryInfo(pairs: (String, Int)*): Extractor[D] = {
+    val n2i = names.inverse
+    val cif = IndexFunction(
+      width,
+      pairs.filter(p => n2i.isDefinedAt(p._1)).map(p => (n2i(p._1), p._2)):_*)
+    this.copy(categoryInfo = cif)
+  }
 }
 
 /** Factory methods for creating various flavors of feature [[Extractor]]. */
 object Extractor {
+  def apply[D](width: Int, function: D => FeatureSeq): Extractor[D] =
+    Extractor(
+     width,
+     function,
+     InvertableIndexFunction.undefined[String](width),
+     IndexFunction.undefined[Int](width))
+
   /** Obtain a new empty extractor: an extractor returning [[FeatureSeq]] of zero length
     *
     * @return An extractor that returns feature sequences of zero length.
     */
-  def empty[D] = new Extractor[D] {
-    def width = 0
-    def function = function_
-    private lazy val function_ = (data: D) => FeatureSeq.empty
-  }
+  def empty[D] = Extractor(0, (data: D) => FeatureSeq.empty)
 
   /** Obtain a new extractor that always returns the same constant features
     *
@@ -330,11 +292,7 @@ object Extractor {
     */
   def constant[D](vList: Double*) = {
     val v = vList.toArray
-    new Extractor[D] {
-      def width = v.length
-      def function = function_
-      private lazy val function_ = (data: D) => v:FeatureSeq
-    }
+    Extractor(v.length, (data: D) => v:FeatureSeq)
   }
 
   /** Obtain a new extractor that computes its values from zero or more functions
@@ -342,23 +300,14 @@ object Extractor {
     * @param fList Zero or more functions from domain to individual feature values.
     * @return An extractor that returns feature sequence (f0(d), f1(d), ...)
     */
-  def apply[D](fList: (D => Double)*) = {
-    val w = fList.length
-    new Extractor[D] {
-      def width = w
-      def function = function_
-      private lazy val function_ = {
-        (data: D) => {
-          val v = new Array[Double](w)
-          var j = 0
-          fList.foreach { f =>
-            v(j) = f(data)
-            j += 1
-          }
-          v:FeatureSeq
-        }
-      }
-    }
+  def apply[D](fList: (D => Double)*): Extractor[D] = {
+    val fv = fList.toArray
+    Extractor(
+      fv.length,
+      (data: D) => {
+        val v = fv.map(f => f(data))
+        v:FeatureSeq
+      })
   }
 
   /** Obtain a new extractor that selects numeric values by a list of indices
@@ -368,16 +317,11 @@ object Extractor {
     */
   def numeric[N :Numeric](jList: Int*) = {
     val jv = jList.toArray
-    val w = jv.length
     val num = implicitly[Numeric[N]]
-    new Extractor[PartialFunction[Int, N]] {
-      def width = w
-      def function = function_
-      private lazy val function_ = 
-        (data: PartialFunction[Int, N]) => (jv.map(j => num.toDouble(data(j)))):FeatureSeq
-    }
+    Extractor(
+      jList.length,
+      (data: PartialFunction[Int, N]) => (jv.map(j => num.toDouble(data(j)))):FeatureSeq)
   }
-
 
   /** Obtain a new extractor that selects numeric strings by a list of indices, and
     * converts them to Double.
@@ -387,13 +331,9 @@ object Extractor {
     */
   def string(jList: Int*) = {
     val jv = jList.toArray
-    val w = jv.length
-    new Extractor[PartialFunction[Int, String]] {
-      def width = w
-      def function = function_
-      private lazy val function_ = 
-        (data: PartialFunction[Int, String]) => (jv.map(j => data(j).toDouble)):FeatureSeq
-    }
+    Extractor(
+      jv.length,
+      (data: PartialFunction[Int, String]) => (jv.map(j => data(j).toDouble)):FeatureSeq)
   }
 
   /** Obtain a new extractor that loads an entire numeric sequence into a feature sequence
@@ -403,13 +343,11 @@ object Extractor {
     */
   def numericSeq[N :Numeric](w: Int) = {
     val num = implicitly[Numeric[N]]
-    new Extractor[Seq[N]] {
-      def width = w
-      def function = function_
-      private lazy val function_ = (data: Seq[N]) => {
+    Extractor(
+      w,
+      (data: Seq[N]) => {
         require(data.length == w)
-        (data.view.map(x => num.toDouble(x))):FeatureSeq    
-      }
-    }
+        (data.map(x => num.toDouble(x))):FeatureSeq    
+      })
   }
 }
