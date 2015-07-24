@@ -49,6 +49,34 @@ private [sample] object infra {
     override def toString = s"CompactSampler($t0, ${t1-t0}, $non01)"
   }
 
+  object CompactSampler {
+    def extractor(samplers: Vector[CompactSampler]) = {
+      val width = samplers.length
+      val rho = samplers.count(_.sample != 0.0).toDouble / width.toDouble
+      val dense = (width < 10) || (rho >= 0.5)
+      Extractor(
+        width,
+        if (dense) {
+          (unused: Unit) => FeatureSeq(new DenseSV(samplers.iterator.map(_.sample).toArray))
+        } else {
+          (unused: Unit) => {
+            var j = 0
+            val vals = ArrayBuffer.empty[Double]
+            val keys = ArrayBuffer.empty[Int]
+            samplers.foreach { s =>
+              val v = s.sample
+              if (v != 0.0) {
+                vals += v
+                keys += j
+              }
+              j += 1
+            }
+            FeatureSeq(new SparseSV(width, keys.toArray, vals.toArray))
+          }
+        })
+    }
+  }
+
   // This class assumes that total samples (n) is being kept track of externally
   class CompactSamplerAccumulator {
     private var n1 = 0
@@ -65,28 +93,5 @@ private [sample] object infra {
     def sampler(n: Int) = new CompactSampler(n, n1, non01)
 
     override def toString = s"CompactSamplerAccumulator($n1, $non01)"
-  }
-
-  class CompactSamplerExtractor(samplers: Vector[CompactSampler]) extends Extractor[Unit] {
-    def width = samplers.length
-    def function = function_
-    private val rho = samplers.count(_.sample != 0.0).toDouble / width.toDouble
-    private lazy val function_ = (unused: Unit) => {
-      if (rho >= 0.5) FeatureSeq(new DenseSV(samplers.iterator.map(_.sample).toArray))
-      else {
-        var j = 0
-        val vals = ArrayBuffer.empty[Double]
-        val keys = ArrayBuffer.empty[Int]
-        samplers.foreach { s =>
-          val v = s.sample
-          if (v != 0.0) {
-            vals += v
-            keys += j
-          }
-          j += 1
-        }
-        FeatureSeq(new SparseSV(width, keys.toArray, vals.toArray))
-      }
-    }
   }
 }
