@@ -39,13 +39,16 @@ package com.redhat.et.silex.util
  *
  * // Support full Option methods and implicit conversion to Option
  * import OptionalArg.fullOptionSupport
- * OptionalArg("xxx").map(_ + "zzz").get // returns "xxxzzz"
+ * def possiblyFilterUsingMap(data: Seq[Int], filterMax: OptionalArg[Int] = None) = {
+ *   // use the 'map' method on an OptionalArg:
+ *   filterMax.map(t => data.filter(_ <= t)).getOrElse(data)
+ * }
  * }}}
  *
  * @tparam A The underlying value type.
  * @param option The raw Option value.  May be implicitly constructed from raw value of type A
  */
-class OptionalArg[+A](val option: Option[A]) extends AnyVal {
+class OptionalArg[A](val option: Option[A]) extends AnyVal {
   /** Determine if the optional argument is empty (contains None)
    * @return true if the option is None, false otherwise
    */

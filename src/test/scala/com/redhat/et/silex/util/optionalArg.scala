@@ -99,4 +99,14 @@ class OptionalArgSpec extends FlatSpec with Matchers {
     f(a1 = Some(55)) should be(((55, "xxx")))    
     f(a2 = Some("goo")) should be (((77, "goo")))
   }
+
+  it should "allow subtypes to be passed" in {
+    sealed abstract class Pet
+    case class Dog() extends Pet
+    case class Cat() extends Pet
+    def f(pet: OptionalArg[Pet]) = pet.map(_.toString).get
+
+    f(Dog()) should be("Dog()")
+    f(Cat()) should be("Cat()")
+  }
 }
