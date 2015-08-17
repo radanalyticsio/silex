@@ -21,18 +21,16 @@ package com.redhat.et.silex.testing
 import scala.util.Random
 import org.scalatest._
 
+import KSTesting._
+
 class KSTestingSpec extends FlatSpec with Matchers {
   scala.util.Random.setSeed(23571113)
-
-  // Generate an endless sampling stream from a block that generates a TraversableOnce
-  def sampleStream[T](blk: => TraversableOnce[T]) =
-    Iterator.from(0).flatMap { u => blk.toIterator }
 
   it should "sanity check KSD" in {
     val c1 = Vector(0.4, 0.8, 1.0, 1.0)
     val c2 = Vector(0.2, 0.6, 0.8, 1.0)
-    KSTesting.KSD(c1, c2) should be (0.2 +- 0.000001)
-    KSTesting.KSD(c2, c1) should be (KSTesting.KSD(c1, c2))
+    KSDStatistic(c1, c2) should be (0.2 +- 0.000001)
+    KSDStatistic(c2, c1) should be (KSDStatistic(c1, c2))
   }
 
   it should "sanity check medianKSD" in {
@@ -40,14 +38,14 @@ class KSTestingSpec extends FlatSpec with Matchers {
 
     // should be statistically same, i.e. fail to reject null hypothesis strongly
     KSTesting.medianKSD(
-      sampleStream { scala.util.Random.nextInt(10) :: Nil },
-      sampleStream { scala.util.Random.nextInt(10) :: Nil }
+      SamplingIterator.continually { scala.util.Random.nextInt(10) },
+      SamplingIterator.continually { scala.util.Random.nextInt(10) }
     ) should be < KSTesting.D
 
     // should be statistically different
     KSTesting.medianKSD(
-      sampleStream { scala.util.Random.nextInt(9) :: Nil },
-      sampleStream { scala.util.Random.nextInt(10) :: Nil }
+      SamplingIterator.continually { scala.util.Random.nextInt(9) },
+      SamplingIterator.continually { scala.util.Random.nextInt(10) }
     ) should be > KSTesting.D
   }
 }
