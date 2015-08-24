@@ -40,6 +40,9 @@ class CascadePartition extends Partition {
   override def index = 0
 }
 
+/** Represents the concept of a series of RDDs with cascaded dependencies, where the partition
+  * of each cascade is a function of the previous cascade and an input RDD partition.
+  */
 class CascadeRDD[T: ClassTag, U: ClassTag]
   (rdd: RDD[T], pid: Int, cascade: Option[RDD[U]], 
    f: => ((Iterator[T], Option[Iterator[U]]) => Iterator[U]))
@@ -60,10 +63,13 @@ class CascadeRDD[T: ClassTag, U: ClassTag]
 
 class CascadeRDDFunctions[T: ClassTag](self: RDD[T]) extends Logging with Serializable {
 
-  /*
-   * Applies a "cascading" function to the input RDD, such that each output partition is
-   * a function of the corresponding input partition and the previous output partition
-   */
+  /** Applies a "cascading" function to the input RDD, such that each output partition is
+    * a function of the corresponding input partition and the previous output partition.
+    *
+    * @param f A function that maps each RDD partition, plus a previous cascade partition,
+    * to the current cascade's output
+    * @return A new cascaded RDD 
+    */
   def cascadePartitions[U: ClassTag]
     (f: => ((Iterator[T], Option[Iterator[U]]) => Iterator[U])): RDD[U] = {
     if (self.partitions.length <= 0) return self.context.emptyRDD[U]
@@ -82,6 +88,16 @@ class CascadeRDDFunctions[T: ClassTag](self: RDD[T]) extends Logging with Serial
 
 }
 
+/** Implicit conversion to [[CascadeRDDFunctions]] to enrich RDDs with the [[cascadePartitions]]
+  * method.
+  *
+  * {{{
+  * import com.redhat.et.silex.rdd.cascade.implicits._
+  *
+  * rdd.cascadePartitions(cascadingFunction)
+  * }}}
+  *
+  */
 object implicits {
   import scala.language.implicitConversions
   implicit def rddToCascadeRDD[T :ClassTag](rdd: RDD[T]) = new CascadeRDDFunctions(rdd)
