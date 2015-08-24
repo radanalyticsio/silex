@@ -152,13 +152,6 @@ class ScanRDDFunctions[T : ClassTag](self: RDD[T]) extends Logging with Serializ
         input.scanLeft(zz)(f)
       })
 
-/*
-    val g = self.context.clean((input: Iterator[T], cascade: Option[Iterator[U]]) => {
-      val zz:U = cascade.map(_.toSeq.last).getOrElse(z)
-      input.scanLeft(zz)(f)
-    })
-*/
-
     self.cascadePartitions(g).mapPartitionsWithIndex((j: Int, input: Iterator[U]) => {
       if (j == 0) input else input.drop(1)
     })
