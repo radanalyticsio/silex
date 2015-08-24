@@ -139,9 +139,13 @@ class ScanOutputRDD[U: ClassTag](scans: RDD[U], offsets: RDD[U], f: (U, U) => U)
 
 class ScanRDDFunctions[T : ClassTag](self: RDD[T]) extends Logging with Serializable {
 
-  /**
-   * Sequential-only prefix scan.  Analogous to scanLeft on scala sequences
-   */
+  /** Sequential-only prefix scan.  Analogous to scanLeft on scala sequences
+    *
+    * @param z The zero element for initalizing the sequential prefix scan
+    * @param f maps the latest prefix scan value, plus a next element, to the next
+    * prefix scan value
+    * @return A new RDD containing the sequential prefix scan of the input elements.
+    */
   def scanLeft[U: ClassTag](z: U)(f: (U, T) => U): RDD[U] = {
     if (self.partitions.length <= 0) return self.context.parallelize(Array(z), 1)
 
@@ -158,9 +162,14 @@ class ScanRDDFunctions[T : ClassTag](self: RDD[T]) extends Logging with Serializ
   }
 
 
-  /**
-   * Parallel prefix scan.  Analogous to scan on scala sequences
-   */
+  /** Parallel prefix scan.  Analogous to scan on scala sequences.
+    *
+    * @param z The zero element to use for initializing scan (sub)sequences.  This element
+    * may be used as the initial value at multiple parallel scan subsequences.
+    * @param f The scanning function.  Maps the latest result of scan, plus a next element, to
+    * the next prefix.
+    * @return A new RDD containing the parallel prefix scan of the input elements
+    */
   def scan[U >: T : ClassTag](z: U)(f: (U, U) => U): RDD[U] = {
     if (self.partitions.length <= 0) return self.context.parallelize(Array(z), 1)
 
@@ -188,6 +197,16 @@ class ScanRDDFunctions[T : ClassTag](self: RDD[T]) extends Logging with Serializ
   }
 }
 
+/** Implicit conversions for enhancing RDDs with scan and scanLeft methods.
+  *
+  *{{{
+  * import com.redhat.et.silex.rdd.scan.implicits._
+  *
+  * rdd.scanLeft(z)(f)
+  * rdd.scan(z)(g)
+  *}}}
+  *
+  */
 object implicits {
   import scala.language.implicitConversions
   implicit def rddToScanRDD[T :ClassTag](rdd: RDD[T]) = new ScanRDDFunctions(rdd)
