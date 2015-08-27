@@ -14,6 +14,8 @@ libraryDependencies += "org.apache.spark" %% "spark-sql" % SPARK_VERSION % "prov
 
 libraryDependencies += "org.apache.spark" %% "spark-mllib" % SPARK_VERSION % "provided"
 
+libraryDependencies += "org.apache.commons" % "commons-math3" % "3.5"
+
 libraryDependencies ++= Seq("joda-time" % "joda-time" % "2.7", "org.joda" % "joda-convert" % "1.7")
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % Test
