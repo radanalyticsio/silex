@@ -8,17 +8,19 @@ val SPARK_VERSION = "1.4.0"
 
 scalaVersion := "2.10.4"
 
-libraryDependencies += "org.apache.spark" %% "spark-core" % SPARK_VERSION % "provided"
+def commonSettings = Seq(
+  libraryDependencies ++= Seq(
+    "org.apache.spark" %% "spark-core" % SPARK_VERSION % "provided",
+    "org.apache.spark" %% "spark-sql" % SPARK_VERSION % "provided",
+    "org.apache.spark" %% "spark-mllib" % SPARK_VERSION % "provided",
+    "joda-time" % "joda-time" % "2.7", 
+    "org.joda" % "joda-convert" % "1.7",
+    "org.scalatest" %% "scalatest" % "2.2.4" % Test,
+    "org.json4s" %% "json4s-jackson" % "3.2.10" % "provided"
+  )
+)
 
-libraryDependencies += "org.apache.spark" %% "spark-sql" % SPARK_VERSION % "provided"
-
-libraryDependencies += "org.apache.spark" %% "spark-mllib" % SPARK_VERSION % "provided"
-
-libraryDependencies ++= Seq("joda-time" % "joda-time" % "2.7", "org.joda" % "joda-convert" % "1.7")
-
-libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % Test
-
-libraryDependencies += "org.json4s" %% "json4s-jackson" % "3.2.10" % "provided"
+seq(commonSettings:_*)
 
 seq(bintraySettings:_*)
 
@@ -41,3 +43,20 @@ site.jekyllSupport()
 ghpages.settings
 
 git.remoteRepo := "git@github.com:willb/silex.git"
+
+lazy val silex = project in file(".")
+
+lazy val spark = project.dependsOn(silex)
+  .settings(commonSettings:_*)
+  .settings(
+    name := "spark",
+    initialCommands in console := """
+      |import org.apache.spark.SparkConf
+      |import org.apache.spark.SparkContext
+      |import org.apache.spark.SparkContext._
+      |import org.apache.spark.rdd.RDD
+      |val app = new com.redhat.et.silex.app.ConsoleApp()
+      |val spark = app.context
+      |com.redhat.et.silex.util.logging.consoleLogWarn
+    """.stripMargin,
+    cleanupCommands in console := "spark.stop")
