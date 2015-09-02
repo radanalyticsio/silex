@@ -50,6 +50,8 @@ lazy val spark = project.dependsOn(silex)
   .settings(commonSettings:_*)
   .settings(
     name := "spark",
+    publishArtifact := false,
+    publish := {},
     initialCommands in console := """
       |import org.apache.spark.SparkConf
       |import org.apache.spark.SparkContext
