@@ -22,6 +22,7 @@ import scala.reflect.ClassTag
 import scala.collection.immutable.SortedSet
 import scala.collection.immutable.SortedMap
 
+import org.apache.spark.rdd.RDD
 import org.apache.spark.mllib.linalg.{
   DenseVector => DenseSV,
   SparseVector => SparseSV
@@ -32,6 +33,7 @@ import com.redhat.et.silex.feature.extractor.spark.implicits._
 import com.redhat.et.silex.feature.indexfunction._
 import com.redhat.et.silex.util.OptionalArg
 import com.redhat.et.silex.util.OptionalArg.fullOptionSupport
+import com.redhat.et.silex.histogram.implicits._
 
 case class OneHotModel[V](histogram: Seq[(V, Double)]) {
   def oneHotExtractor(
@@ -149,12 +151,12 @@ case class OneHotModel[V](histogram: Seq[(V, Double)]) {
   }
 }
 
-abstract class OneHotMethods[D] {
-  def oneHotBy[V](f: D => V): OneHotModel[V]
-  def oneHotByFlat[V](f: D => Iterable[V]): OneHotModel[V]
-  def oneHotSketchBy[V](f: D => V): OneHotModel[V]
-  def oneHotSketchByFlat[V](f: D => Iterable[V]): OneHotModel[V]
+class OneHotMethodsRDD[D :ClassTag](rdd: RDD[D]) {
+  def oneHotBy[V](f: D => V) = new OneHotModel(rdd.histBy(f))
+  def oneHotByFlat[V](f: D => Iterable[V]) = new OneHotModel(rdd.histByFlat(f))
 }
 
-class OneHotMethodsRDD[D :ClassTag] {
+object implicits {
+  import scala.language.implicitConversions
+  implicit def toOneHotMethodsRDD[D :ClassTag](rdd: RDD[D]) = new OneHotMethodsRDD(rdd)
 }
