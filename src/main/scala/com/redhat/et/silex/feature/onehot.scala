@@ -153,7 +153,7 @@ case class OneHotModel[V](histogram: Seq[(V, Double)]) {
 
 class OneHotMethodsRDD[D :ClassTag](rdd: RDD[D]) {
   def oneHotBy[V](f: D => V) = new OneHotModel(rdd.histBy(f))
-  def oneHotByFlat[V](f: D => Iterable[V]) = new OneHotModel(rdd.histByFlat(f))
+  def oneHotByFlat[V](f: D => TraversableOnce[V]) = new OneHotModel(rdd.histByFlat(f))
 }
 
 object implicits {

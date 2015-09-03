@@ -53,7 +53,7 @@ abstract class HistogramMethods[T] extends Serializable {
     * @return A Map from occurring values to their counts
     * @tparam U The element type of the sequence returned by the function
     */
-  def countByFlat[U](f: T => Iterable[U]): Map[U, Long]
+  def countByFlat[U](f: T => TraversableOnce[U]): Map[U, Long]
 
   /** Histogram the occurrences of values in a sequence returned by a function applied to RDD rows
     * @param f The function to apply to each RDD row: returns a sequence of values
@@ -64,7 +64,7 @@ abstract class HistogramMethods[T] extends Serializable {
     * @note When both cumulative and normalized are true, "counts" are analoglous to a sampled CDF
     */
   def histByFlat[U](
-      f: T => Iterable[U],
+      f: T => TraversableOnce[U],
       normalized: Boolean = false,
       cumulative: Boolean = false
       ): Seq[(U, Double)]

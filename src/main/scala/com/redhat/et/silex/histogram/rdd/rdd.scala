@@ -71,7 +71,7 @@ class HistogramMethodsRDD[T :ClassTag](data: RDD[T]) extends HistogramMethods[T]
     hist.toVector
   }
 
-  def countByFlat[U](f: T => Iterable[U]): Map[U, Long] = {
+  def countByFlat[U](f: T => TraversableOnce[U]): Map[U, Long] = {
     val hacc = data.sparkContext.accumulable(empty[U])(new AccumulableCounts[U])
     data.foreach { r =>
       for { e <- f(r) } {
@@ -82,7 +82,7 @@ class HistogramMethodsRDD[T :ClassTag](data: RDD[T]) extends HistogramMethods[T]
   }
 
   def histByFlat[U](
-      f: T => Iterable[U],
+      f: T => TraversableOnce[U],
       normalized: Boolean = false,
       cumulative: Boolean = false
       ): Seq[(U, Double)] = {
