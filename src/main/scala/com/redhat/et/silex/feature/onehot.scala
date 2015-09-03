@@ -49,7 +49,8 @@ case class OneHotModel[V](histogram: Seq[(V, Double)]) {
     val width = v.length + (if (undef) 1 else 0)
     val v2i = InvertibleIndexFunction(v).inverse
     val nvec = v2i.domain.map(namePrefix + _.toString).toVector
-    val names = InvertibleIndexFunction(if (undef) (nvec :+ undefName.get) else nvec)
+      .++(if (undef) Vector(namePrefix + undefName.get) else Vector[String]())
+    val names = InvertibleIndexFunction(nvec)
     val function =
       if (undef) {
         (v: V) => {
@@ -80,7 +81,8 @@ case class OneHotModel[V](histogram: Seq[(V, Double)]) {
     val width = v.length + (if (undef) 1 else 0)
     val v2i = InvertibleIndexFunction(v).inverse
     val nvec = v2i.domain.map(namePrefix + _.toString).toVector
-    val names = InvertibleIndexFunction(if (undef) (nvec :+ undefName.get) else nvec)
+      .++(if (undef) Vector(namePrefix + undefName.get) else Vector[String]())
+    val names = InvertibleIndexFunction(nvec)
     val function =
       if (undef) {
         (data: TraversableOnce[V]) => {
@@ -111,7 +113,8 @@ case class OneHotModel[V](histogram: Seq[(V, Double)]) {
     val width = v.length + (if (undef) 1 else 0)
     val v2i = InvertibleIndexFunction(v).inverse
     val nvec = v2i.domain.map(namePrefix + _.toString).toVector
-    val names = InvertibleIndexFunction(if (undef) (nvec :+ undefName.get) else nvec)
+      .++(if (undef) Vector(namePrefix + undefName.get) else Vector[String]())
+    val names = InvertibleIndexFunction(nvec)
     val function =
       if (undef) {
         (data: TraversableOnce[V]) => {
