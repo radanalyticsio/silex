@@ -63,4 +63,52 @@ class OneHotModelSpec extends FlatSpec with Matchers {
     model.oneHotExtractor(maxProb = 0.0)("a") should beEqSeq(Seq.empty[Double])
     model.oneHotExtractor(maxSize = 0)("a") should beEqSeq(Seq.empty[Double])
   }
+
+  it should "provide multiHotExtractor" in {
+    val hist = Seq(("a", 3.0), ("b", 2.0), ("c", 1.0))
+    val model = new OneHotModel(hist)
+    model.multiHotExtractor()(Seq("a")) should beEqSeq(Seq(1.0, 0.0, 0.0))
+    model.multiHotExtractor()(Seq("b")) should beEqSeq(Seq(0.0, 1.0, 0.0))
+    model.multiHotExtractor()(Seq("c")) should beEqSeq(Seq(0.0, 0.0, 1.0))
+    model.multiHotExtractor()(Seq("d")) should beEqSeq(Seq(0.0, 0.0, 0.0))
+    model.multiHotExtractor()(Seq("a", "c")) should beEqSeq(Seq(1.0, 0.0, 1.0))
+    model.multiHotExtractor()(Seq("b", "d")) should beEqSeq(Seq(0.0, 1.0, 0.0))
+
+    model.multiHotExtractor(undefName = "*")(Seq("a")) should beEqSeq(Seq(1.0, 0.0, 0.0, 0.0))
+    model.multiHotExtractor(undefName = "*")(Seq("b")) should beEqSeq(Seq(0.0, 1.0, 0.0, 0.0))
+    model.multiHotExtractor(undefName = "*")(Seq("c")) should beEqSeq(Seq(0.0, 0.0, 1.0, 0.0))
+    model.multiHotExtractor(undefName = "*")(Seq("d")) should beEqSeq(Seq(0.0, 0.0, 0.0, 1.0))
+    model.multiHotExtractor(undefName = "*")(Seq("a", "c")) should beEqSeq(Seq(1.0, 0.0, 1.0, 0.0))
+    model.multiHotExtractor(undefName = "*")(Seq("b", "d")) should beEqSeq(Seq(0.0, 1.0, 0.0, 1.0))
+
+    model.multiHotExtractor(minFreq = 2)(Seq("a")) should beEqSeq(Seq(1.0, 0.0))
+    model.multiHotExtractor(minFreq = 2)(Seq("b")) should beEqSeq(Seq(0.0, 1.0))
+    model.multiHotExtractor(minFreq = 2)(Seq("c")) should beEqSeq(Seq(0.0, 0.0))
+    model.multiHotExtractor(minFreq = 2)(Seq("a", "c")) should beEqSeq(Seq(1.0, 0.0))
+
+    model.multiHotExtractor(maxFreq = 2)(Seq("a")) should beEqSeq(Seq(0.0, 0.0))
+    model.multiHotExtractor(maxFreq = 2)(Seq("b")) should beEqSeq(Seq(1.0, 0.0))
+    model.multiHotExtractor(maxFreq = 2)(Seq("c")) should beEqSeq(Seq(0.0, 1.0))
+    model.multiHotExtractor(maxFreq = 2)(Seq("a", "c")) should beEqSeq(Seq(0.0, 1.0))
+
+    model.multiHotExtractor(minProb = 0.33)(Seq("a")) should beEqSeq(Seq(1.0, 0.0))
+    model.multiHotExtractor(minProb = 0.33)(Seq("b")) should beEqSeq(Seq(0.0, 1.0))
+    model.multiHotExtractor(minProb = 0.33)(Seq("c")) should beEqSeq(Seq(0.0, 0.0))
+    model.multiHotExtractor(minProb = 0.33)(Seq("a", "c")) should beEqSeq(Seq(1.0, 0.0))
+
+    model.multiHotExtractor(maxProb = 0.34)(Seq("a")) should beEqSeq(Seq(0.0, 0.0))
+    model.multiHotExtractor(maxProb = 0.34)(Seq("b")) should beEqSeq(Seq(1.0, 0.0))
+    model.multiHotExtractor(maxProb = 0.34)(Seq("c")) should beEqSeq(Seq(0.0, 1.0))
+    model.multiHotExtractor(maxProb = 0.34)(Seq("a", "c")) should beEqSeq(Seq(0.0, 1.0))
+
+    model.multiHotExtractor(maxSize = 2)(Seq("a")) should beEqSeq(Seq(1.0, 0.0))
+    model.multiHotExtractor(maxSize = 2)(Seq("b")) should beEqSeq(Seq(0.0, 1.0))
+    model.multiHotExtractor(maxSize = 2)(Seq("c")) should beEqSeq(Seq(0.0, 0.0))
+
+    model.multiHotExtractor(minFreq = 4)(Seq("a")) should beEqSeq(Seq.empty[Double])
+    model.multiHotExtractor(maxFreq = 0)(Seq("a")) should beEqSeq(Seq.empty[Double])
+    model.multiHotExtractor(minProb = 1.0)(Seq("a")) should beEqSeq(Seq.empty[Double])
+    model.multiHotExtractor(maxProb = 0.0)(Seq("a")) should beEqSeq(Seq.empty[Double])
+    model.multiHotExtractor(maxSize = 0)(Seq("a")) should beEqSeq(Seq.empty[Double])
+  }
 }
