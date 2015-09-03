@@ -104,11 +104,70 @@ class OneHotModelSpec extends FlatSpec with Matchers {
     model.multiHotExtractor(maxSize = 2)(Seq("a")) should beEqSeq(Seq(1.0, 0.0))
     model.multiHotExtractor(maxSize = 2)(Seq("b")) should beEqSeq(Seq(0.0, 1.0))
     model.multiHotExtractor(maxSize = 2)(Seq("c")) should beEqSeq(Seq(0.0, 0.0))
+    model.multiHotExtractor(maxSize = 2)(Seq("a", "c")) should beEqSeq(Seq(1.0, 0.0))
 
     model.multiHotExtractor(minFreq = 4)(Seq("a")) should beEqSeq(Seq.empty[Double])
     model.multiHotExtractor(maxFreq = 0)(Seq("a")) should beEqSeq(Seq.empty[Double])
     model.multiHotExtractor(minProb = 1.0)(Seq("a")) should beEqSeq(Seq.empty[Double])
     model.multiHotExtractor(maxProb = 0.0)(Seq("a")) should beEqSeq(Seq.empty[Double])
     model.multiHotExtractor(maxSize = 0)(Seq("a")) should beEqSeq(Seq.empty[Double])
+  }
+
+  it should "provide histExtractor" in {
+    val hist = Seq(("a", 3.0), ("b", 2.0), ("c", 1.0))
+    val model = new OneHotModel(hist)
+    model.histExtractor()(Seq("a")) should beEqSeq(Seq(1.0, 0.0, 0.0))
+    model.histExtractor()(Seq("b")) should beEqSeq(Seq(0.0, 1.0, 0.0))
+    model.histExtractor()(Seq("c")) should beEqSeq(Seq(0.0, 0.0, 1.0))
+    model.histExtractor()(Seq("d")) should beEqSeq(Seq(0.0, 0.0, 0.0))
+    model.histExtractor()(Seq("a", "c")) should beEqSeq(Seq(1.0, 0.0, 1.0))
+    model.histExtractor()(Seq("b", "d")) should beEqSeq(Seq(0.0, 1.0, 0.0))
+    model.histExtractor()(Seq("a", "a")) should beEqSeq(Seq(2.0, 0.0, 0.0))
+    model.histExtractor()(Seq("a", "b", "a", "b", "a")) should beEqSeq(Seq(3.0, 2.0, 0.0))
+
+    model.histExtractor(undefName = "*")(Seq("a")) should beEqSeq(Seq(1.0, 0.0, 0.0, 0.0))
+    model.histExtractor(undefName = "*")(Seq("b")) should beEqSeq(Seq(0.0, 1.0, 0.0, 0.0))
+    model.histExtractor(undefName = "*")(Seq("c")) should beEqSeq(Seq(0.0, 0.0, 1.0, 0.0))
+    model.histExtractor(undefName = "*")(Seq("d")) should beEqSeq(Seq(0.0, 0.0, 0.0, 1.0))
+    model.histExtractor(undefName = "*")(Seq("a", "c")) should beEqSeq(Seq(1.0, 0.0, 1.0, 0.0))
+    model.histExtractor(undefName = "*")(Seq("a", "c", "a")) should beEqSeq(Seq(2.0, 0.0, 1.0, 0.0))
+    model.histExtractor(undefName = "*")(Seq("b", "d", "b")) should beEqSeq(Seq(0.0, 2.0, 0.0, 1.0))
+    model.histExtractor(undefName = "*")(Seq("d", "b", "e")) should beEqSeq(Seq(0.0, 1.0, 0.0, 2.0))
+
+    model.histExtractor(minFreq = 2)(Seq("a")) should beEqSeq(Seq(1.0, 0.0))
+    model.histExtractor(minFreq = 2)(Seq("b")) should beEqSeq(Seq(0.0, 1.0))
+    model.histExtractor(minFreq = 2)(Seq("c")) should beEqSeq(Seq(0.0, 0.0))
+    model.histExtractor(minFreq = 2)(Seq("a", "c")) should beEqSeq(Seq(1.0, 0.0))
+    model.histExtractor(minFreq = 2)(Seq("a", "c", "a", "b")) should beEqSeq(Seq(2.0, 1.0))
+
+    model.histExtractor(maxFreq = 2)(Seq("a")) should beEqSeq(Seq(0.0, 0.0))
+    model.histExtractor(maxFreq = 2)(Seq("b")) should beEqSeq(Seq(1.0, 0.0))
+    model.histExtractor(maxFreq = 2)(Seq("c")) should beEqSeq(Seq(0.0, 1.0))
+    model.histExtractor(maxFreq = 2)(Seq("a", "c")) should beEqSeq(Seq(0.0, 1.0))
+    model.histExtractor(maxFreq = 2)(Seq("a", "c", "b", "c")) should beEqSeq(Seq(1.0, 2.0))
+
+    model.histExtractor(minProb = 0.33)(Seq("a")) should beEqSeq(Seq(1.0, 0.0))
+    model.histExtractor(minProb = 0.33)(Seq("b")) should beEqSeq(Seq(0.0, 1.0))
+    model.histExtractor(minProb = 0.33)(Seq("c")) should beEqSeq(Seq(0.0, 0.0))
+    model.histExtractor(minProb = 0.33)(Seq("a", "c")) should beEqSeq(Seq(1.0, 0.0))
+    model.histExtractor(minProb = 0.33)(Seq("b", "c", "b", "a")) should beEqSeq(Seq(1.0, 2.0))
+
+    model.histExtractor(maxProb = 0.34)(Seq("a")) should beEqSeq(Seq(0.0, 0.0))
+    model.histExtractor(maxProb = 0.34)(Seq("b")) should beEqSeq(Seq(1.0, 0.0))
+    model.histExtractor(maxProb = 0.34)(Seq("c")) should beEqSeq(Seq(0.0, 1.0))
+    model.histExtractor(maxProb = 0.34)(Seq("a", "c")) should beEqSeq(Seq(0.0, 1.0))
+    model.histExtractor(maxProb = 0.34)(Seq("a", "c", "b", "c")) should beEqSeq(Seq(1.0, 2.0))
+
+    model.histExtractor(maxSize = 2)(Seq("a")) should beEqSeq(Seq(1.0, 0.0))
+    model.histExtractor(maxSize = 2)(Seq("b")) should beEqSeq(Seq(0.0, 1.0))
+    model.histExtractor(maxSize = 2)(Seq("c")) should beEqSeq(Seq(0.0, 0.0))
+    model.histExtractor(maxSize = 2)(Seq("a", "c")) should beEqSeq(Seq(1.0, 0.0))
+    model.histExtractor(maxSize = 2)(Seq("a", "c", "a", "b")) should beEqSeq(Seq(2.0, 1.0))
+
+    model.histExtractor(minFreq = 4)(Seq("a")) should beEqSeq(Seq.empty[Double])
+    model.histExtractor(maxFreq = 0)(Seq("a")) should beEqSeq(Seq.empty[Double])
+    model.histExtractor(minProb = 1.0)(Seq("a")) should beEqSeq(Seq.empty[Double])
+    model.histExtractor(maxProb = 0.0)(Seq("a")) should beEqSeq(Seq.empty[Double])
+    model.histExtractor(maxSize = 0)(Seq("a")) should beEqSeq(Seq.empty[Double])
   }
 }
