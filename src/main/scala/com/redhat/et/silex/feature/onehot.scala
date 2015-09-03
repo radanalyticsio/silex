@@ -140,8 +140,9 @@ case class OneHotModel[V](histogram: Seq[(V, Double)]) {
     maxProb: OptionalArg[Double],
     maxSize: OptionalArg[Int]
   ) = {
+    val n = if (minProb.isEmpty && maxProb.isEmpty) 0.0 else histogram.iterator.map(_._2).sum
     var h = histogram.iterator
-    val n = if (minProb.isEmpty && maxProb.isEmpty) 0.0 else h.map(_._2).sum
+    // Filter order matters here: by frequency, then by probability, then by max size
     minFreq.foreach { f => h = h.filter(_._2 >= f.toDouble) }
     maxFreq.foreach { f => h = h.filter(_._2 <= f.toDouble) }
     minProb.foreach { p => h = h.filter(_._2 / n >= p) }
