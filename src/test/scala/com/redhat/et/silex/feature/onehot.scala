@@ -271,3 +271,53 @@ class OneHotModelSpec extends FlatSpec with Matchers {
     model.histExtractor(maxSize = 0).categoryInfo.range.toSeq should beEqSeq(Seq[Int]())
   }
 }
+
+class OneHotMethodsRDDSpec extends FlatSpec with Matchers  with PerTestSparkContext {
+  import com.redhat.et.silex.feature.onehot.implicits._
+
+  it should "provide oneHotBy" in {
+    val data = context.parallelize(Seq(3, 2, 1, 2, 1, 1), 2)
+    val model1 = data.oneHotBy(identity _)
+    model1.oneHotExtractor()(1) should beEqSeq(Seq(1.0, 0.0, 0.0))
+    model1.oneHotExtractor()(2) should beEqSeq(Seq(0.0, 1.0, 0.0))
+    model1.oneHotExtractor()(3) should beEqSeq(Seq(0.0, 0.0, 1.0))
+    model1.oneHotExtractor()(4) should beEqSeq(Seq(0.0, 0.0, 0.0))
+    model1.oneHotExtractor().width should be (3)
+    model1.oneHotExtractor().names.range.toSeq should beEqSeq(Seq("v=1","v=2","v=3"))
+    model1.oneHotExtractor().categoryInfo.domain.toSeq should beEqSeq(Seq(0, 1, 2))
+    model1.oneHotExtractor().categoryInfo.range.toSeq should beEqSeq(Seq(2))
+
+    val model2 = data.oneHotBy(_ * 2)
+    model2.oneHotExtractor()(2) should beEqSeq(Seq(1.0, 0.0, 0.0))
+    model2.oneHotExtractor()(4) should beEqSeq(Seq(0.0, 1.0, 0.0))
+    model2.oneHotExtractor()(6) should beEqSeq(Seq(0.0, 0.0, 1.0))
+    model2.oneHotExtractor()(8) should beEqSeq(Seq(0.0, 0.0, 0.0))
+    model2.oneHotExtractor().width should be (3)
+    model2.oneHotExtractor().names.range.toSeq should beEqSeq(Seq("v=2","v=4","v=6"))
+    model2.oneHotExtractor().categoryInfo.domain.toSeq should beEqSeq(Seq(0, 1, 2))
+    model2.oneHotExtractor().categoryInfo.range.toSeq should beEqSeq(Seq(2))
+  }
+
+  it should "provide oneHotByFlat" in {
+    val data = context.parallelize(Seq(3, 2, 1, 2, 1, 1), 2)
+    val model1 = data.oneHotByFlat(x => Seq(x))
+    model1.oneHotExtractor()(1) should beEqSeq(Seq(1.0, 0.0, 0.0))
+    model1.oneHotExtractor()(2) should beEqSeq(Seq(0.0, 1.0, 0.0))
+    model1.oneHotExtractor()(3) should beEqSeq(Seq(0.0, 0.0, 1.0))
+    model1.oneHotExtractor()(4) should beEqSeq(Seq(0.0, 0.0, 0.0))
+    model1.oneHotExtractor().width should be (3)
+    model1.oneHotExtractor().names.range.toSeq should beEqSeq(Seq("v=1","v=2","v=3"))
+    model1.oneHotExtractor().categoryInfo.domain.toSeq should beEqSeq(Seq(0, 1, 2))
+    model1.oneHotExtractor().categoryInfo.range.toSeq should beEqSeq(Seq(2))
+
+    val model2 = data.oneHotByFlat(x => Seq(x * 2))
+    model2.oneHotExtractor()(2) should beEqSeq(Seq(1.0, 0.0, 0.0))
+    model2.oneHotExtractor()(4) should beEqSeq(Seq(0.0, 1.0, 0.0))
+    model2.oneHotExtractor()(6) should beEqSeq(Seq(0.0, 0.0, 1.0))
+    model2.oneHotExtractor()(8) should beEqSeq(Seq(0.0, 0.0, 0.0))
+    model2.oneHotExtractor().width should be (3)
+    model2.oneHotExtractor().names.range.toSeq should beEqSeq(Seq("v=2","v=4","v=6"))
+    model2.oneHotExtractor().categoryInfo.domain.toSeq should beEqSeq(Seq(0, 1, 2))
+    model2.oneHotExtractor().categoryInfo.range.toSeq should beEqSeq(Seq(2))
+  }
+}
