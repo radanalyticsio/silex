@@ -35,7 +35,43 @@ import com.redhat.et.silex.util.OptionalArg
 import com.redhat.et.silex.util.OptionalArg.fullOptionSupport
 import com.redhat.et.silex.histogram.implicits._
 
+/** A model for generating Extractor objects from a histogram of values
+  *
+  * @tparam V The value type of elements in histogram
+  * @param histogram A histogram of (value, frequency) elements, assumed to be sorted in descending order of frequency.
+  *
+  * @define namePrefixDoc @param namePrefix a string prepended to feature names.
+  * The name of feature corresponding to value v is namePrefix + v.toString.
+  * @define undefNameDoc @param undefName a "virtual" value corresponding to any value that is 
+  * not in the histogram. If not set, then undefined values result in an all-zero output vector.
+  * @define minFreqDoc @param minFreq If set, then histogram values with frequency < minFreq
+  * will not be defined in the extractor mapping.
+  * @define maxFreqDoc @param maxFreq If set, then histogram values with frequency > maxFreq
+  * will not be defined in the extractor mapping.
+  * @define minProbDoc @param minProb If set, then histogram values with probability < minProb
+  * will not be defined in the extractor mapping.
+  * @define maxProbDoc @param maxProb If set, then histogram values with probability > maxProb
+  * will not be defined in the extractor mapping.
+  * @define maxSizeDoc @param maxSize If set, then the subsequence of histogram values 
+  * that pass any of the above filters is clipped to maxSize elements, and the remaining
+  * elements are the ones defined in the extractor mapping.
+  * @define orderNote @note the histogram filters above are applied in the following order: minFreq, maxFreq, minProb, maxProb, maxSize.
+  */
 case class OneHotModel[V](histogram: Seq[(V, Double)]) {
+
+  /** Generate a "one-hot" extractor that maps a value of type V to a vector where the position
+    * corresponding to that value is 1, and all others elements are 0.
+    *
+    * $namePrefixDoc
+    * $undefNameDoc
+    * $minFreqDoc
+    * $maxFreqDoc
+    * $minProbDoc
+    * $maxProbDoc
+    * $maxSizeDoc
+    * @return An extractor that implements a one-hot encoding of input values.
+    * $orderNote
+    */
   def oneHotExtractor(
     namePrefix: String = "v=",
     undefName: OptionalArg[String] = None,
@@ -68,6 +104,19 @@ case class OneHotModel[V](histogram: Seq[(V, Double)]) {
     Extractor(width, function, names, IndexFunction.constant(2, width))
   }
 
+  /** Generate a "multi-hot" extractor that maps a sequence of type V to a vector where the position
+    * corresponding to each value present in the sequence is 1, and all others elements are 0.
+    *
+    * $namePrefixDoc
+    * $undefNameDoc
+    * $minFreqDoc
+    * $maxFreqDoc
+    * $minProbDoc
+    * $maxProbDoc
+    * $maxSizeDoc
+    * @return An extractor that implements a multi-hot encoding of values in an input sequence.
+    * $orderNote
+    */
   def multiHotExtractor(
     namePrefix: String = "v=",
     undefName: OptionalArg[String] = None,
@@ -100,6 +149,20 @@ case class OneHotModel[V](histogram: Seq[(V, Double)]) {
     Extractor(width, function, names, IndexFunction.constant(2, width))
   }
 
+  /** Generate a histogram extractor that maps a sequence of type V to a vector where the position
+    * corresponding to each value present in the sequence is the frequency of that value in the 
+    * sequence.
+    *
+    * $namePrefixDoc
+    * $undefNameDoc
+    * $minFreqDoc
+    * $maxFreqDoc
+    * $minProbDoc
+    * $maxProbDoc
+    * $maxSizeDoc
+    * @return An extractor that implements a histogram of the values in an input sequence.
+    * $orderNote
+    */
   def histExtractor(
     namePrefix: String = "v=",
     undefName: OptionalArg[String] = None,
@@ -155,11 +218,25 @@ case class OneHotModel[V](histogram: Seq[(V, Double)]) {
   }
 }
 
+/** define oneHotBy family of methods on Spark RDDs */
 class OneHotMethodsRDD[D :ClassTag](rdd: RDD[D]) {
+  /** Generate a one-hot model from the values obtained by applying 'f' to each RDD row
+    *
+    * @param f The function to apply to each row to obtain histogram values
+    * @return A one-hot model corresponding to the resulting histogram
+    */
   def oneHotBy[V](f: D => V) = new OneHotModel(rdd.histBy(f))
+
+  /** Generate a one-hot model from the values in each sequence obtained by applying 'f' 
+    * to the RDD rows
+    *
+    * @param f The function to apply to each row to obtain a sequence of histogram values
+    * @return A one-hot model corresponding to the resulting histogram
+    */
   def oneHotByFlat[V](f: D => TraversableOnce[V]) = new OneHotModel(rdd.histByFlat(f))
 }
 
+/** implicit conversions for enhanced methods in the OneHotMethods family */ 
 object implicits {
   import scala.language.implicitConversions
   implicit def toOneHotMethodsRDD[D :ClassTag](rdd: RDD[D]) = new OneHotMethodsRDD(rdd)
