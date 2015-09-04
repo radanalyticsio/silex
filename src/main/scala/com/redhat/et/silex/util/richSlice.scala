@@ -22,76 +22,74 @@ object richslice {
   import scala.language.implicitConversions
   import scala.collection.immutable.Range
 
-  sealed abstract class RichSliceOp
+  sealed trait Star {
+    def to(j: Int): Range = starIdx to j
+    def to(s: Star): Range = starIdx to starIdx
+    def until(j: Int): Range = starIdx until j
+    def until(s: Star): Range = starIdx until starIdx
+    def by(step: Int): Range = starIdx until starIdx by step
+  }
+  object star extends Star
+  def * = star
+  private val starIdx = scala.Int.MinValue
 
-  private case class IndexRS(idx: Int) extends RichSliceOp
-  private case class RangeRS(beg: Int, end: Int) extends RichSliceOp
-  private case class RangeStepRS(beg: Int, end: Int, step: Int) extends RichSliceOp {
-    require(step != 0)
+  implicit class StarToRange(n: Int) {
+    def to(s: Star): Range = n to starIdx
+    def until(s: Star): Range = n until starIdx
   }
 
-  implicit def intToIndexRS(idx: Int): RichSliceOp = IndexRS(idx)
-
-  implicit def rangeToRangeRS(r: Range): RichSliceOp = {
-    val d = if (!r.isInclusive || r.end == star) 0 else if (r.step > 0) 1 else -1
-    if (r.step == 1) RangeRS(r.start, r.end + d) else RangeStepRS(r.start, r.end + d, r.step)
+  sealed trait Slice
+  private case class IndexS(idx: Int) extends Slice
+  private case class RangeS(beg: Int, end: Int) extends Slice
+  private case class RangeStepS(beg: Int, end: Int, step: Int) extends Slice {
+    require(step != 0, "RichSlice step values cannot be zero")
   }
 
-  abstract class RichSliceStar {
-    def to(j: Int): Range = star to j
-    def to(s: RichSliceStar): Range = star to star
-    def until(j: Int): Range = star until j
-    def until(s: RichSliceStar): Range = star until star
-    def by(step: Int): Range = star until star by step
+  object Slice {
+    implicit def intToSlice(idx: Int): Slice = IndexS(idx)
+
+    implicit def rangeToSlice(r: Range): Slice = {
+      val d = if (!r.isInclusive || r.end == starIdx) 0 else if (r.step > 0) 1 else -1
+      if (r.step == 1) RangeS(r.start, r.end + d) else RangeStepS(r.start, r.end + d, r.step)
+    }
+
+    implicit def starToSlice(s: Star): Slice = RangeS(starIdx, starIdx)
   }
-  private val star = scala.Int.MinValue
-  object starobj extends RichSliceStar
-  def * = starobj
 
-  implicit def starToRangeRS(s: RichSliceStar): RichSliceOp = RangeStepRS(star, star, 1)
-
-  class RichSliceIntWrapper(n: Int) {
-    def to(s: RichSliceStar): Range = n to star
-    def until(s: RichSliceStar): Range = n until star
-  }
-  implicit def toRichSliceIntWrapper(n: Int) = new RichSliceIntWrapper(n)
-
-  case class RichSliceSeq(ops: Seq[RichSliceOp]) extends Serializable
+  case class RichSlice(slices: List[Slice]) extends Serializable
 
   object RichSlice {
-    def apply(ops: RichSliceOp*) = RichSliceSeq(ops)
+    def apply(slices: Slice*): RichSlice = RichSlice(slices.toList)
   }
 
-  class RichSliceSeqWrapper[A](self: Seq[A]) {
-    val N = self.length
+  implicit class RichSliceMethods[A](self: Seq[A]) {
+    private val N = self.length
 
-    def richSliceIterator(ops: RichSliceOp*): Iterator[A] =
-      richSliceIterator(RichSliceSeq(ops))
+    def richSliceIterator(slices: Slice*): Iterator[A] =
+      richSliceIterator(RichSlice(slices.toList))
 
-    def richSliceIterator(rs: RichSliceSeq): Iterator[A] = {
-      val itrList = rs.ops.map(resolveNegative).map { op =>
-        op match {
-          case IndexRS(j) => Iterator.single(self(j))
-          case RangeRS(beg, end) => {
-            if (beg == star) {
-              if (end == star) { self.iterator } else { self.iterator.take(end) }
-            } else {
-              if (end == star) { self.iterator.drop(beg) } else { self.iterator.slice(beg, end) }
-            }
+    def richSliceIterator(rs: RichSlice): Iterator[A] = {
+      val itrList = rs.slices.map(resolveNegative).map {
+        case IndexS(j) => Iterator.single(self(j))
+        case RangeS(beg, end) => {
+          if (beg == starIdx) {
+            if (end == starIdx) self.iterator else self.iterator.take(end)
+          } else {
+            if (end == starIdx) self.iterator.drop(beg) else self.iterator.slice(beg, end)
           }
-          case RangeStepRS(beg, end, step) => {
-            if (beg == star) {
-              if (end == star) {
-                if (step > 0) new IterU(self, 0, N, step) else new IterD(self, N-1, -1, step)
-              } else {
-                if (step > 0) new IterU(self, 0, end, step) else new IterD(self, N-1, end, step)
-              }
+        }
+        case RangeStepS(beg, end, step) => {
+          if (beg == starIdx) {
+            if (end == starIdx) {
+              if (step > 0) new IterU(self, 0, N, step) else new IterD(self, N-1, -1, step)
             } else {
-              if (end == star) {
-                if (step > 0) new IterU(self, beg, N, step) else new IterD(self, beg, -1, step)
-              } else {
-                if (step > 0) new IterU(self, beg, end, step) else new IterD(self, beg, end, step)
-              }
+              if (step > 0) new IterU(self, 0, end, step) else new IterD(self, N-1, end, step)
+            }
+          } else {
+            if (end == starIdx) {
+              if (step > 0) new IterU(self, beg, N, step) else new IterD(self, beg, -1, step)
+            } else {
+              if (step > 0) new IterU(self, beg, end, step) else new IterD(self, beg, end, step)
             }
           }
         }
@@ -101,59 +99,8 @@ object richslice {
       else itrList.fold(Iterator.empty)(_ ++ _)
     }
 
-    def richSlice(ops: RichSliceOp*): Seq[A] = richSlice(RichSliceSeq(ops))
-
-    def richSlice(rs: RichSliceSeq): Seq[A] = {
-      val r = scala.collection.mutable.ArrayBuffer.empty[A]
-      rs.ops.map(resolveNegative).foreach { op =>
-        op match {
-          case IndexRS(j) => { r += self(j) }
-          case RangeRS(beg, end) => {
-            if (beg == star) {
-              if (end == star) { r ++= self } else { r ++= self.take(end) }
-            } else {
-              if (end == star) { r ++= self.drop(beg) } else { r ++= self.slice(beg, end) }
-            }
-          }
-          case RangeStepRS(beg, end, step) => {
-            if (beg == star) {
-              if (end == star) {
-                if (step > 0) doStep(0, N, step, r) else doStep(N-1, -1, step, r)
-              } else {
-                if (step > 0) doStep(0, end, step, r) else doStep(N-1, end, step, r)
-              }
-            } else {
-              if (end == star) {
-                if (step > 0) doStep(beg, N, step, r) else doStep(beg, -1, step, r)
-              } else {
-                doStep(beg, end, step, r)
-              }
-            }
-          }
-        }
-      }
-      r
-    }
-
-    private def doStep(beg: Int, end: Int, step: Int, r: scala.collection.mutable.ArrayBuffer[A]) {
-      require(step != 0)
-      var j = beg
-      if (step > 0) {
-        if (beg < end) {
-          while (j < end) {
-            r += self(j)
-            j += step
-          }
-        } 
-      } else {
-        if (beg > end) {
-          while (j > end) {
-            r += self(j)
-            j += step
-          }
-        } 
-      }
-    }
+    def richSlice(slices: Slice*): Seq[A] = richSliceIterator(RichSlice(slices.toList)).toSeq
+    def richSlice(rs: RichSlice): Seq[A] = richSliceIterator(rs).toSeq
 
     class IterU(data: Seq[A], beg: Int, end: Int, step: Int) extends Iterator[A] {
       require(step > 0)
@@ -176,22 +123,18 @@ object richslice {
       }
     }
 
-    private def resolveNegative(op: RichSliceOp) = {
+    private def resolveNegative(slice: Slice) = {
       def resolve(j: Int, step: Int = 1) = {
         if (j >= 0) j
-        else if (j == star) j
+        else if (j == starIdx) j
         else if (j == -1  &&  step < 0) j
         else N + j
       }
-      op match {
-        case IndexRS(j) => IndexRS(resolve(j))
-        case RangeRS(b, e) => RangeRS(resolve(b), resolve(e))
-        case RangeStepRS(b, e, s) => RangeStepRS(resolve(b), resolve(e, s), s)
+      slice match {
+        case IndexS(j) => IndexS(resolve(j))
+        case RangeS(b, e) => RangeS(resolve(b), resolve(e))
+        case RangeStepS(b, e, s) => RangeStepS(resolve(b), resolve(e, s), s)
       }
     }
   }
-  implicit def toRichSliceSeqWrapper[A](self: Seq[A]): RichSliceSeqWrapper[A] =
-    new RichSliceSeqWrapper[A](self)
-  implicit def arrayToRichSliceSeqWrapper[A](self: Array[A]): RichSliceSeqWrapper[A] =
-    new RichSliceSeqWrapper[A](self.toSeq)
 }
