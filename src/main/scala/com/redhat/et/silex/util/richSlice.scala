@@ -62,34 +62,34 @@ object richslice {
     def apply(slices: Slice*): RichSlice = RichSlice(slices.toList)
   }
 
-  implicit class RichSliceMethods[A](self: Seq[A]) {
-    private val N = self.length
+  implicit class RichSliceMethods[A](seq: Seq[A]) {
+    private val N = seq.length
 
     def richSliceIterator(slices: Slice*): Iterator[A] =
       richSliceIterator(RichSlice(slices.toList))
 
     def richSliceIterator(rs: RichSlice): Iterator[A] = {
       val itrList = rs.slices.map(resolveNegative).map {
-        case IndexS(j) => Iterator.single(self(j))
+        case IndexS(j) => Iterator.single(seq(j))
         case RangeS(beg, end) => {
           if (beg == starIdx) {
-            if (end == starIdx) self.iterator else self.iterator.take(end)
+            if (end == starIdx) seq.iterator else seq.iterator.take(end)
           } else {
-            if (end == starIdx) self.iterator.drop(beg) else self.iterator.slice(beg, end)
+            if (end == starIdx) seq.iterator.drop(beg) else seq.iterator.slice(beg, end)
           }
         }
         case RangeStepS(beg, end, step) => {
           if (beg == starIdx) {
             if (end == starIdx) {
-              if (step > 0) new IterU(self, 0, N, step) else new IterD(self, N-1, -1, step)
+              if (step > 0) new IterU(seq, 0, N, step) else new IterD(seq, N-1, -1, step)
             } else {
-              if (step > 0) new IterU(self, 0, end, step) else new IterD(self, N-1, end, step)
+              if (step > 0) new IterU(seq, 0, end, step) else new IterD(seq, N-1, end, step)
             }
           } else {
             if (end == starIdx) {
-              if (step > 0) new IterU(self, beg, N, step) else new IterD(self, beg, -1, step)
+              if (step > 0) new IterU(seq, beg, N, step) else new IterD(seq, beg, -1, step)
             } else {
-              if (step > 0) new IterU(self, beg, end, step) else new IterD(self, beg, end, step)
+              if (step > 0) new IterU(seq, beg, end, step) else new IterD(seq, beg, end, step)
             }
           }
         }
