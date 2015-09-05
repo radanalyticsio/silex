@@ -38,6 +38,15 @@ class RichSliceSpec extends FlatSpec with Matchers {
   it should "slice with ranges" in {
     val data = (0 until 10).toVector
     data.richSlice(3 to 6) should beEqSeq(3 to 6)
+    data.richSlice(3 until 6) should beEqSeq(3 until 6)
+  }
+
+  it should "slice with negative ranges" in {
+    val data = (0 until 10).toVector
+    data.richSlice(3 until -3) should beEqSeq(Seq(3, 4, 5, 6))
+    data.richSlice(3 to -3) should beEqSeq(Seq(3, 4, 5, 6, 7))
+    data.richSlice(-3 until 3 by -1) should beEqSeq(Seq(7, 6, 5, 4))
+    data.richSlice(-3 to 3 by -1) should beEqSeq(Seq(7, 6, 5, 4, 3))
   }
 
   it should "slice with stepped ranges" in {
@@ -52,5 +61,13 @@ class RichSliceSpec extends FlatSpec with Matchers {
     data.richSlice(* until 7) should beEqSeq(0 until 7)
     data.richSlice(* to 7) should beEqSeq(0 to 7)
     data.richSlice(*) should beEqSeq(data)
+    data.richSlice(* by 2) should beEqSeq(Seq(0, 2, 4, 6, 8))
+    data.richSlice(* by -2) should beEqSeq(Seq(9, 7, 5, 3, 1))
+  }
+
+  it should "slice with mixed" in {
+    val data = (0 until 20).toVector
+    data.richSlice(2, 3, 5, 7 to 11) should beEqSeq(Seq(2, 3, 5, 7, 8, 9, 10, 11))
+    data.richSlice(* to 3, 3 to * by -1, 17) should beEqSeq(Seq(0, 1, 2, 3, 3, 2, 1, 0, 17))
   }
 }
