@@ -19,6 +19,9 @@
 package com.redhat.et.silex.util
 
 object richslice {
+  import scala.language.higherKinds
+  import scala.collection.SeqLike
+  import scala.collection.generic.CanBuildFrom
   import scala.language.implicitConversions
   import scala.collection.immutable.Range
 
@@ -62,7 +65,7 @@ object richslice {
     def apply(slices: Slice*): RichSlice = RichSlice(slices.toList)
   }
 
-  implicit class RichSliceMethods[A](seq: Seq[A]) {
+  implicit class RichSliceMethods[A, S[E] <: SeqLike[E, S[E]]](seq: S[A]) {
     private val N = seq.length
 
     def richSliceIterator(slices: Slice*): Iterator[A] =
@@ -99,10 +102,13 @@ object richslice {
       else itrList.fold(Iterator.empty)(_ ++ _)
     }
 
-    def richSlice(slices: Slice*): Seq[A] = richSliceIterator(RichSlice(slices.toList)).toSeq
-    def richSlice(rs: RichSlice): Seq[A] = richSliceIterator(rs).toSeq
+    def richSlice(slices: Slice*)(implicit cbf: CanBuildFrom[Nothing, A, S[A]]): S[A] =
+      richSliceIterator(RichSlice(slices.toList)).to[S]
 
-    class IterU(data: Seq[A], beg: Int, end: Int, step: Int) extends Iterator[A] {
+    def richSlice(rs: RichSlice)(implicit cbf: CanBuildFrom[Nothing, A, S[A]]): S[A] =
+      richSliceIterator(rs).to[S]
+
+    class IterU(data: S[A], beg: Int, end: Int, step: Int) extends Iterator[A] {
       require(step > 0)
       var j = if (beg < end) beg else end
       def hasNext = j < end
@@ -112,7 +118,7 @@ object richslice {
         r
       }
     }
-    class IterD(data: Seq[A], beg: Int, end: Int, step: Int) extends Iterator[A] {
+    class IterD(data: S[A], beg: Int, end: Int, step: Int) extends Iterator[A] {
       require(step < 0)
       var j = if (beg > end) beg else end
       def hasNext = j > end
