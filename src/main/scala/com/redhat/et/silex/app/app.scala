@@ -40,7 +40,7 @@ trait AppCommon {
     val initialConf = new SparkConf()
      .setAppName(appName)
      .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
-     .set("spark.kryoserializer.buffer.mb", "16")
+     .set("spark.kryoserializer.buffer", "16mb")
 
     configHooks.reverse.foldLeft(initialConf) {(c, f) => f(c)}
   }
@@ -122,7 +122,7 @@ private [silex] class TestConsoleApp(val suppliedMaster: String = "local[2]") ex
   override def master = suppliedMaster
   override def appName = "console"
   
-  addConfig( {(conf: SparkConf) => conf.set("spark.kryoserializer.buffer.mb", "2")})
+  addConfig( {(conf: SparkConf) => conf.set("spark.kryoserializer.buffer", "2mb")})
   
   def appMain(args: Array[String]) {
     // this never runs
