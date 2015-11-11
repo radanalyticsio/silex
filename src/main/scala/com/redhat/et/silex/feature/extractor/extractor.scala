@@ -70,7 +70,8 @@ abstract class FeatureSeq extends scala.collection.immutable.Seq[Double] with Se
     * @param that The right-argument.  Feature values are appended to the result.
     * @return A new feature sequence consisting of left-argument followed by the right-argument.
     */
-  final def ++(that: FeatureSeq): FeatureSeq = new ConcatFS(this, that)
+  final def ++(that: FeatureSeq): FeatureSeq =
+    if (this.length == 0) that else if (that.length == 0) this else new ConcatFS(this, that)
 
   /** Obtain a new iterator over the indices of the feature sequence.
     *
@@ -200,6 +201,36 @@ case class Extractor[D](
   final override def compose[G](g: G => D) =
     Extractor(width, function.compose(g), names, categoryInfo)
 
+  /** Apply another extractor to the output of this one
+    *
+    * f.andThenExtractor(g) = g.compose(f), in other words: (f.andThenExtractor(g))(x) => g(f(x))
+    * @param g An Extractor whose domain is the output of this extractor
+    * @return A new extractor equivalent to applying 'g' to the output of this extractor
+    */
+  final def andThenExtractor(g: Extractor[FeatureSeq]) = g.compose(this)
+
+  /** Fold another extractor over this one
+    *
+    * A fold is defined as: f.fold(g) = f ++ g.compose(f), in other words: (f.fold(g))(x) => f(x) ++ g(f(x))
+    *
+    * When folding multiple arguments: (f.fold(g, h, ...))(x) => f(x) ++ g(f(x)) ++ h(f(x)) ...
+    * @param extr the extractor to fold
+    * @param rest additional extractors (if any) to fold
+    * @return A new extractor that obeys the folding definition above
+    */
+  final def fold(extr: Extractor[FeatureSeq], rest: Extractor[FeatureSeq]*) = {
+    val eseq = extr +: rest
+    Extractor(
+      width + eseq.map(_.width).sum,
+      (d: D) => {
+        val v = function(d)
+        (v +: eseq.map(_.function(v))).fold(FeatureSeq.empty)(_ ++ _)
+      },
+      (names +: eseq.map(_.names)).fold(InvertibleIndexFunction.empty[String])(_ ++ _),
+      (categoryInfo +: eseq.map(_.categoryInfo)).fold(IndexFunction.empty[Int])(_ ++ _)
+    )
+  }
+
   /** Concatenate two extractors.
     *
     * A concatenation of extractors, e1 ++ e2, is defined as follows:
@@ -212,7 +243,9 @@ case class Extractor[D](
     * @return The concatenation of left and right extractors.
     */
   final def ++(that: Extractor[D]) =
-    Extractor(
+    if (this.width == 0) that
+    else if (that.width == 0) this
+    else Extractor(
       this.width + that.width,
       (d: D) => this.function(d) ++ that.function(d),
       this.names ++ that.names,

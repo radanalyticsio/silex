@@ -69,20 +69,23 @@ abstract class IndexFunction[V] extends PartialFunction[Int, V] with Serializabl
     * (f1 ++ f2)(j) = if (j < f1.width) f1(j) else f2(j - f1.width)
     * }}}
     */
-  final def ++(that: IndexFunction[V]) = new IndexFunction[V] {
-    def width = self.width + that.width
-    def domain = self.domain ++ that.domain.map(_ + self.width)
-    private lazy val rangeLazy = {
-      val uniq = scala.collection.mutable.Set.empty[V]
-      (self.range ++ that.range).foreach { v =>
-         uniq += v
+  final def ++(that: IndexFunction[V]) =
+    if (this.width == 0) that
+    else if (that.width == 0) this
+    else new IndexFunction[V] {
+      def width = self.width + that.width
+      def domain = self.domain ++ that.domain.map(_ + self.width)
+      private lazy val rangeLazy = {
+        val uniq = scala.collection.mutable.Set.empty[V]
+        (self.range ++ that.range).foreach { v =>
+           uniq += v
+        }
+        uniq
       }
-      uniq
+      def range = rangeLazy.iterator
+      def apply(j: Int) = if (j < self.width) self.apply(j) else that.apply(j - self.width)
+      def isDefinedAt(j: Int) = if (j < self.width) self.isDefinedAt(j) else that.isDefinedAt(j - self.width)
     }
-    def range = rangeLazy.iterator
-    def apply(j: Int) = if (j < self.width) self.apply(j) else that.apply(j - self.width)
-    def isDefinedAt(j: Int) = if (j < self.width) self.isDefinedAt(j) else that.isDefinedAt(j - self.width)
-  }
 }
 
 /** The inverse of an [[InvertibleIndexFunction]].
@@ -149,27 +152,30 @@ abstract class InvertibleIndexFunction[V] extends IndexFunction[V] { self =>
     * (f1 ++ f2)(j) = if (j < f1.width) f1(j) else f2(j - f1.width)
     * }}}
     */
-  final def ++(that: InvertibleIndexFunction[V]) = {
-    // check up front that ranges are disjoint, such that concatenation is invertible
-    val iself = self.inverse
-    val ithat = that.inverse
-    val cv = findCommon(iself, ithat)
-    if (!cv.isEmpty) throw new Exception(s"Value ${cv.get} present in both ranges")
+  final def ++(that: InvertibleIndexFunction[V]) =
+    if (this.width == 0) that
+    else if (that.width == 0) this
+    else {
+      // check up front that ranges are disjoint, such that concatenation is invertible
+      val iself = self.inverse
+      val ithat = that.inverse
+      val cv = findCommon(iself, ithat)
+      if (!cv.isEmpty) throw new Exception(s"Value ${cv.get} present in both ranges")
 
-    new InvertibleIndexFunction[V] {
-      def width = self.width + that.width
-      def domain = self.domain ++ that.domain.map(_ + self.width)
-      def apply(j: Int) = if (j < self.width) self.apply(j) else that.apply(j - self.width)
-      def isDefinedAt(j: Int) = if (j < self.width) self.isDefinedAt(j) else that.isDefinedAt(j - self.width)
-      def inverse = lazyInverse
-      private lazy val lazyInverse = new InverseIndexFunction[V] {
+      new InvertibleIndexFunction[V] {
         def width = self.width + that.width
-        def domain = iself.domain ++ ithat.domain
-        def apply(v: V) = if (iself.isDefinedAt(v)) iself(v) else self.width + ithat(v)
-        def isDefinedAt(v: V) = iself.isDefinedAt(v) || ithat.isDefinedAt(v)
+        def domain = self.domain ++ that.domain.map(_ + self.width)
+        def apply(j: Int) = if (j < self.width) self.apply(j) else that.apply(j - self.width)
+        def isDefinedAt(j: Int) = if (j < self.width) self.isDefinedAt(j) else that.isDefinedAt(j - self.width)
+        def inverse = lazyInverse
+        private lazy val lazyInverse = new InverseIndexFunction[V] {
+          def width = self.width + that.width
+          def domain = iself.domain ++ ithat.domain
+          def apply(v: V) = if (iself.isDefinedAt(v)) iself(v) else self.width + ithat(v)
+          def isDefinedAt(v: V) = iself.isDefinedAt(v) || ithat.isDefinedAt(v)
+        }
       }
     }
-  }
 
   private def findCommon(fi1: InverseIndexFunction[V], fi2: InverseIndexFunction[V]): Option[V] = {
     // might consider supporting some kind of heuristics on how to do this fastest, but
