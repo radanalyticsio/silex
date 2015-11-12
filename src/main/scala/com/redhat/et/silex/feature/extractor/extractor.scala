@@ -384,10 +384,10 @@ object Extractor {
       })
   }
 
-  def quadraticByName[D](extr: Extractor[D], features: Seq[String], diag: Boolean = false): Extractor[FeatureSeq] =
+  def quadraticByName[D](extr: Extractor[D], features: Seq[String], diag: Boolean = false) =
     quadraticByIndex(extr, features.map(extr.names.inverse), diag)
 
-  def quadraticByIndex[D](extr: Extractor[D], indexes: Seq[Int], diag: Boolean = false): Extractor[FeatureSeq] = {
+  def quadraticByIndex[D](extr: Extractor[D], indexes: Seq[Int], diag: Boolean = false) = {
     require(indexes.forall(j => (j >= 0 && j < extr.width)), s"indexes out of range [0, ${extr.width})")
 
     val tuples = () => for {
@@ -396,7 +396,7 @@ object Extractor {
     } yield (indexes(j), indexes(k))
 
     val width = tuples().length
-    val ndef = tuples().count { case (j, k) => extr.names.isDefinedAt(j) && extr.names.isDefinedAt(j) }
+    val ndef = tuples().count { case (j, k) => extr.names.isDefinedAt(j) && extr.names.isDefinedAt(k) }
     val names =
       if (ndef == width) {
         InvertibleIndexFunction(
@@ -405,7 +405,7 @@ object Extractor {
         InvertibleIndexFunction(
           width,
           tuples().zipWithIndex
-            .filter { case ((j, k), _) => extr.names.isDefinedAt(j) && extr.names.isDefinedAt(j) }
+            .filter { case ((j, k), _) => extr.names.isDefinedAt(j) && extr.names.isDefinedAt(k) }
             .map { case ((j, k), idx) => (idx, extr.names(j) + "*" + extr.names(k)) }:_*)
       }
 
