@@ -383,4 +383,36 @@ object Extractor {
         (data.map(x => num.toDouble(x))):FeatureSeq    
       })
   }
+
+  def quadraticByName[D](extr: Extractor[D], features: Seq[String], diag: Boolean = false): Extractor[FeatureSeq] =
+    quadraticByIndex(extr, features.map(extr.names.inverse), diag)
+
+  def quadraticByIndex[D](extr: Extractor[D], indexes: Seq[Int], diag: Boolean = false): Extractor[FeatureSeq] = {
+    require(indexes.forall(j => (j >= 0 && j < extr.width)), s"indexes out of range [0, ${extr.width})")
+
+    val tuples = () => for {
+      j <- 0 until indexes.length;
+      k <- (j + (if (diag) 0 else 1)) until indexes.length
+    } yield (indexes(j), indexes(k))
+
+    val width = tuples().length
+    val ndef = tuples().count { case (j, k) => extr.names.isDefinedAt(j) && extr.names.isDefinedAt(j) }
+    val names =
+      if (ndef == width) {
+        InvertibleIndexFunction(
+          tuples().map { case (j, k) => extr.names(j) + "*" + extr.names(k) }.toVector)
+      } else {
+        InvertibleIndexFunction(
+          width,
+          tuples().zipWithIndex
+            .filter { case ((j, k), _) => extr.names.isDefinedAt(j) && extr.names.isDefinedAt(j) }
+            .map { case ((j, k), idx) => (idx, extr.names(j) + "*" + extr.names(k)) }:_*)
+      }
+
+    Extractor(
+      width,
+      (s: FeatureSeq) => (tuples().map { case (j, k) => s(j) * s(k) }.toVector):FeatureSeq,
+      names,
+      IndexFunction.undefined[Int](width))
+  }
 }
