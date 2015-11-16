@@ -384,9 +384,25 @@ object Extractor {
       })
   }
 
+  /** Generate a quadratic expansion over a set of named features.
+    * @param extr The Extractor whose output features are to be expanded.
+    * @param features A list of feature names to expand.
+    * @param diag If true, expand features with themselves (square them).  Otherwise, only
+    * generate products with other features.  Defaults to false.
+    * @return An extractor whose domain is the output of this extractor, which computes
+    * the pairwise products of the given features.
+    */
   def quadraticByName[D](extr: Extractor[D], features: Seq[String], diag: Boolean = false) =
     quadraticByIndex(extr, features.map(extr.names.inverse), diag)
 
+  /** Generate a quadratic expansion over a set of features by their index.
+    * @param extr The Extractor whose output features are to be expanded.
+    * @param indexes A list of the feature indexes to expand.
+    * @param diag If true, expand features with themselves (square them).  Otherwise, only
+    * generate products with other features.  Defaults to false.
+    * @return An extractor whose domain is the output of this extractor, which computes
+    * the pairwise products of the given features.
+    */
   def quadraticByIndex[D](extr: Extractor[D], indexes: Seq[Int], diag: Boolean = false) = {
     require(indexes.forall(j => (j >= 0 && j < extr.width)), s"indexes out of range [0, ${extr.width})")
 
