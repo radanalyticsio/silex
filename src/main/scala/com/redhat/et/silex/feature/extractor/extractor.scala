@@ -70,7 +70,8 @@ abstract class FeatureSeq extends scala.collection.immutable.Seq[Double] with Se
     * @param that The right-argument.  Feature values are appended to the result.
     * @return A new feature sequence consisting of left-argument followed by the right-argument.
     */
-  final def ++(that: FeatureSeq): FeatureSeq = new ConcatFS(this, that)
+  final def ++(that: FeatureSeq): FeatureSeq =
+    if (this.length == 0) that else if (that.length == 0) this else new ConcatFS(this, that)
 
   /** Obtain a new iterator over the indices of the feature sequence.
     *
@@ -200,6 +201,36 @@ case class Extractor[D](
   final override def compose[G](g: G => D) =
     Extractor(width, function.compose(g), names, categoryInfo)
 
+  /** Apply another extractor to the output of this one
+    *
+    * f.andThenExtractor(g) = g.compose(f), in other words: (f.andThenExtractor(g))(x) => g(f(x))
+    * @param g An Extractor whose domain is the output of this extractor
+    * @return A new extractor equivalent to applying 'g' to the output of this extractor
+    */
+  final def andThenExtractor(g: Extractor[FeatureSeq]) = g.compose(this)
+
+  /** Fold another extractor over this one
+    *
+    * A fold is defined as: f.fold(g) = f ++ g.compose(f), in other words: (f.fold(g))(x) => f(x) ++ g(f(x))
+    *
+    * When folding multiple arguments: (f.fold(g, h, ...))(x) => f(x) ++ g(f(x)) ++ h(f(x)) ...
+    * @param extr the extractor to fold
+    * @param rest additional extractors (if any) to fold
+    * @return A new extractor that obeys the folding definition above
+    */
+  final def fold(extr: Extractor[FeatureSeq], rest: Extractor[FeatureSeq]*) = {
+    val eseq = extr +: rest
+    Extractor(
+      width + eseq.map(_.width).sum,
+      (d: D) => {
+        val v = function(d)
+        (v +: eseq.map(_.function(v))).fold(FeatureSeq.empty)(_ ++ _)
+      },
+      (names +: eseq.map(_.names)).fold(InvertibleIndexFunction.empty[String])(_ ++ _),
+      (categoryInfo +: eseq.map(_.categoryInfo)).fold(IndexFunction.empty[Int])(_ ++ _)
+    )
+  }
+
   /** Concatenate two extractors.
     *
     * A concatenation of extractors, e1 ++ e2, is defined as follows:
@@ -212,7 +243,9 @@ case class Extractor[D](
     * @return The concatenation of left and right extractors.
     */
   final def ++(that: Extractor[D]) =
-    Extractor(
+    if (this.width == 0) that
+    else if (that.width == 0) this
+    else Extractor(
       this.width + that.width,
       (d: D) => this.function(d) ++ that.function(d),
       this.names ++ that.names,
@@ -349,5 +382,53 @@ object Extractor {
         require(data.length == w)
         (data.map(x => num.toDouble(x))):FeatureSeq    
       })
+  }
+
+  /** Generate a quadratic expansion over a set of named features.
+    * @param extr The Extractor whose output features are to be expanded.
+    * @param features A list of feature names to expand.
+    * @param diag If true, expand features with themselves (square them).  Otherwise, only
+    * generate products with other features.  Defaults to false.
+    * @return An extractor whose domain is the output of this extractor, which computes
+    * the pairwise products of the given features.
+    */
+  def quadraticByName[D](extr: Extractor[D], features: Seq[String], diag: Boolean = false) =
+    quadraticByIndex(extr, features.map(extr.names.inverse), diag)
+
+  /** Generate a quadratic expansion over a set of features by their index.
+    * @param extr The Extractor whose output features are to be expanded.
+    * @param indexes A list of the feature indexes to expand.
+    * @param diag If true, expand features with themselves (square them).  Otherwise, only
+    * generate products with other features.  Defaults to false.
+    * @return An extractor whose domain is the output of this extractor, which computes
+    * the pairwise products of the given features.
+    */
+  def quadraticByIndex[D](extr: Extractor[D], indexes: Seq[Int], diag: Boolean = false) = {
+    require(indexes.forall(j => (j >= 0 && j < extr.width)), s"indexes out of range [0, ${extr.width})")
+
+    val tuples = () => for {
+      j <- 0 until indexes.length;
+      k <- (j + (if (diag) 0 else 1)) until indexes.length
+    } yield (indexes(j), indexes(k))
+
+    val width = tuples().length
+    val ndef = tuples().count { case (j, k) => extr.names.isDefinedAt(j) && extr.names.isDefinedAt(k) }
+    val names =
+      if (ndef == width) {
+        InvertibleIndexFunction(
+          tuples().map { case (j, k) => extr.names(j) + "*" + extr.names(k) }.toVector)
+      } else {
+        InvertibleIndexFunction(
+          width,
+          tuples().zipWithIndex
+            .filter { case ((j, k), _) => extr.names.isDefinedAt(j) && extr.names.isDefinedAt(k) }
+            .map { case ((j, k), idx) => (idx, extr.names(j) + "*" + extr.names(k)) }:_*)
+      }
+
+    Extractor(
+      width,
+      (s: FeatureSeq) => (tuples().map { case (j, k) => s(j) * s(k) }.toVector):FeatureSeq,
+      names,
+      IndexFunction.undefined[Int](width))
   }
 }

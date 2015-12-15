@@ -270,6 +270,7 @@ object ExtractorSpecSupport extends FlatSpec with Matchers {
 }
 
 class ExtractorSpec extends FlatSpec with Matchers {
+  import com.redhat.et.silex.scalatest.matchers._
   import com.redhat.et.silex.feature.extractor.Extractor
   import ExtractorSpecSupport._
   import com.redhat.et.silex.feature.indexfunction.{
@@ -419,5 +420,64 @@ class ExtractorSpec extends FlatSpec with Matchers {
       Extractor.constant[Int](1.0, 2.0).withNames("a", "b").withCategoryInfo(("a", 2), ("c", 5)),
       Extractor.constant[Int](3.0).withNames("c").withCategoryInfo(IndexFunction(Vector(7))),
       Extractor.constant[Int](4.0, 5.0).withNames("d", "e").withCategoryInfo(("d", 8), ("e", 9)))
+  }
+
+  it should "support andThenExtractor" in {
+    val e1 = Extractor((x: Int) => x.toDouble)
+    val e2 = Extractor((s: FeatureSeq) => s(0) + 3.0, (s: FeatureSeq) => s(0) * 3.0)
+      .withNames("a", "b")
+      .withCategoryInfo(("a", 2), ("b", 5))
+    equalTest(e1.andThenExtractor(e2), e2.compose(e1))
+
+    val e3 = Extractor((x: Double) => 2.0 * x)
+    equalTest(e3.andThenExtractor(e2), e2.compose(e3))
+
+    val et = Extractor((s: FeatureSeq) => s(0) + 3.0, (s: FeatureSeq) => s(0) * 3.0)
+    propertyTest(
+      e1.andThenExtractor(et.withNames("a", "b").withCategoryInfo(("a", 2), ("b", 3))),
+      e1.andThenExtractor(et.withNames("c", "d").withCategoryInfo(("c", 5), ("d", 7))),
+      e1.andThenExtractor(et.withNames("e", "f").withCategoryInfo(("e", 8), ("f", 9))))
+  }
+
+  it should "support fold" in {
+    val e1 = Extractor((x: Int) => x.toDouble).withNames("z").withCategoryInfo(("z", 42))
+    val e2 = Extractor((s: FeatureSeq) => s(0) + 3.0).withNames("a").withCategoryInfo(("a", 2))
+    val e3 = Extractor((s: FeatureSeq) => s(0) * 5.0).withNames("b").withCategoryInfo(("b", 3))
+    val e4 = Extractor((s: FeatureSeq) => s(0) / 3.0).withNames("c").withCategoryInfo(("c", 5))
+
+    equalTest(e1.fold(e2), e1 ++ e1.andThenExtractor(e2))
+    equalTest(e1.fold(e2, e3), e1 ++ e1.andThenExtractor(e2) ++ e1.andThenExtractor(e3))
+    equalTest(e1.fold(e2, e3, e4), e1 ++ e1.andThenExtractor(e2) ++ e1.andThenExtractor(e3) ++ e1.andThenExtractor(e4))
+    equalTest(e1.fold(e4, e3, e2), e1 ++ e4.compose(e1) ++ e3.compose(e1) ++ e2.compose(e1))
+
+    val et = Extractor((x: Int) => x.toDouble)
+    propertyTest(et.fold(e2), et.fold(e3), et.fold(e4))
+  }
+
+  it should "support quadratic expansion" in {
+    val e = Extractor((x:Double) => x + 1.0, (x: Double) => x + 2.0, (x: Double) => x + 3.0).withNames("a", "b", "c")
+
+    val q0 = Extractor.quadraticByName(e, Seq("a", "b", "c"))
+    val e0 = e.fold(q0)
+    e0.names.range.toSeq should beEqSeq(Seq("a", "b", "c", "a*b", "a*c", "b*c"))
+    e0(0.0) should beEqSeq(Seq(1.0, 2.0, 3.0, 2.0, 3.0, 6.0))
+
+    val q1 = Extractor.quadraticByName(e, Seq("a", "b", "c"), diag = true)
+    val e1 = e.fold(q1)
+    e1.names.range.toSeq should beEqSeq(Seq("a", "b", "c", "a*a", "a*b", "a*c", "b*b", "b*c", "c*c"))
+    e1(0.0) should beEqSeq(Seq(1.0, 2.0, 3.0, 1.0, 2.0, 3.0, 4.0, 6.0, 9.0))
+
+    equalTest(e0, e.fold(Extractor.quadraticByIndex(e, 0 until 3)))
+    equalTest(e0, e.fold(Extractor.quadraticByIndex(e, Seq(0, 1, 2))))
+    equalTest(e1, e.fold(Extractor.quadraticByIndex(e, 0 until 3, diag = true)))
+    equalTest(e1, e.fold(Extractor.quadraticByIndex(e, Seq(0, 1, 2), diag = true)))
+
+    val en0 = e.withNames(InvertibleIndexFunction.undefined[String](3))
+    val qn0 = Extractor.quadraticByIndex(en0, 0 to 2, diag = true)
+    qn0.names.range.toSeq should beEqSeq(Seq.empty[String])
+
+    val en1 = e.withNames(InvertibleIndexFunction(3, (0, "a"), (2, "c")))
+    val qn1 = Extractor.quadraticByIndex(en1, 0 to 2, diag = true)
+    qn1.names.range.toSeq should beEqSeq(Seq("a*a", "a*c", "c*c"))
   }
 }
