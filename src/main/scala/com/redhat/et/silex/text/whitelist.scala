@@ -81,13 +81,22 @@ private [text] object AWLHash {
 
 case class ApproximateWhitelist(val filter: BitSet) {
   def combine(other: => ApproximateWhitelist): ApproximateWhitelist = ApproximateWhitelist(filter | other.filter)
-  def zero: ApproximateWhitelist = ApproximateWhitelist(BitSet())
   
-  def add(s: String) = ApproximateWhitelist(filter ++ AWLHash.hashes(s))
+  def add[A](s: A)(implicit f: A => String) = ApproximateWhitelist(filter ++ AWLHash.hashes(f(s)))
   
-  def maybeContains(s: String): Boolean = {
-    val hashes = AWLHash.hashes(s)
+  def maybeContains[A](s: A)(implicit f: A => String): Boolean = {
+    val hashes = AWLHash.hashes(f(s))
     (filter & hashes) == hashes
   }
 }
 
+object ApproximateWhitelist {
+  val zero: ApproximateWhitelist = ApproximateWhitelist(BitSet())
+  
+  def train[A](source: Seq[A])(implicit f: A => String): ApproximateWhitelist = {
+    source.foldLeft(zero)((awl, elt) => awl.add(f(elt)))
+  }
+  def train[A](source: RDD[A])(implicit f: A => String): ApproximateWhitelist = {
+    source.aggregate(zero)((awl, elt) => awl.add(f(elt)), (a1, a2) => a1.combine(a2))
+  }
+}
