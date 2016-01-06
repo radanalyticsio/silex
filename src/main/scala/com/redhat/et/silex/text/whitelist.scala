@@ -88,16 +88,21 @@ case class ApproximateWhitelist(val filter: BitSet) {
     val hashes = AWLHash.hashes(f(s))
     (filter & hashes) == hashes
   }
-  
-  def `<:`[A](s: A)(implicit f: A => String): Boolean = maybeContains(s)(f)
 }
 
 object ApproximateWhitelist {
   val zero: ApproximateWhitelist = ApproximateWhitelist(BitSet())
   
+  /**
+    * Trains an approximate whitelist on a sequence of values.  Each element in the sequence should correspond to one element in the whitelist (e.g., a word).  There must be a stable implicit conversion from the sequence's element type to <tt>String</ss>s.
+    */
   def train[A](source: Seq[A])(implicit f: A => String): ApproximateWhitelist = {
     source.foldLeft(zero)((awl, elt) => awl.add(f(elt)))
   }
+  
+  /**
+    * Trains an approximate whitelist on an RDD of values.  Each element in the RDD should correspond to one element in the whitelist (e.g., a word).  There must be a stable implicit conversion from the RDD's element type to <tt>String</ss>s.
+    */
   def train[A](source: RDD[A])(implicit f: A => String): ApproximateWhitelist = {
     source.aggregate(zero)((awl, elt) => awl.add(f(elt)), (a1, a2) => a1.combine(a2))
   }
