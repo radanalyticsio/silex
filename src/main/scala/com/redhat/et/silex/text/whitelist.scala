@@ -88,6 +88,8 @@ case class ApproximateWhitelist(val filter: BitSet) {
     val hashes = AWLHash.hashes(f(s))
     (filter & hashes) == hashes
   }
+  
+  def `<:`[A](s: A)(implicit f: A => String): Boolean = maybeContains(s)(f)
 }
 
 object ApproximateWhitelist {
