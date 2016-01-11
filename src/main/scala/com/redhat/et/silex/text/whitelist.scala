@@ -79,11 +79,23 @@ private [text] object AWLHash {
   }
 }
 
+/**
+ * An <tt>ApproximateWhitelist</tt> is a basic Bloom filter intended for holding natural-language
+ * vocabularies.  It deals with String values natively and can be trained from a sequence or from 
+ * an RDD of any element type <tt>T</tt>, as long as there is an implicit conversion in scope
+ * from <tt>T</tt> to <tt>String</tt>.
+ *
+ */
 case class ApproximateWhitelist(val filter: BitSet) {
+  /** Creates a whitelist that accepts a superset of anything accepted by <tt>this</tt> and anything accepted by <tt>other</tt>. */
   def combine(other: => ApproximateWhitelist): ApproximateWhitelist = ApproximateWhitelist(filter | other.filter)
   
+  /** Adds an element to the whitelist. */
   def add[A](s: A)(implicit f: A => String) = ApproximateWhitelist(filter ++ AWLHash.hashes(f(s)))
   
+  /**
+   * Returns true if <tt>s</tt> is possibly contained in the whitelist and false if it definitely is not.
+   */
   def maybeContains[A](s: A)(implicit f: A => String): Boolean = {
     val hashes = AWLHash.hashes(f(s))
     (filter & hashes) == hashes
@@ -91,6 +103,9 @@ case class ApproximateWhitelist(val filter: BitSet) {
 }
 
 object ApproximateWhitelist {
+  /**
+   * An empty approximate whitelist.
+   */
   val zero: ApproximateWhitelist = ApproximateWhitelist(BitSet())
   
   /**
