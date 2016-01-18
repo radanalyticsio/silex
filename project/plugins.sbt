@@ -12,3 +12,7 @@ addSbtPlugin("me.lessis" % "bintray-sbt" % "0.2.1")
 addSbtPlugin("com.typesafe.sbt" % "sbt-ghpages" % "0.5.3")
 
 addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.6.0")
+
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.3.5")
+
+addSbtPlugin("org.scoverage" % "sbt-coveralls" % "1.0.3")
