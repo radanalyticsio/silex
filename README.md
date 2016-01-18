@@ -25,3 +25,4 @@ The [Silex web site](http://silex.freevariable.com/) includes some examples of S
 ### CI Status
 
 [![Build Status](https://travis-ci.org/willb/silex.svg?branch=develop)](https://travis-ci.org/willb/silex)
+[![Coverage Status](https://coveralls.io/repos/github/willb/silex/badge.svg?branch=develop)](https://coveralls.io/github/willb/silex?branch=develop)
