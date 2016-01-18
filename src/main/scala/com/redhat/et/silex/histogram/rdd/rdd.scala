@@ -34,29 +34,13 @@ import com.redhat.et.silex.histogram.details._
   * }}}
   */
 class HistogramMethodsRDD[T :ClassTag](data: RDD[T]) extends HistogramMethods[T] {
-  private type Counts[T] = mutable.Map[T, Long]
-  private def empty[T] = mutable.Map.empty[T, Long]
-  private val val0 = 0L
-  private val val1 = 1L
-
-  private class AccumulableCounts[T] extends AccumulableParam[Counts[T], T] {
-    def addAccumulator(c: Counts[T], v: T): Counts[T] = {
-      c(v) = val1 + c.getOrElse(v, val0)
-      c
-    }
-    def addInPlace(c1: Counts[T], c2: Counts[T]): Counts[T] = {
-      for { v <- c2.keys } {
-        c1(v) = c2(v) + c1.getOrElse(v, val0)
-      }
-      c1
-    }
-    def zero(h: Counts[T]): Counts[T] = empty[T]
-  }
-
   def countBy[U](f: T => U): Map[U, Long] = {
-    val hacc = data.sparkContext.accumulable(empty[U])(new AccumulableCounts[U])
-    data.foreach { r => hacc += f(r) }
-    hacc.value.toMap
+    data.aggregate(Map.empty[U, Long])(
+      (m, row) => {
+        val u = f(row)
+        m + ((u, 1L + m.getOrElse(u, 0L)))
+      },
+      (m1, m2) => m2.foldLeft(m1)((m, e) => m + ((e._1, e._2 + m.getOrElse(e._1, 0L)))))
   }
 
   def histBy[U](
@@ -71,18 +55,14 @@ class HistogramMethodsRDD[T :ClassTag](data: RDD[T]) extends HistogramMethods[T]
     hist.toVector
   }
 
-  def countByFlat[U](f: T => Iterable[U]): Map[U, Long] = {
-    val hacc = data.sparkContext.accumulable(empty[U])(new AccumulableCounts[U])
-    data.foreach { r =>
-      for { e <- f(r) } {
-        hacc += e
-      }
-    }
-    hacc.value.toMap
+  def countByFlat[U](f: T => TraversableOnce[U]): Map[U, Long] = {
+    data.aggregate(Map.empty[U, Long])(
+      (m, row) => f(row).foldLeft(m)((m2, u) => m2 + ((u, 1L + m2.getOrElse(u, 0L)))),
+      (m1, m2) => m2.foldLeft(m1)((m, e) => m + ((e._1, e._2 + m.getOrElse(e._1, 0L)))))
   }
 
   def histByFlat[U](
-      f: T => Iterable[U],
+      f: T => TraversableOnce[U],
       normalized: Boolean = false,
       cumulative: Boolean = false
       ): Seq[(U, Double)] = {
