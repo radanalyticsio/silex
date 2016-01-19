@@ -23,9 +23,13 @@ object DirUtils {
   
   def maybeReaddir(dirname: String, flt: String => Boolean = (_ => true)): Option[Array[String]] = {
     val dirOption = Try(new java.io.File(dirname).getCanonicalFile).toOption
-    dirOption 
-      .filter { dir => dir.exists && dir.isDirectory } 
+    dirOption
+      .filter { dir => dir.exists && dir.isDirectory }
       .map { dir => dir.listFiles collect { case (file) if flt(file.getName) => file.getCanonicalPath } }
+  }
+  
+  def readdir(dirname: String, flt: String => Boolean = (_ => true)): Array[String] = {
+    maybeReaddir(dirname, flt).getOrElse(Array())
   }
 }
 
