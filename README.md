@@ -18,6 +18,8 @@ and then add Silex as a dependency:
 libraryDependencies += "com.redhat.et" %% "silex" % "0.0.7"
 ```
 
+(or a later version, if we've released one!)
+
 ### Documentation
 
 The [Silex web site](http://silex.freevariable.com/) includes some examples of Silex functionality in use and [API docs](http://silex.freevariable.com/latest/api/#package).
