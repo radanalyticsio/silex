@@ -37,9 +37,11 @@ trait PerTestSparkContext extends BeforeAndAfterEach {
     app.sqlContext.setConf("spark.sql.shuffle.partitions", "10")
     
     app.context
+    super.beforeEach()
   }
   
   override def afterEach() {
     app.context.stop
+    super.afterEach()
   }
 }
