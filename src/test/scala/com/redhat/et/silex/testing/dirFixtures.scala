@@ -1,7 +1,7 @@
 /*
  * This file is part of the "silex" library of helpers for Apache Spark.
  *
- * Copyright (c) 2015 Red Hat, Inc.
+ * Copyright (c) 2016 Red Hat, Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,32 +22,34 @@ import org.scalatest._
 
 import com.redhat.et.silex.app.TestConsoleApp
 
-trait AbstractBeforeAndAfter extends BeforeAndAfterEach {
-  self: BeforeAndAfterEach with Suite =>
-  override def beforeEach() {}
-  override def afterEach() {}
-}
+import java.io.File
+import java.nio.file.{Path, Files}
+import Files.{isSymbolicLink, createTempDirectory, deleteIfExists}
 
-trait PerTestSparkContext extends AbstractBeforeAndAfter {
+trait TempDirFixtures extends AbstractBeforeAndAfter {
   self: BeforeAndAfterEach with Suite =>
   
-  private var app: TestConsoleApp = null
-  
-  def context = app.context
-  def sqlContext = app.sqlContext
+  private var tempDir: Option[File] = None
+  private def tempPath: String = tempDir.map { _.toString }.get
+
+  private [this] def cleanUp(path: File) {
+    if (path.isDirectory() && !isSymbolicLink(path.toPath)) {
+      path.listFiles().map { 
+        case p if p.isDirectory => cleanUp(p)
+        case p => p.delete()
+      }
+    }
+
+    path.delete()
+  }
   
   override def beforeEach() {
+    tempDir = Some(createTempDirectory("silex-test").toFile)
     super.beforeEach()
-    app = new TestConsoleApp()
-    System.clearProperty("spark.master.port")
-    
-    app.sqlContext.setConf("spark.sql.shuffle.partitions", "10")
-    
-    app.context
   }
   
   override def afterEach() {
+    tempDir.map { f => cleanUp(f) }
     super.afterEach()
-    app.context.stop
   }
 }
