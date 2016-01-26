@@ -26,7 +26,7 @@ import java.io.File
 import java.nio.file.{Path, Files}
 import Files.{isSymbolicLink, createTempDirectory, deleteIfExists}
 
-trait TempDirFixtures extends BeforeAndAfterEach {
+trait TempDirFixtures extends AbstractBeforeAndAfter {
   self: BeforeAndAfterEach with Suite =>
   
   private var tempDir: Option[File] = None

@@ -22,7 +22,13 @@ import org.scalatest._
 
 import com.redhat.et.silex.app.TestConsoleApp
 
-trait PerTestSparkContext extends BeforeAndAfterEach {
+trait AbstractBeforeAndAfter extends BeforeAndAfterEach {
+  self: BeforeAndAfterEach with Suite =>
+  override def beforeEach() {}
+  override def afterEach() {}
+}
+
+trait PerTestSparkContext extends AbstractBeforeAndAfter {
   self: BeforeAndAfterEach with Suite =>
   
   private var app: TestConsoleApp = null
@@ -31,17 +37,17 @@ trait PerTestSparkContext extends BeforeAndAfterEach {
   def sqlContext = app.sqlContext
   
   override def beforeEach() {
+    super.beforeEach()
     app = new TestConsoleApp()
     System.clearProperty("spark.master.port")
     
     app.sqlContext.setConf("spark.sql.shuffle.partitions", "10")
     
     app.context
-    super.beforeEach()
   }
   
   override def afterEach() {
-    app.context.stop
     super.afterEach()
+    app.context.stop
   }
 }
