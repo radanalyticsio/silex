@@ -29,8 +29,8 @@ import Files.{isSymbolicLink, createTempDirectory, deleteIfExists}
 trait TempDirFixtures extends AbstractBeforeAndAfter {
   self: BeforeAndAfterEach with Suite =>
   
-  private var tempDir: Option[File] = None
-  private def tempPath: String = tempDir.map { _.toString }.get
+  protected var tempDir: Option[File] = None
+  protected def tempPath: String = tempDir.map { _.toString }.get
 
   private [this] def cleanUp(path: File) {
     if (path.isDirectory() && !isSymbolicLink(path.toPath)) {
