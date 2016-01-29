@@ -20,10 +20,13 @@ package com.redhat.et.silex.frame
 
 import org.apache.spark.sql.{DataFrame, SQLContext}
 
+
+/** Module holding a utility function to load a directory of serialized data frames (e.g., Parquet files) */
 object FrameDir {
   import com.redhat.et.silex.util.DirUtils.readdir
   
-  def loadDir(sqlc: SQLContext, dir: String, repartition: Int = 0): DataFrame = {
+  /** Loads a directory of serialized data frames (e.g., Parquet files).  Returns a frame that is the union of the results of loading every file in <tt>dir</tt> */
+  def loadDir(sqlc: SQLContext, dir: String): DataFrame = {
     readdir(dir) map {file => sqlc.read.load(file)} reduce ((a, b) => a.unionAll(b))
   }
 }
