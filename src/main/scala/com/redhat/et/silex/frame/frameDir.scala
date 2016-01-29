@@ -20,10 +20,10 @@ package com.redhat.et.silex.frame
 
 import org.apache.spark.sql.{DataFrame, SQLContext}
 
-object ParquetDir {
+object FrameDir {
   import com.redhat.et.silex.util.DirUtils.readdir
   
-  def loadParquetDir(sqlc: SQLContext, dir: String, repartition: Int = 0): DataFrame = {
+  def loadDir(sqlc: SQLContext, dir: String, repartition: Int = 0): DataFrame = {
     readdir(dir) map {file => sqlc.read.load(file)} reduce ((a, b) => a.unionAll(b))
   }
 }
