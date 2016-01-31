@@ -13,7 +13,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.c
+ * limitations under the License.
  */
 
 package com.redhat.et.silex.testing
@@ -22,7 +22,13 @@ import org.scalatest._
 
 import com.redhat.et.silex.app.TestConsoleApp
 
-trait PerTestSparkContext extends BeforeAndAfterEach {
+trait AbstractBeforeAndAfter extends BeforeAndAfterEach {
+  self: BeforeAndAfterEach with Suite =>
+  override def beforeEach() {}
+  override def afterEach() {}
+}
+
+trait PerTestSparkContext extends AbstractBeforeAndAfter {
   self: BeforeAndAfterEach with Suite =>
   
   private var app: TestConsoleApp = null
@@ -31,6 +37,7 @@ trait PerTestSparkContext extends BeforeAndAfterEach {
   def sqlContext = app.sqlContext
   
   override def beforeEach() {
+    super.beforeEach()
     app = new TestConsoleApp()
     System.clearProperty("spark.master.port")
     
@@ -40,6 +47,7 @@ trait PerTestSparkContext extends BeforeAndAfterEach {
   }
   
   override def afterEach() {
+    super.afterEach()
     app.context.stop
   }
 }
