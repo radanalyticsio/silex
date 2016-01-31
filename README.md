@@ -15,7 +15,7 @@ resolvers += "Will's bintray" at "https://dl.bintray.com/willb/maven/"
 and then add Silex as a dependency:
 
 ```scala
-libraryDependencies += "com.redhat.et" %% "silex" % "0.0.7"
+libraryDependencies += "com.redhat.et" %% "silex" % "0.0.8"
 ```
 
 ### Documentation
