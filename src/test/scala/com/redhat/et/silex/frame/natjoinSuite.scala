@@ -78,4 +78,20 @@ class NatJoinSpec extends FlatSpec with Matchers with PerTestSparkContext {
     }
   }
   
+  it should "work whether using NaturalJoin or implicitly enriched DataFrame" in {
+    val sqlc = sqlContext
+    import sqlc.implicits._
+    import NaturalJoin.implicits._
+    
+    val frame1 = context.parallelize((1 to 9).map { i => Example1(i, i * 2, i * 3)}).toDF()
+    val frame2 = context.parallelize((1 to 12).map { i => Example2(i, i * 2, i * 4)}).toDF()
+    val join = frame1.natjoin(frame2)
+    
+    assert(join.count == 9)
+    join.collect.foreach {
+      case Row(a: Int, b: Int, c: Int, d: Int) => {
+        assert(d == a * 4 && c == a * 3 && b == a * 2)
+      }
+    }
+  }
 }
