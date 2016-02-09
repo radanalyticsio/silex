@@ -23,14 +23,29 @@ import scala.reflect.ClassTag
 import org.apache.spark.rdd.RDD
 import org.apache.spark.Logging
 
+/**
+ * Encodes an ancestor in the dependency lineage of a target RDD.
+ * @param rdd The ancestor RDD itself
+ * @param ply The ply, or depth, of this RDD in the lineage.  What is the path length from
+ * the target RDD to this RDD, in the orginal's lineage?
+ * @param child The RDD whose dependency this RDD represents.
+ * @note It is possible for an RDD to be reachable along multiple lineage paths from the target,
+ * and so one ancestor RDD may appear multiple times in a target RDD's ancestry.
+ */
 class RDDAncestor(val rdd: RDD[_], val ply: Int, val child: RDD[_])
 
+/** Enhances RDDs with ancestry methods */
 class AncestryRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializable {
 
+  /**
+   * Obtain an iterator over an RDD's ancestors in it's dependency lineage.  Iteration is
+   * in breadth-first order.
+   * @return An iterator over the RDD's lineage ancestors.
+   */
   def ancestry = new Iterator[RDDAncestor] {
     import scala.collection.mutable.Queue
 
-    val q = Queue(parents(self, 1) :_*)
+    private val q = Queue(parents(self, 1) :_*)
  
     def hasNext = !q.isEmpty
 
@@ -45,6 +60,7 @@ class AncestryRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Seria
   }
 }
 
+/** Implicit conversions to enhance RDDs with ancestry methods */
 object implicits {
   import scala.language.implicitConversions
   implicit def fromRDD[T :ClassTag](rdd: RDD[T]): AncestryRDDFunctions[T] =
