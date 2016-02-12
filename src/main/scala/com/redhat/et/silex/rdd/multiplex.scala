@@ -53,37 +53,14 @@ class MuxRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializab
    * returned by applying (f) to each input partition.
    * @param n The length of sequence returned from (f)
    * @param f Function maps data from a partition into a sequence of (n) objects of type U
-   * @return The sequence of RDDs, as described above
-   */
-  def muxPartitions[U :ClassTag](
-    n: Int, f: Iterator[T] => Seq[U]):
-      Seq[RDD[U]] =
-    muxPartitions(n, (id: Int, itr: Iterator[T]) => f(itr), defaultSL)
-
-  /** Obtain a sequence of (n) RDDs where the jth RDD is obtained from the jth element
-   * returned by applying (f) to each input partition and its id.
-   * @param n The length of sequence returned from (f)
-   * @param f Function maps data from a partition, along with that partition's (id) value,
-   * into a sequence of (n) objects of type U
-   * @return The sequence of RDDs, as described above
-   */
-  def muxPartitions[U :ClassTag](
-    n: Int, f: (Int, Iterator[T]) => Seq[U]):
-      Seq[RDD[U]] =
-    muxPartitions(n, f, defaultSL)
-
-  /** Obtain a sequence of (n) RDDs where the jth RDD is obtained from the jth element
-   * returned by applying (f) to each input partition.
-   * @param n The length of sequence returned from (f)
-   * @param f Function maps data from a partition into a sequence of (n) objects of type U
    * @param persist The storage level to apply to the intermediate result returned by (f)
    * @return The sequence of RDDs, as described above
    */
   def muxPartitions[U :ClassTag](
     n: Int, f: Iterator[T] => Seq[U],
-    persist: StorageLevel):
+    persist: StorageLevel = defaultSL):
       Seq[RDD[U]] =
-    muxPartitions(n, (id: Int, itr: Iterator[T]) => f(itr), persist)
+    muxPartitionsWithIndex(n, (id: Int, itr: Iterator[T]) => f(itr), persist)
 
   /** Obtain a sequence of (n) RDDs where the jth RDD is obtained from the jth element
    * returned by applying (f) to each input partition and its id.
@@ -93,9 +70,9 @@ class MuxRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializab
    * @param persist The storage level to apply to the intermediate result returned by (f)
    * @return The sequence of RDDs, as described above
    */
-  def muxPartitions[U :ClassTag](
+  def muxPartitionsWithIndex[U :ClassTag](
     n: Int, f: (Int, Iterator[T]) => Seq[U],
-    persist: StorageLevel):
+    persist: StorageLevel = defaultSL):
       Seq[RDD[U]] = {
     require(n >= 0, "expected sequence length must be >= 0")
     val mux = self.mapPartitionsWithIndex { case (id, itr) =>
@@ -109,34 +86,14 @@ class MuxRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializab
   /** Obtain a tuple of RDDs where jth component is obtained from the corresponding component
    * returned by applying (f) to each partition
    * @param f Function maps data from a partition into a tuple of objects
-   * @return The tuple of RDDs, as described above
-   */
-  def muxPartitions[U1 :ClassTag, U2 :ClassTag](
-    f: Iterator[T] => (U1, U2)):
-      (RDD[U1], RDD[U2]) =
-    muxPartitions((id: Int, itr: Iterator[T]) => f(itr), defaultSL)
-
-  /** Obtain a tuple of RDDs where jth component is obtained from the corresponding component
-   * returned by applying (f) to each partition and its id
-   * @param f Function maps data from a partition and its id into a tuple of objects
-   * @return The tuple of RDDs, as described above
-   */
-  def muxPartitions[U1 :ClassTag, U2 :ClassTag](
-    f: (Int, Iterator[T]) => (U1, U2)):
-      (RDD[U1], RDD[U2]) =
-    muxPartitions(f, defaultSL)
-
-  /** Obtain a tuple of RDDs where jth component is obtained from the corresponding component
-   * returned by applying (f) to each partition
-   * @param f Function maps data from a partition into a tuple of objects
    * @param persist The storage level to apply to the intermediate result returned by (f)
    * @return The tuple of RDDs, as described above
    */
-  def muxPartitions[U1 :ClassTag, U2 :ClassTag](
+  def mux2Partitions[U1 :ClassTag, U2 :ClassTag](
     f: Iterator[T] => (U1, U2),
-    persist: StorageLevel):
+    persist: StorageLevel = defaultSL):
       (RDD[U1], RDD[U2]) =
-    muxPartitions((id: Int, itr: Iterator[T]) => f(itr), persist)
+    mux2PartitionsWithIndex((id: Int, itr: Iterator[T]) => f(itr), persist)
 
   /** Obtain a tuple of RDDs where jth component is obtained from the corresponding component
    * returned by applying (f) to each partition and its id
@@ -144,9 +101,9 @@ class MuxRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializab
    * @param persist The storage level to apply to the intermediate result returned by (f)
    * @return The tuple of RDDs, as described above
    */
-  def muxPartitions[U1 :ClassTag, U2 :ClassTag](
+  def mux2PartitionsWithIndex[U1 :ClassTag, U2 :ClassTag](
     f: (Int, Iterator[T]) => (U1, U2),
-    persist: StorageLevel):
+    persist: StorageLevel = defaultSL):
       (RDD[U1], RDD[U2]) = {
     val mux = self.mapPartitionsWithIndex { case (id, itr) =>
       Iterator.single(f(id, itr))
@@ -159,34 +116,14 @@ class MuxRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializab
   /** Obtain a tuple of RDDs where jth component is obtained from the corresponding component
    * returned by applying (f) to each partition
    * @param f Function maps data from a partition into a tuple of objects
-   * @return The tuple of RDDs, as described above
-   */
-  def muxPartitions[U1 :ClassTag, U2 :ClassTag, U3: ClassTag](
-    f: Iterator[T] => (U1, U2, U3)):
-      (RDD[U1], RDD[U2], RDD[U3]) =
-    muxPartitions((id: Int, itr: Iterator[T]) => f(itr), defaultSL)
-
-  /** Obtain a tuple of RDDs where jth component is obtained from the corresponding component
-   * returned by applying (f) to each partition and its id
-   * @param f Function maps data from a partition and its id into a tuple of objects
-   * @return The tuple of RDDs, as described above
-   */
-  def muxPartitions[U1 :ClassTag, U2 :ClassTag, U3: ClassTag](
-    f: (Int, Iterator[T]) => (U1, U2, U3)):
-      (RDD[U1], RDD[U2], RDD[U3]) =
-    muxPartitions(f, defaultSL)
-
-  /** Obtain a tuple of RDDs where jth component is obtained from the corresponding component
-   * returned by applying (f) to each partition
-   * @param f Function maps data from a partition into a tuple of objects
    * @param persist The storage level to apply to the intermediate result returned by (f)
    * @return The tuple of RDDs, as described above
    */
-  def muxPartitions[U1 :ClassTag, U2 :ClassTag, U3: ClassTag](
+  def mux3Partitions[U1 :ClassTag, U2 :ClassTag, U3: ClassTag](
     f: Iterator[T] => (U1, U2, U3),
-    persist: StorageLevel):
+    persist: StorageLevel = defaultSL):
       (RDD[U1], RDD[U2], RDD[U3]) =
-    muxPartitions((id: Int, itr: Iterator[T]) => f(itr), persist)
+    mux3PartitionsWithIndex((id: Int, itr: Iterator[T]) => f(itr), persist)
 
   /** Obtain a tuple of RDDs where jth component is obtained from the corresponding component
    * returned by applying (f) to each partition and its id
@@ -194,9 +131,9 @@ class MuxRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializab
    * @param persist The storage level to apply to the intermediate result returned by (f)
    * @return The tuple of RDDs, as described above
    */
-  def muxPartitions[U1 :ClassTag, U2 :ClassTag, U3: ClassTag](
+  def mux3PartitionsWithIndex[U1 :ClassTag, U2 :ClassTag, U3: ClassTag](
     f: (Int, Iterator[T]) => (U1, U2, U3),
-    persist: StorageLevel):
+    persist: StorageLevel = defaultSL):
       (RDD[U1], RDD[U2], RDD[U3]) = {
     val mux = self.mapPartitionsWithIndex { case (id, itr) =>
       Iterator.single(f(id, itr))
@@ -210,34 +147,14 @@ class MuxRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializab
   /** Obtain a tuple of RDDs where jth component is obtained from the corresponding component
    * returned by applying (f) to each partition
    * @param f Function maps data from a partition into a tuple of objects
-   * @return The tuple of RDDs, as described above
-   */
-  def muxPartitions[U1 :ClassTag, U2 :ClassTag, U3: ClassTag, U4 :ClassTag](
-    f: Iterator[T] => (U1, U2, U3, U4)):
-      (RDD[U1], RDD[U2], RDD[U3], RDD[U4]) =
-    muxPartitions((id: Int, itr: Iterator[T]) => f(itr), defaultSL)
-
-  /** Obtain a tuple of RDDs where jth component is obtained from the corresponding component
-   * returned by applying (f) to each partition and its id
-   * @param f Function maps data from a partition and its id into a tuple of objects
-   * @return The tuple of RDDs, as described above
-   */
-  def muxPartitions[U1 :ClassTag, U2 :ClassTag, U3: ClassTag, U4 :ClassTag](
-    f: (Int, Iterator[T]) => (U1, U2, U3, U4)):
-      (RDD[U1], RDD[U2], RDD[U3], RDD[U4]) =
-    muxPartitions(f, defaultSL)
-
-  /** Obtain a tuple of RDDs where jth component is obtained from the corresponding component
-   * returned by applying (f) to each partition
-   * @param f Function maps data from a partition into a tuple of objects
    * @param persist The storage level to apply to the intermediate result returned by (f)
    * @return The tuple of RDDs, as described above
    */
-  def muxPartitions[U1 :ClassTag, U2 :ClassTag, U3: ClassTag, U4 :ClassTag](
+  def mux4Partitions[U1 :ClassTag, U2 :ClassTag, U3: ClassTag, U4 :ClassTag](
     f: Iterator[T] => (U1, U2, U3, U4),
-    persist: StorageLevel):
+    persist: StorageLevel = defaultSL):
       (RDD[U1], RDD[U2], RDD[U3], RDD[U4]) =
-    muxPartitions((id: Int, itr: Iterator[T]) => f(itr), persist)
+    mux4PartitionsWithIndex((id: Int, itr: Iterator[T]) => f(itr), persist)
 
   /** Obtain a tuple of RDDs where jth component is obtained from the corresponding component
    * returned by applying (f) to each partition and its id
@@ -245,9 +162,9 @@ class MuxRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializab
    * @param persist The storage level to apply to the intermediate result returned by (f)
    * @return The tuple of RDDs, as described above
    */
-  def muxPartitions[U1 :ClassTag, U2 :ClassTag, U3: ClassTag, U4 :ClassTag](
+  def mux4PartitionsWithIndex[U1 :ClassTag, U2 :ClassTag, U3: ClassTag, U4 :ClassTag](
     f: (Int, Iterator[T]) => (U1, U2, U3, U4),
-    persist: StorageLevel):
+    persist: StorageLevel = defaultSL):
       (RDD[U1], RDD[U2], RDD[U3], RDD[U4]) = {
     val mux = self.mapPartitionsWithIndex { case (id, itr) =>
       Iterator.single(f(id, itr))
@@ -262,34 +179,14 @@ class MuxRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializab
   /** Obtain a tuple of RDDs where jth component is obtained from the corresponding component
    * returned by applying (f) to each partition
    * @param f Function maps data from a partition into a tuple of objects
-   * @return The tuple of RDDs, as described above
-   */
-  def muxPartitions[U1 :ClassTag, U2 :ClassTag, U3: ClassTag, U4 :ClassTag, U5 :ClassTag](
-    f: Iterator[T] => (U1, U2, U3, U4, U5)):
-      (RDD[U1], RDD[U2], RDD[U3], RDD[U4], RDD[U5]) =
-    muxPartitions((id: Int, itr: Iterator[T]) => f(itr), defaultSL)
-
-  /** Obtain a tuple of RDDs where jth component is obtained from the corresponding component
-   * returned by applying (f) to each partition and its id
-   * @param f Function maps data from a partition and its id into a tuple of objects
-   * @return The tuple of RDDs, as described above
-   */
-  def muxPartitions[U1 :ClassTag, U2 :ClassTag, U3: ClassTag, U4 :ClassTag, U5 :ClassTag](
-    f: (Int, Iterator[T]) => (U1, U2, U3, U4, U5)):
-      (RDD[U1], RDD[U2], RDD[U3], RDD[U4], RDD[U5]) =
-    muxPartitions(f, defaultSL)
-
-  /** Obtain a tuple of RDDs where jth component is obtained from the corresponding component
-   * returned by applying (f) to each partition
-   * @param f Function maps data from a partition into a tuple of objects
    * @param persist The storage level to apply to the intermediate result returned by (f)
    * @return The tuple of RDDs, as described above
    */
-  def muxPartitions[U1 :ClassTag, U2 :ClassTag, U3: ClassTag, U4 :ClassTag, U5 :ClassTag](
+  def mux5Partitions[U1 :ClassTag, U2 :ClassTag, U3: ClassTag, U4 :ClassTag, U5 :ClassTag](
     f: Iterator[T] => (U1, U2, U3, U4, U5),
-    persist: StorageLevel):
+    persist: StorageLevel = defaultSL):
       (RDD[U1], RDD[U2], RDD[U3], RDD[U4], RDD[U5]) =
-    muxPartitions((id: Int, itr: Iterator[T]) => f(itr), persist)
+    mux5PartitionsWithIndex((id: Int, itr: Iterator[T]) => f(itr), persist)
 
   /** Obtain a tuple of RDDs where jth component is obtained from the corresponding component
    * returned by applying (f) to each partition and its id
@@ -297,9 +194,9 @@ class MuxRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializab
    * @param persist The storage level to apply to the intermediate result returned by (f)
    * @return The tuple of RDDs, as described above
    */
-  def muxPartitions[U1 :ClassTag, U2 :ClassTag, U3: ClassTag, U4 :ClassTag, U5 :ClassTag](
+  def mux5PartitionsWithIndex[U1 :ClassTag, U2 :ClassTag, U3: ClassTag, U4 :ClassTag, U5 :ClassTag](
     f: (Int, Iterator[T]) => (U1, U2, U3, U4, U5),
-    persist: StorageLevel):
+    persist: StorageLevel = defaultSL):
       (RDD[U1], RDD[U2], RDD[U3], RDD[U4], RDD[U5]) = {
     val mux = self.mapPartitionsWithIndex { case (id, itr) =>
       Iterator.single(f(id, itr))
@@ -316,37 +213,14 @@ class MuxRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializab
    * returned by applying (f) to each input partition.
    * @param n The length of sequence returned from (f)
    * @param f Function maps data from a partition into a sequence of (n) sequences of type U
-   * @return The sequence of RDDs, as described above
-   */
-  def flatMuxPartitions[U :ClassTag](
-    n: Int, f: Iterator[T] => Seq[TraversableOnce[U]]):
-      Seq[RDD[U]] =
-    flatMuxPartitions(n, (id: Int, itr: Iterator[T]) => f(itr), defaultSL)
-
-  /** Obtain a sequence of (n) RDDs where the jth RDD is obtained from flattening the jth elements
-   * returned by applying (f) to each input partition and its id
-   * @param n The length of sequence returned from (f)
-   * @param f Function maps data from a partition and its id into a sequence of (n)
-   * sequences of type U
-   * @return The sequence of RDDs, as described above
-   */
-  def flatMuxPartitions[U :ClassTag](
-    n: Int, f: (Int, Iterator[T]) => Seq[TraversableOnce[U]]):
-      Seq[RDD[U]] =
-    flatMuxPartitions(n, f, defaultSL)
-
-  /** Obtain a sequence of (n) RDDs where the jth RDD is obtained from flattening the jth elements
-   * returned by applying (f) to each input partition.
-   * @param n The length of sequence returned from (f)
-   * @param f Function maps data from a partition into a sequence of (n) sequences of type U
    * @param persist The storage level to apply to the intermediate result returned by (f)
    * @return The sequence of RDDs, as described above
    */
   def flatMuxPartitions[U :ClassTag](
     n: Int, f: Iterator[T] => Seq[TraversableOnce[U]],
-    persist: StorageLevel):
+    persist: StorageLevel = defaultSL):
       Seq[RDD[U]] =
-    flatMuxPartitions(n, (id: Int, itr: Iterator[T]) => f(itr), persist)
+    flatMuxPartitionsWithIndex(n, (id: Int, itr: Iterator[T]) => f(itr), persist)
 
   /** Obtain a sequence of (n) RDDs where the jth RDD is obtained from flattening the jth elements
    * returned by applying (f) to each input partition and its id
@@ -356,9 +230,9 @@ class MuxRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializab
    * @param persist The storage level to apply to the intermediate result returned by (f)
    * @return The sequence of RDDs, as described above
    */
-  def flatMuxPartitions[U :ClassTag](
+  def flatMuxPartitionsWithIndex[U :ClassTag](
     n: Int, f: (Int, Iterator[T]) => Seq[TraversableOnce[U]],
-    persist: StorageLevel):
+    persist: StorageLevel = defaultSL):
       Seq[RDD[U]] = {
     require(n >= 0, "expected sequence length must be >= 0")
     val mux = self.mapPartitionsWithIndex { case (id, itr) =>
@@ -372,34 +246,14 @@ class MuxRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializab
   /** Obtain a tuple of RDDs where the jth component is obtained from flattening the corresponding
    * components returned by applying (f) to each input partition.
    * @param f Function maps data from a partition into a tuple of sequences
-   * @return The tuple of RDDs, as described above
-   */
-  def flatMuxPartitions[U1 :ClassTag, U2 :ClassTag](
-    f: Iterator[T] => (TraversableOnce[U1], TraversableOnce[U2])):
-      (RDD[U1], RDD[U2]) =
-    flatMuxPartitions((id: Int, itr: Iterator[T]) => f(itr), defaultSL)
-
-  /** Obtain a tuple of RDDs where the jth component is obtained from flattening the corresponding
-   * components returned by applying (f) to each input partition and its id.
-   * @param f Function maps data from a partition and its id into a tuple of sequences
-   * @return The tuple of RDDs, as described above
-   */
-  def flatMuxPartitions[U1 :ClassTag, U2 :ClassTag](
-    f: (Int, Iterator[T]) => (TraversableOnce[U1], TraversableOnce[U2])):
-      (RDD[U1], RDD[U2]) =
-    flatMuxPartitions(f, defaultSL)
-
-  /** Obtain a tuple of RDDs where the jth component is obtained from flattening the corresponding
-   * components returned by applying (f) to each input partition.
-   * @param f Function maps data from a partition into a tuple of sequences
    * @param persist The storage level to apply to the intermediate result returned by (f)
    * @return The tuple of RDDs, as described above
    */
-  def flatMuxPartitions[U1 :ClassTag, U2 :ClassTag](
+  def flatMux2Partitions[U1 :ClassTag, U2 :ClassTag](
     f: Iterator[T] => (TraversableOnce[U1], TraversableOnce[U2]),
-    persist: StorageLevel):
+    persist: StorageLevel = defaultSL):
       (RDD[U1], RDD[U2]) =
-    flatMuxPartitions((id: Int, itr: Iterator[T]) => f(itr), persist)
+    flatMux2PartitionsWithIndex((id: Int, itr: Iterator[T]) => f(itr), persist)
 
   /** Obtain a tuple of RDDs where the jth component is obtained from flattening the corresponding
    * components returned by applying (f) to each input partition and its id.
@@ -407,9 +261,9 @@ class MuxRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializab
    * @param persist The storage level to apply to the intermediate result returned by (f)
    * @return The tuple of RDDs, as described above
    */
-  def flatMuxPartitions[U1 :ClassTag, U2 :ClassTag](
+  def flatMux2PartitionsWithIndex[U1 :ClassTag, U2 :ClassTag](
     f: (Int, Iterator[T]) => (TraversableOnce[U1], TraversableOnce[U2]),
-    persist: StorageLevel):
+    persist: StorageLevel = defaultSL):
       (RDD[U1], RDD[U2]) = {
     val mux = self.mapPartitionsWithIndex { case (id, itr) =>
       Iterator.single(f(id, itr))
@@ -422,34 +276,14 @@ class MuxRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializab
   /** Obtain a tuple of RDDs where the jth component is obtained from flattening the corresponding
    * components returned by applying (f) to each input partition.
    * @param f Function maps data from a partition into a tuple of sequences
-   * @return The tuple of RDDs, as described above
-   */
-  def flatMuxPartitions[U1 :ClassTag, U2 :ClassTag, U3 :ClassTag](
-    f: Iterator[T] => (TraversableOnce[U1], TraversableOnce[U2], TraversableOnce[U3])):
-      (RDD[U1], RDD[U2], RDD[U3]) =
-    flatMuxPartitions((id: Int, itr: Iterator[T]) => f(itr), defaultSL)
-
-  /** Obtain a tuple of RDDs where the jth component is obtained from flattening the corresponding
-   * components returned by applying (f) to each input partition and its id.
-   * @param f Function maps data from a partition and its id into a tuple of sequences
-   * @return The tuple of RDDs, as described above
-   */
-  def flatMuxPartitions[U1 :ClassTag, U2 :ClassTag, U3 :ClassTag](
-    f: (Int, Iterator[T]) => (TraversableOnce[U1], TraversableOnce[U2], TraversableOnce[U3])):
-      (RDD[U1], RDD[U2], RDD[U3]) =
-    flatMuxPartitions(f, defaultSL)
-
-  /** Obtain a tuple of RDDs where the jth component is obtained from flattening the corresponding
-   * components returned by applying (f) to each input partition.
-   * @param f Function maps data from a partition into a tuple of sequences
    * @param persist The storage level to apply to the intermediate result returned by (f)
    * @return The tuple of RDDs, as described above
    */
-  def flatMuxPartitions[U1 :ClassTag, U2 :ClassTag, U3 :ClassTag](
+  def flatMux3Partitions[U1 :ClassTag, U2 :ClassTag, U3 :ClassTag](
     f: Iterator[T] => (TraversableOnce[U1], TraversableOnce[U2], TraversableOnce[U3]),
-    persist: StorageLevel):
+    persist: StorageLevel = defaultSL):
       (RDD[U1], RDD[U2], RDD[U3]) =
-    flatMuxPartitions((id: Int, itr: Iterator[T]) => f(itr), persist)
+    flatMux3PartitionsWithIndex((id: Int, itr: Iterator[T]) => f(itr), persist)
 
   /** Obtain a tuple of RDDs where the jth component is obtained from flattening the corresponding
    * components returned by applying (f) to each input partition and its id.
@@ -457,9 +291,9 @@ class MuxRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializab
    * @param persist The storage level to apply to the intermediate result returned by (f)
    * @return The tuple of RDDs, as described above
    */
-  def flatMuxPartitions[U1 :ClassTag, U2 :ClassTag, U3 :ClassTag](
+  def flatMux3PartitionsWithIndex[U1 :ClassTag, U2 :ClassTag, U3 :ClassTag](
     f: (Int, Iterator[T]) => (TraversableOnce[U1], TraversableOnce[U2], TraversableOnce[U3]),
-    persist: StorageLevel):
+    persist: StorageLevel = defaultSL):
       (RDD[U1], RDD[U2], RDD[U3]) = {
     val mux = self.mapPartitionsWithIndex { case(id, itr) =>
       Iterator.single(f(id, itr))
@@ -473,34 +307,14 @@ class MuxRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializab
   /** Obtain a tuple of RDDs where the jth component is obtained from flattening the corresponding
    * components returned by applying (f) to each input partition.
    * @param f Function maps data from a partition into a tuple of sequences
-   * @return The tuple of RDDs, as described above
-   */
-  def flatMuxPartitions[U1 :ClassTag, U2 :ClassTag, U3 :ClassTag, U4 :ClassTag](
-    f: Iterator[T] => (TraversableOnce[U1], TraversableOnce[U2], TraversableOnce[U3], TraversableOnce[U4])):
-      (RDD[U1], RDD[U2], RDD[U3], RDD[U4]) =
-    flatMuxPartitions((id: Int, itr: Iterator[T]) => f(itr), defaultSL)
-
-  /** Obtain a tuple of RDDs where the jth component is obtained from flattening the corresponding
-   * components returned by applying (f) to each input partition and its id.
-   * @param f Function maps data from a partition and its id into a tuple of sequences
-   * @return The tuple of RDDs, as described above
-   */
-  def flatMuxPartitions[U1 :ClassTag, U2 :ClassTag, U3 :ClassTag, U4 :ClassTag](
-    f: (Int, Iterator[T]) => (TraversableOnce[U1], TraversableOnce[U2], TraversableOnce[U3], TraversableOnce[U4])):
-      (RDD[U1], RDD[U2], RDD[U3], RDD[U4]) =
-    flatMuxPartitions(f, defaultSL)
-
-  /** Obtain a tuple of RDDs where the jth component is obtained from flattening the corresponding
-   * components returned by applying (f) to each input partition.
-   * @param f Function maps data from a partition into a tuple of sequences
    * @param persist The storage level to apply to the intermediate result returned by (f)
    * @return The tuple of RDDs, as described above
    */
-  def flatMuxPartitions[U1 :ClassTag, U2 :ClassTag, U3 :ClassTag, U4 :ClassTag](
+  def flatMux4Partitions[U1 :ClassTag, U2 :ClassTag, U3 :ClassTag, U4 :ClassTag](
     f: Iterator[T] => (TraversableOnce[U1], TraversableOnce[U2], TraversableOnce[U3], TraversableOnce[U4]),
-    persist: StorageLevel):
+    persist: StorageLevel = defaultSL):
       (RDD[U1], RDD[U2], RDD[U3], RDD[U4]) =
-    flatMuxPartitions((id: Int, itr: Iterator[T]) => f(itr), persist)
+    flatMux4PartitionsWithIndex((id: Int, itr: Iterator[T]) => f(itr), persist)
 
   /** Obtain a tuple of RDDs where the jth component is obtained from flattening the corresponding
    * components returned by applying (f) to each input partition and its id.
@@ -508,9 +322,9 @@ class MuxRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializab
    * @param persist The storage level to apply to the intermediate result returned by (f)
    * @return The tuple of RDDs, as described above
    */
-  def flatMuxPartitions[U1 :ClassTag, U2 :ClassTag, U3 :ClassTag, U4 :ClassTag](
+  def flatMux4PartitionsWithIndex[U1 :ClassTag, U2 :ClassTag, U3 :ClassTag, U4 :ClassTag](
     f: (Int, Iterator[T]) => (TraversableOnce[U1], TraversableOnce[U2], TraversableOnce[U3], TraversableOnce[U4]),
-    persist: StorageLevel):
+    persist: StorageLevel = defaultSL):
       (RDD[U1], RDD[U2], RDD[U3], RDD[U4]) = {
     val mux = self.mapPartitionsWithIndex { case (id, itr) =>
       Iterator.single(f(id, itr))
@@ -525,34 +339,14 @@ class MuxRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializab
   /** Obtain a tuple of RDDs where the jth component is obtained from flattening the corresponding
    * components returned by applying (f) to each input partition.
    * @param f Function maps data from a partition into a tuple of sequences
-   * @return The tuple of RDDs, as described above
-   */
-  def flatMuxPartitions[U1 :ClassTag, U2 :ClassTag, U3 :ClassTag, U4 :ClassTag, U5 :ClassTag](
-    f: Iterator[T] => (TraversableOnce[U1], TraversableOnce[U2], TraversableOnce[U3], TraversableOnce[U4], TraversableOnce[U5])):
-      (RDD[U1], RDD[U2], RDD[U3], RDD[U4], RDD[U5]) =
-    flatMuxPartitions((id: Int, itr: Iterator[T]) => f(itr), defaultSL)
-
-  /** Obtain a tuple of RDDs where the jth component is obtained from flattening the corresponding
-   * components returned by applying (f) to each input partition and its id.
-   * @param f Function maps data from a partition and its id into a tuple of sequences
-   * @return The tuple of RDDs, as described above
-   */
-  def flatMuxPartitions[U1 :ClassTag, U2 :ClassTag, U3 :ClassTag, U4 :ClassTag, U5 :ClassTag](
-    f: (Int, Iterator[T]) => (TraversableOnce[U1], TraversableOnce[U2], TraversableOnce[U3], TraversableOnce[U4], TraversableOnce[U5])):
-      (RDD[U1], RDD[U2], RDD[U3], RDD[U4], RDD[U5]) =
-    flatMuxPartitions(f, defaultSL)
-
-  /** Obtain a tuple of RDDs where the jth component is obtained from flattening the corresponding
-   * components returned by applying (f) to each input partition.
-   * @param f Function maps data from a partition into a tuple of sequences
    * @param persist The storage level to apply to the intermediate result returned by (f)
    * @return The tuple of RDDs, as described above
    */
-  def flatMuxPartitions[U1 :ClassTag, U2 :ClassTag, U3 :ClassTag, U4 :ClassTag, U5 :ClassTag](
+  def flatMux5Partitions[U1 :ClassTag, U2 :ClassTag, U3 :ClassTag, U4 :ClassTag, U5 :ClassTag](
     f: Iterator[T] => (TraversableOnce[U1], TraversableOnce[U2], TraversableOnce[U3], TraversableOnce[U4], TraversableOnce[U5]),
-    persist: StorageLevel):
+    persist: StorageLevel = defaultSL):
       (RDD[U1], RDD[U2], RDD[U3], RDD[U4], RDD[U5]) =
-    flatMuxPartitions((id: Int, itr: Iterator[T]) => f(itr), persist)
+    flatMux5PartitionsWithIndex((id: Int, itr: Iterator[T]) => f(itr), persist)
 
   /** Obtain a tuple of RDDs where the jth component is obtained from flattening the corresponding
    * components returned by applying (f) to each input partition and its id.
@@ -560,9 +354,9 @@ class MuxRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializab
    * @param persist The storage level to apply to the intermediate result returned by (f)
    * @return The tuple of RDDs, as described above
    */
-  def flatMuxPartitions[U1 :ClassTag, U2 :ClassTag, U3 :ClassTag, U4 :ClassTag, U5 :ClassTag](
+  def flatMux5PartitionsWithIndex[U1 :ClassTag, U2 :ClassTag, U3 :ClassTag, U4 :ClassTag, U5 :ClassTag](
     f: (Int, Iterator[T]) => (TraversableOnce[U1], TraversableOnce[U2], TraversableOnce[U3], TraversableOnce[U4], TraversableOnce[U5]),
-    persist: StorageLevel):
+    persist: StorageLevel = defaultSL):
       (RDD[U1], RDD[U2], RDD[U3], RDD[U4], RDD[U5]) = {
     val mux = self.mapPartitionsWithIndex { case(id, itr) =>
       Iterator.single(f(id, itr))

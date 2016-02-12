@@ -58,7 +58,7 @@ class SplitSampleRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Se
     persist: StorageLevel = defaultSL,
     seed: Long = scala.util.Random.nextLong): Seq[RDD[T]] = {
     require(n > 0, "n must be > 0")
-    self.flatMuxPartitions(n, (id: Int, data: Iterator[T]) => {
+    self.flatMuxPartitionsWithIndex(n, (id: Int, data: Iterator[T]) => {
       scala.util.Random.setSeed(id.toLong * seed)
       val samples = Vector.fill(n) { scala.collection.mutable.ArrayBuffer.empty[T] }
       data.foreach { e => samples(scala.util.Random.nextInt(n)) += e }
@@ -84,7 +84,7 @@ class SplitSampleRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Se
     val n = weights.length
     val z = weights.sum
     val w = weights.scan(0.0)(_ + _).map(_ / z).toVector
-    self.flatMuxPartitions(n, (id: Int, data: Iterator[T]) => {
+    self.flatMuxPartitionsWithIndex(n, (id: Int, data: Iterator[T]) => {
       scala.util.Random.setSeed(id.toLong * seed)
       val samples = Vector.fill(n) { scala.collection.mutable.ArrayBuffer.empty[T] }
       data.foreach { e =>

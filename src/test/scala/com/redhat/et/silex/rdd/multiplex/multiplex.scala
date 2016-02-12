@@ -38,9 +38,9 @@ class MuxRDDFunctionsSpec extends FlatSpec with Matchers with PerTestSparkContex
     mux(2).collect.seq should beEqSeq(Seq(15d, 30d))
   }
 
-  it should "provide muxPartitions for 2-tuple" in {
+  it should "provide mux2Partitions for 2-tuple" in {
     val rdd = context.parallelize((1 to 10), 2)
-    val (mux1, mux2) = rdd.muxPartitions { data: Iterator[Int] =>
+    val (mux1, mux2) = rdd.mux2Partitions { data: Iterator[Int] =>
       val j = data.max
       (j, j.toString)
     }
@@ -50,9 +50,9 @@ class MuxRDDFunctionsSpec extends FlatSpec with Matchers with PerTestSparkContex
     res2 should beEqSeq(Seq("5", "10"))
   }
 
-  it should "provide muxPartitions for 3-tuple" in {
+  it should "provide mux3Partitions for 3-tuple" in {
     val rdd = context.parallelize((1 to 10), 2)
-    val (mux1, mux2, mux3) = rdd.muxPartitions { data: Iterator[Int] =>
+    val (mux1, mux2, mux3) = rdd.mux3Partitions { data: Iterator[Int] =>
       val j = data.max
       (j, j.toString, j.toDouble)
     }
@@ -63,9 +63,9 @@ class MuxRDDFunctionsSpec extends FlatSpec with Matchers with PerTestSparkContex
     res3 should beEqSeq(Seq(5.0, 10.0))
   }
 
-  it should "provide muxPartitions for 4-tuple" in {
+  it should "provide mux4Partitions for 4-tuple" in {
     val rdd = context.parallelize((1 to 10), 2)
-    val (mux1, mux2, mux3, mux4) = rdd.muxPartitions { data: Iterator[Int] =>
+    val (mux1, mux2, mux3, mux4) = rdd.mux4Partitions { data: Iterator[Int] =>
       val j = data.max
       (j, j.toString, j.toDouble, j.toLong)
     }
@@ -78,9 +78,9 @@ class MuxRDDFunctionsSpec extends FlatSpec with Matchers with PerTestSparkContex
     res4 should beEqSeq(Seq(5L, 10L))
   }
 
-  it should "provide muxPartitions for 5-tuple" in {
+  it should "provide mux5Partitions for 5-tuple" in {
     val rdd = context.parallelize((1 to 10), 2)
-    val (mux1, mux2, mux3, mux4, mux5) = rdd.muxPartitions { data: Iterator[Int] =>
+    val (mux1, mux2, mux3, mux4, mux5) = rdd.mux5Partitions { data: Iterator[Int] =>
       val j = data.max
       (j, j.toString, j.toDouble, j.toLong, j.toFloat)
     }
@@ -109,9 +109,9 @@ class MuxRDDFunctionsSpec extends FlatSpec with Matchers with PerTestSparkContex
     mux(2).collect.seq should beEqSeq(Seq(15d, 3d, 30d, 18d))
   }
 
-  it should "provide flatMuxPartitions for 2-tuple" in {
+  it should "provide flatMux2Partitions for 2-tuple" in {
     val rdd = context.parallelize((1 to 10), 2)
-    val (mux1, mux2) = rdd.flatMuxPartitions { data: Iterator[Int] =>
+    val (mux1, mux2) = rdd.flatMux2Partitions { data: Iterator[Int] =>
       val dseq = data.toSeq
       val (j, k) = (dseq.max, dseq.min)
       (Seq(j, k), Seq(j.toString, k.toString))
@@ -122,9 +122,9 @@ class MuxRDDFunctionsSpec extends FlatSpec with Matchers with PerTestSparkContex
     res2 should beEqSeq(Seq("5", "1", "10", "6"))
   }
 
-  it should "provide flatMuxPartitions for 3-tuple" in {
+  it should "provide flatMux3Partitions for 3-tuple" in {
     val rdd = context.parallelize((1 to 10), 2)
-    val (mux1, mux2, mux3) = rdd.flatMuxPartitions { data: Iterator[Int] =>
+    val (mux1, mux2, mux3) = rdd.flatMux3Partitions { data: Iterator[Int] =>
       val dseq = data.toSeq
       val (j, k) = (dseq.max, dseq.min)
       (Seq(j, k), Seq(j.toString, k.toString), Seq(j.toDouble, k.toDouble))
@@ -136,9 +136,9 @@ class MuxRDDFunctionsSpec extends FlatSpec with Matchers with PerTestSparkContex
     res3 should beEqSeq(Seq(5d, 1d, 10d, 6d))
   }
 
-  it should "provide flatMuxPartitions for 4-tuple" in {
+  it should "provide flatMux4Partitions for 4-tuple" in {
     val rdd = context.parallelize((1 to 10), 2)
-    val (mux1, mux2, mux3, mux4) = rdd.flatMuxPartitions { data: Iterator[Int] =>
+    val (mux1, mux2, mux3, mux4) = rdd.flatMux4Partitions { data: Iterator[Int] =>
       val dseq = data.toSeq
       val (j, k) = (dseq.max, dseq.min)
       (Seq(j, k), Seq(j.toString, k.toString), Seq(j.toDouble, k.toDouble), Seq(j.toLong, k.toLong))
@@ -152,9 +152,9 @@ class MuxRDDFunctionsSpec extends FlatSpec with Matchers with PerTestSparkContex
     res4 should beEqSeq(Seq(5L, 1L, 10L, 6L))
   }
 
-  it should "provide flatMuxPartitions for 5-tuple" in {
+  it should "provide flatMux5Partitions for 5-tuple" in {
     val rdd = context.parallelize((1 to 10), 2)
-    val (mux1, mux2, mux3, mux4, mux5) = rdd.flatMuxPartitions { data: Iterator[Int] =>
+    val (mux1, mux2, mux3, mux4, mux5) = rdd.flatMux5Partitions { data: Iterator[Int] =>
       val dseq = data.toSeq
       val (j, k) = (dseq.max, dseq.min)
       (Seq(j, k), Seq(j.toString, k.toString), Seq(j.toDouble, k.toDouble),
