@@ -30,9 +30,14 @@ class SplitSampleSpec extends FlatSpec with Matchers with PerTestSparkContext {
 
   it should "provide splitSample with integer argument" in {
     val rdd = context.parallelize(1 to 10000, 4)
+
+    val ss = rdd.splitSample(3)
+    ss.length should be (3)
+    val reconstruct = ss.map(_.collect.toVector).fold(Vector.empty[Int])(_ ++ _).sorted
+    reconstruct should beEqSeq((1 to 10000).toVector)
+
+    val ssRes = ss.map(_.collect.seq.sliding(2).map(e => e(1) - e(0)).toVector)
     val rsRes = rdd.randomSplit(Array(1.0, 1.0, 1.0)).toSeq
-      .map(_.collect.seq.sliding(2).map(e => e(1) - e(0)).toVector)
-    val ssRes = rdd.splitSample(3)
       .map(_.collect.seq.sliding(2).map(e => e(1) - e(0)).toVector)
     val Dvals = rsRes.zip(ssRes).map { case (rs, ss) =>
       medianKSD(SamplingIterator { rs }, SamplingIterator { ss })
@@ -42,9 +47,14 @@ class SplitSampleSpec extends FlatSpec with Matchers with PerTestSparkContext {
 
   it should "provide weightedSplitSample with weights argument" in {
     val rdd = context.parallelize(1 to 10000, 4)
+
+    val ss = rdd.weightedSplitSample(Vector(1.0, 2.0, 3.0))
+    ss.length should be (3)
+    val reconstruct = ss.map(_.collect.toVector).fold(Vector.empty[Int])(_ ++ _).sorted
+    reconstruct should beEqSeq((1 to 10000).toVector)
+
+    val ssRes = ss.map(_.collect.seq.sliding(2).map(e => e(1) - e(0)).toVector)
     val rsRes = rdd.randomSplit(Array(1.0, 2.0, 3.0)).toSeq
-      .map(_.collect.seq.sliding(2).map(e => e(1) - e(0)).toVector)
-    val ssRes = rdd.weightedSplitSample(Seq(1.0, 2.0, 3.0))
       .map(_.collect.seq.sliding(2).map(e => e(1) - e(0)).toVector)
     val Dvals = rsRes.zip(ssRes).map { case (rs, ss) =>
       medianKSD(SamplingIterator { rs }, SamplingIterator { ss })
