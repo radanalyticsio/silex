@@ -25,36 +25,54 @@ import org.apache.spark.storage.StorageLevel
 import org.apache.spark.rdd.RDD
 import org.apache.spark.Logging
 
+/**
+ * Enhances RDDs with methods for splitting RDDs based on predicates or other functions
+ */
 class SplitRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializable {
+  import scala.collection.mutable.ArrayBuffer
   import com.redhat.et.silex.rdd.multiplex.implicits._
-
   import SplitRDDFunctions.defaultSL
 
+  /**
+   * Split an RDD into two output RDDs, using a predicate function
+   * @param f The predicate function to split with
+   * @param persist The storage level to use for the intermediate result.
+   * @return A pair of RDDs.  The first output contains rows for which the predicate was true, and 
+   * the second contains rows for which the predicate was false.
+   */
   def splitFilter(f: T => Boolean,
     persist: StorageLevel = defaultSL): (RDD[T], RDD[T]) = {
     self.flatMux2Partitions((data: Iterator[T]) => {
-      val pass = scala.collection.mutable.ArrayBuffer.empty[T]
-      val fail = scala.collection.mutable.ArrayBuffer.empty[T]
+      val (pass, fail) = (ArrayBuffer.empty[T], ArrayBuffer.empty[T])
       data.foreach { e => (if (f(e)) pass else fail) += e }
       (pass, fail)
-    })
+    }, persist)
   }
 
+  /**
+   * Split an RDD into two output RDDs, using a function that returns an Either[L, R]
+   * @param f A function that returns an Either[L, R]
+   * @param persist The storage level to use for the intermediate result.
+   * @return A pair of RDDs.  The first output contains rows for which the function output was Left[L],
+   * and the second contains rows for which the function output was Right[R]
+   */
   def splitEither[L :ClassTag, R :ClassTag](f: T => Either[L, R],
     persist: StorageLevel = defaultSL): (RDD[L], RDD[R]) = {
     self.flatMux2Partitions((data: Iterator[T]) => {
-      val left = scala.collection.mutable.ArrayBuffer.empty[L]
-      val right = scala.collection.mutable.ArrayBuffer.empty[R]
+      val (left, right) = (ArrayBuffer.empty[L], ArrayBuffer.empty[R])
       data.foreach { e => f(e).fold(lv => left += lv, rv => right += rv) }
       (left, right)
-    })
+    }, persist)
   }
 }
 
+/** Definitions used by the SplitRDDFunctions instances */
 object SplitRDDFunctions {
+  /** The default storage level used for intermediate splitting results */
   val defaultSL = StorageLevel.MEMORY_ONLY
 }
 
+/** Implicit conversions to enhance RDDs with splitting methods */
 object implicits {
   import scala.language.implicitConversions
   implicit def splitRDDFunctions[T :ClassTag](rdd: RDD[T]): SplitRDDFunctions[T] =
