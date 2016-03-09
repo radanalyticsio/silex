@@ -139,20 +139,20 @@ trait ReplAppLike {
     val repl = new ILoop {
       override def loop(): Unit = {
         val app = makeApp
-        intp.addImports("org.apache.spark.SparkConf")
-        intp.addImports("org.apache.spark.SparkContext")
-        intp.addImports("org.apache.spark.SparkContext._")
-        intp.addImports("org.apache.spark.rdd.RDD")
+        intp.interpret("import org.apache.spark.SparkConf")
+        intp.interpret("import org.apache.spark.SparkContext")
+        intp.interpret("import org.apache.spark.SparkContext._")
+        intp.interpret("import org.apache.spark.rdd.RDD")
         
-        intp.addImports("org.apache.spark.sql.DataFrame")
-        intp.addImports("org.apache.spark.sql.functions._")
-        intp.addImports("org.apache.spark.sql.types._")
+        intp.interpret("import org.apache.spark.sql.DataFrame")
+        intp.interpret("import org.apache.spark.sql.functions._")
+        intp.interpret("import org.apache.spark.sql.types._")
         
         intp.bind("app", app)
         intp.bind("spark", app.context)
         intp.bind("sqlc", app.sqlContext)
-        intp.addImports("sqlc._")
-        intp.addImports("sqlc.implicits._")
+        intp.interpret("import sqlc._")
+        intp.interpret("import sqlc.implicits._")
         
         super.loop()
       }
