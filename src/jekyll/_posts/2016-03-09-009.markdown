@@ -1,0 +1,18 @@
+---
+layout: post
+title:  "Silex 0.0.9"
+date:   2016-03-09 16:42:38
+categories: examples
+---
+
+Silex 0.0.9 is now released!  The main feature is that Silex now supports (and is built for) Scala 2.11.  We will continue to support Scala 2.10 as long as it is feasible to do so.  We have also integrated some improvements to our continuous integration that should lead to more reliable code overall.
+
+In case you missed the improvements in Silex 0.0.8, here they are:
+
+* support Spark 1.6 and eliminate some deprecation warnings related to Spark 1.6
+* support for loading a directory of serialized data frames
+* `VectorID` class for extending MLlib vectors with identifiers
+* lazy `scan` and `scanLeft` for RDDs
+* improved feature extraction support
+* basic tokenizers for machine-generated English
+* `ApproximateWhitelist` for filtering natural-language text
