@@ -137,7 +137,8 @@ trait ReplAppLike {
   
   def main(args: Array[String]) {
     val repl = new ILoop {
-      override def loop(): Unit = {
+      override def createInterpreter(): Unit = {
+	super.createInterpreter()
         val app = makeApp
         intp.interpret("import org.apache.spark.SparkConf")
         intp.interpret("import org.apache.spark.SparkContext")
@@ -153,8 +154,6 @@ trait ReplAppLike {
         intp.bind("sqlc", app.sqlContext)
         intp.interpret("import sqlc._")
         intp.interpret("import sqlc.implicits._")
-        
-        super.loop()
       }
     }
     
