@@ -10,10 +10,6 @@ scalaVersion := "2.10.5"
 
 crossScalaVersions := Seq("2.10.5", "2.11.8")
 
-parallelExecution in Test := false
-
-testForkedParallel in Test := true
-
 def commonSettings = Seq(
   libraryDependencies ++= Seq(
     "org.apache.spark" %% "spark-core" % SPARK_VERSION % "provided",
@@ -40,7 +36,7 @@ scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
 
 scalacOptions in (Compile, doc) ++= Seq("-doc-root-content", baseDirectory.value+"/root-doc.txt")
 
-fork in Test := true
+// fork in Test := true
 
 site.settings
 
