@@ -1,5 +1,5 @@
 language: scala
 jdk:
   - openjdk7
-script: "sbt clean coverage test"
-after_success: "sbt coverageReport coveralls"
+script: "sbt +clean +coverage +test"
+after_success: "sbt +coverageReport +coveralls"
