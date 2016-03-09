@@ -9,7 +9,7 @@ resolvers += "jgit-repo" at "http://download.eclipse.org/jgit/maven"
 
 addSbtPlugin("me.lessis" % "bintray-sbt" % "0.2.1")
 
-addSbtPlugin("com.typesafe.sbt" % "sbt-ghpages" % "0.5.3")
+addSbtPlugin("com.typesafe.sbt" % "sbt-ghpages" % "0.5.4")
 
 addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.6.0")
 

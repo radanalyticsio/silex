@@ -1,5 +1,21 @@
 language: scala
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.ivy2/cache
+    - $HOME/.sbt/boot/
 jdk:
   - openjdk7
-script: "sbt clean coverage test"
-after_success: "sbt coverageReport coveralls"
+scala:
+   - 2.10.5
+   - 2.11.8
+script:
+  - sbt ++$TRAVIS_SCALA_VERSION clean 
+  - sbt ++$TRAVIS_SCALA_VERSION coverage 
+  - sbt ++$TRAVIS_SCALA_VERSION test
+  - find $HOME/.sbt -name "*.lock" | xargs rm
+  - find $HOME/.ivy2 -name "ivydata-*.properties" | xargs rm
+after_success: 
+  - sbt ++$TRAVIS_SCALA_VERSION coverageReport
+  - sbt ++$TRAVIS_SCALA_VERSION coveralls

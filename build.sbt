@@ -2,11 +2,13 @@ name := "silex"
 
 organization := "com.redhat.et"
 
-version := "0.0.8"
+version := "0.0.9"
 
 val SPARK_VERSION = "1.6.0"
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.10.5"
+
+crossScalaVersions := Seq("2.10.5", "2.11.8")
 
 def commonSettings = Seq(
   libraryDependencies ++= Seq(
@@ -34,7 +36,7 @@ scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
 
 scalacOptions in (Compile, doc) ++= Seq("-doc-root-content", baseDirectory.value+"/root-doc.txt")
 
-fork := true
+// fork in Test := true
 
 site.settings
 

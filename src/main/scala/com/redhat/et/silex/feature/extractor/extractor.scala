@@ -109,14 +109,14 @@ sealed class ConcatFS(fb1: FeatureSeq, fb2: FeatureSeq) extends FeatureSeq {
 }
 
 /** Subclass of [[FeatureSeq]] representing a single Scala Seq object. */
-sealed class SeqFS(seq: Seq[Double]) extends FeatureSeq {
-  def length = seq.length
-  def apply(j: Int) = seq(j)
-  def iterator = seq.iterator
+sealed class SeqFS(sq: Seq[Double]) extends FeatureSeq {
+  def length = sq.length
+  def apply(j: Int) = sq(j)
+  def iterator = sq.iterator
   def activeKeysIterator = Iterator.range(0, length)
   def activeValuesIterator = iterator
   def density = 1.0
-  override def toString = s"SeqFS(${seq})"
+  override def toString = s"SeqFS(${sq})"
 }
 
 /** Provides factory methods for [[FeatureSeq]] instances. */
