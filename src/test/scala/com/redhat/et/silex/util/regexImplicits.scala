@@ -27,10 +27,10 @@ class RegexImplicitsSpec extends FlatSpec with Matchers {
     import RegexImplicits._
     
     val matches = "123::456" match {
-      case r"([0-9]+)$first::([0-9]+)$second" => Pair(first, second)
-      case _ => Pair("", "")
+      case r"([0-9]+)$first::([0-9]+)$second" => (first, second)
+      case _ => ("", "")
     }
     
-    assert(matches == Pair("123", "456"))
+    assert(matches == ("123", "456"))
   }
 }

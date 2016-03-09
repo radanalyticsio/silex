@@ -70,7 +70,7 @@ object Amortizer {
    * <code>end</code> are on the same day, return a [[Seq]] with <code>start</code> and the whole
    * amount.
    */
-  def amortize(start: DateTimeUTC, end: DateTimeUTC, amt: Double): Seq[Pair[DateTimeUTC, Double]] = {
+  def amortize(start: DateTimeUTC, end: DateTimeUTC, amt: Double): Seq[Tuple2[DateTimeUTC, Double]] = {
     val db = start.daysBetween(end)
     if (db > 0) {
       val perDay = amt / db
@@ -82,7 +82,7 @@ object Amortizer {
         )
       }
     } else {
-      Seq(Pair(start, amt))
+      Seq(Tuple2(start, amt))
     }
   }
 }
@@ -114,7 +114,7 @@ object AWSTimeLens extends TimeLens {
 
 object TimeUtils {
   import org.joda.time.DateTime
-  def timestampToYearAndDay(secondsSinceEpoch: Int): Pair[Int, Int] = {
+  def timestampToYearAndDay(secondsSinceEpoch: Int): Tuple2[Int, Int] = {
     val dt = new DateTime(secondsSinceEpoch * 1000L)
     (dt.getYear, dt.getDayOfYear)
   }
