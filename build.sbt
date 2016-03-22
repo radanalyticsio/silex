@@ -17,6 +17,7 @@ def commonSettings = Seq(
     "org.apache.spark" %% "spark-mllib" % SPARK_VERSION % "provided",
     "joda-time" % "joda-time" % "2.7", 
     "org.joda" % "joda-convert" % "1.7",
+    "org.apache.commons" % "commons-math3" % "3.6",
     "org.scalatest" %% "scalatest" % "2.2.4" % Test,
     "org.json4s" %% "json4s-jackson" % "3.2.10" % "provided"
   )
