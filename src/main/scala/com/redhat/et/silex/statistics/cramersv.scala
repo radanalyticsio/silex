@@ -98,7 +98,6 @@ object CramersV {
    * generator can be provided (if desired) via the `rng` parameter.
    */
   def permutationTest[T, U](values1 : Seq[T], values2 : Seq[U], rounds : Int, rng : Random = new Random()) : Double = {
-//    val rng = new Random()
 
     val testV = CramersV(values1, values2)
     
