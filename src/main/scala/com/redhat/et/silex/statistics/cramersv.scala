@@ -77,13 +77,13 @@ object CramersV {
           val b = ni * nj / nObs
           val c = (nij - b) * (nij - b) / b
 
-          c / nObs
+          c
       }
       .sum
 
       val minDim = math.min(set1.size - 1, set1.size - 1).toDouble
       
-      val v = math.sqrt(chi2 / minDim)
+      val v = math.sqrt(chi2 / nObs / minDim)
 
       v
     }
