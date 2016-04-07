@@ -108,14 +108,14 @@ object CramersV {
    *
    * @param values Values co-sampled from variables 1 and 2
    * @param rounds Number of permutations to generate
-   * @param rng (Optional) Random number generator used to generate permutations
+   * @param seed Seed for the Random number generator used to generate permutations
    * @return p-value giving the probability of getting a lower association value
    */
-  def permutationTest[T, U](values : Seq[(T, U)], rounds : Int, rng : Random = new Random()) : Double = {
+  def permutationTest[T, U](values : Seq[(T, U)], rounds : Int, seed : Long) : Double = {
     val values1 = values.map { _._1 }
     val values2 = values.map { _._2 }
 
-    permutationTest(values1, values2, rounds, rng)
+    permutationTest(values1, values2, rounds, seed)
   }
 
   /**
@@ -126,12 +126,13 @@ object CramersV {
    * @param values1 Values sampled from variable 1
    * @param values2 Values sampled from variable 2
    * @param rounds Number of permutations to generate
-   * @param rng (Optional) Random number generator used to generate permutations
+   * @param 
    * @return p-value giving the probability of getting a lower association value
    */
-  def permutationTest[T, U](values1 : Seq[T], values2 : Seq[U], rounds : Int, rng : Random = new Random()) : Double = {
+  def permutationTest[T, U](values1 : Seq[T], values2 : Seq[U], rounds : Int, seed : Long) : Double = {
 
     val testV = cramersV(values1, values2)
+    val rng = new Random(seed)
     
     val worseCount = (1 to rounds).iterator.map {
       i =>

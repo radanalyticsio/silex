@@ -90,7 +90,7 @@ class CramersVSpec extends FlatSpec with Matchers with PerTestSparkContext {
         Seq(i, i)
     }
     
-    val pvalue = CramersV.permutationTest(values, values, 1000)
+    val pvalue = CramersV.permutationTest(values, values, 1000, 1234L)
 
     assert(math.abs(pvalue - 1.0) < eps)
   }
