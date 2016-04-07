@@ -33,6 +33,13 @@ object CramersV {
       b <- sb.toIterator
     ) yield (a, b)
 
+  private def countOccurrences[A](seq : Seq[A]) : Map[A, Double] = {
+    seq.foldLeft(Map.empty[A, Double]) {
+        case (counts, value) =>
+          counts + (value -> (counts.getOrElse(value, 0.0) + 1.0))
+    }
+  }
+
   /**
    * Calculate Cramer's V for a collection of values co-sampled from two
    * variables.
@@ -67,23 +74,9 @@ object CramersV {
     } else if (values1.size == 0 || set1.size == 1 || set2.size == 1) {
       0.0
     } else {
-      val pairCounts = values1.zip(values2)
-        .foldLeft(Map.empty[(T, U), Double]) {
-        case (counts, value) =>
-          counts + (value -> (counts.getOrElse(value, 0.0) + 1.0))
-      }
-
-      val counts1 = values1
-        .foldLeft(Map.empty[T, Double]) {
-        case (counts, value) =>
-          counts + (value -> (counts.getOrElse(value, 0.0) + 1.0))
-      }
-
-      val counts2 = values2
-        .foldLeft(Map.empty[U, Double]) {
-        case (counts, value) =>
-          counts + (value -> (counts.getOrElse(value, 0.0) + 1.0))
-      }
+      val pairCounts = countOccurrences(values1.zip(values2))
+      val counts1 = countOccurrences(values1)
+      val counts2 = countOccurrences(values2)
 
       val nObs = values1.size.toDouble
 
