@@ -27,50 +27,59 @@ class CramersVSpec extends FlatSpec with Matchers with PerTestSparkContext {
 
   val eps = 1e-5
 
-  "CramersV.apply" should "report 1.0 under perfect association" in {
+  "CramersV.cramersV" should "report 1.0 under perfect association" in {
     val values1 = Seq(1, 1, 1, 0, 0, 0, 2, 2, 2)
     val values2 = Seq(0, 0, 0, 1, 1, 1, 2, 2, 2)
     val values3 = Seq(1, 1, 1, 1, 2, 2, 1, 1)
     val values4 = Seq(3, 3, 3, 3, 4, 4, 3, 3)
 
-    val sameV12 = CramersV(values1, values1)
-    val negatedV12 = CramersV(values1, values2)
-    val v34 = CramersV(values3, values4)
+    val sameV12 = CramersV.cramersV(values1, values1)
+    val negatedV12 = CramersV.cramersV(values1, values2)
+    val v34 = CramersV.cramersV(values3, values4)
 
     assert(math.abs(sameV12 - 1.0) < eps)
     assert(math.abs(negatedV12 - 1.0) < eps)
     assert(math.abs(v34 - 1.0) < eps)
   }
 
-  "CramersV.apply" should "report 0.0 with no association" in {
+  "CramersV.cramersV" should "throw IllegalArgumentException when given values of unequal lengths" in {
+    val values1 = Seq(1, 2, 3)
+    val values2 = Seq(1, 2)
+
+    intercept[IllegalArgumentException] {
+      CramersV.cramersV(values1, values2)
+    }
+  }
+
+  "CramersV.cramersV" should "report 0.0 with no association" in {
     val values1 = Seq(1, 1, 1, 1, 0, 0, 0, 0)
     val values2 = Seq(0, 1, 0, 1, 1, 0, 1, 0)
  
-    val v = CramersV(values1, values2)
+    val v = CramersV.cramersV(values1, values2)
 
     assert(v < eps) 
   }
 
-  "CramersV.apply" should "report 1.0 with single-value sets" in {
+  "CramersV.cramersV" should "report 1.0 with single-value sets" in {
     val values1 = Seq(1, 1, 1, 1)
     val values2 = Seq(1, 1, 1, 1)
 
-    val v = CramersV(values1, values2)
+    val v = CramersV.cramersV(values1, values2)
 
     assert(math.abs(v - 1.0) < eps)
   }
 
-  "CramersV.apply" should "report 0.0 when one variable has 1 value and the other has more" in {
+  "CramersV.cramersV" should "report 0.0 when one variable has 1 value and the other has more" in {
     val values1 = Seq(1, 1, 1, 1)
     val values2 = Seq(1, 2, 3, 4)
 
-    val v = CramersV(values1, values2)
+    val v = CramersV.cramersV(values1, values2)
 
     assert(v < eps)
   }
 
-  "CramersV.apply" should "report 0.0 for empty sets" in {
-    val v = CramersV(Seq[Int](), Seq[Int]())
+  "CramersV.cramersV" should "report 0.0 for empty sets" in {
+    val v = CramersV.cramersV(Seq[Int](), Seq[Int]())
 
     assert(v < eps)
   }

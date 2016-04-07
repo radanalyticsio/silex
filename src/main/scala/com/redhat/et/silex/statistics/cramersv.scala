@@ -27,10 +27,38 @@ import scala.util.Random
  * (inclusive)." 
  */
 object CramersV {
+  private def cross[A, B](sa: TraversableOnce[A], sb: TraversableOnce[B]): Iterator[(A, B)] =
+    for(
+      a <- sa.toIterator;
+      b <- sb.toIterator
+    ) yield (a, b)
+
+  /**
+   * Calculate Cramer's V for a collection of values co-sampled from two
+   * variables.
+   *
+   * @param values Sequence of 2-tuples containing co-sampled values
+   * @return Cramer's V
+   */
+  def cramersV[T, U](values : Seq[(T, U)]) : Double = {
+    val values1 = values.map { _._1 }
+    val values2 = values.map { _._2 }
+
+    cramersV(values1, values2)
+  }
+
   /**
    * Calculate Cramer's V for two sets (`values1` and `values2`) of co-sampled values.
+   *
+   * @param values1 Values sampled from variable 1
+   * @param values2 Values sampled from variable 2
+   * @return Cramer's V
    */
-  def apply[T, U](values1 : Seq[T], values2 : Seq[U]) : Double = {
+  def cramersV[T, U](values1 : Seq[T], values2 : Seq[U]) : Double = {
+    if (values1.size != values2.size) {
+      throw new IllegalArgumentException("Value sequences must be the same length.")
+    }
+
     val set1 = values1.toSet
     val set2 = values2.toSet
 
@@ -59,27 +87,18 @@ object CramersV {
 
       val nObs = values1.size.toDouble
 
-      val combinations = set1.flatMap {
-        v1 =>
-          set2.map {
-            v2 =>
-              (v1, v2)
-          }
-      }
-      .toSeq
+      val chi2 = cross(set1, set2)
+        .foldLeft(0.0) {
+          case (runningSum, (value1, value2)) =>
+            val nij = pairCounts.getOrElse((value1, value2), 0.0)
+            val ni = counts1.getOrElse(value1, 0.0)
+            val nj = counts2.getOrElse(value2, 0.0)
 
-      val chi2 = combinations.map {
-        case (value1, value2) =>
-          val nij = pairCounts.getOrElse((value1, value2), 0.0)
-          val ni = counts1.getOrElse(value1, 0.0)
-          val nj = counts2.getOrElse(value2, 0.0)
+            val b = ni * nj / nObs
+            val c = (nij - b) * (nij - b) / b
 
-          val b = ni * nj / nObs
-          val c = (nij - b) * (nij - b) / b
-
-          c
-      }
-      .sum
+            runningSum + c
+        }
 
       val minDim = math.min(set1.size - 1, set1.size - 1).toDouble
       
@@ -94,17 +113,37 @@ object CramersV {
    * a lower assocation value.  Take the association level as the null hypothesis, reject
    * if the p-value is less than your desired threshold.
    *
-   * The parameter `rounds` indicates how many permutations to generate. A random number
-   * generator can be provided (if desired) via the `rng` parameter.
+   * @param values Values co-sampled from variables 1 and 2
+   * @param rounds Number of permutations to generate
+   * @param rng (Optional) Random number generator used to generate permutations
+   * @return p-value giving the probability of getting a lower association value
+   */
+  def permutationTest[T, U](values : Seq[(T, U)], rounds : Int, rng : Random = new Random()) : Double = {
+    val values1 = values.map { _._1 }
+    val values2 = values.map { _._2 }
+
+    permutationTest(values1, values2, rounds, rng)
+  }
+
+  /**
+   * Perform a permutation test to get a p-value indicating the probability of getting
+   * a lower assocation value.  Take the association level as the null hypothesis, reject
+   * if the p-value is less than your desired threshold.
+   *
+   * @param values1 Values sampled from variable 1
+   * @param values2 Values sampled from variable 2
+   * @param rounds Number of permutations to generate
+   * @param rng (Optional) Random number generator used to generate permutations
+   * @return p-value giving the probability of getting a lower association value
    */
   def permutationTest[T, U](values1 : Seq[T], values2 : Seq[U], rounds : Int, rng : Random = new Random()) : Double = {
 
-    val testV = CramersV(values1, values2)
+    val testV = cramersV(values1, values2)
     
-    val worseCount = (1 to rounds).map {
+    val worseCount = (1 to rounds).iterator.map {
       i =>
         val shuffled = rng.shuffle(values1)
-        CramersV(shuffled, values2)
+        cramersV(shuffled, values2)
     }
     .filter {
       v =>
