@@ -47,24 +47,9 @@ object CramersV {
    * @param values Sequence of 2-tuples containing co-sampled values
    * @return Cramer's V
    */
-  def cramersV[T, U](values : Seq[(T, U)]) : Double = {
+  def apply[T, U](values : Seq[(T, U)]) : Double = {
     val values1 = values.map { _._1 }
     val values2 = values.map { _._2 }
-
-    cramersV(values1, values2)
-  }
-
-  /**
-   * Calculate Cramer's V for two sets (`values1` and `values2`) of co-sampled values.
-   *
-   * @param values1 Values sampled from variable 1
-   * @param values2 Values sampled from variable 2
-   * @return Cramer's V
-   */
-  def cramersV[T, U](values1 : Seq[T], values2 : Seq[U]) : Double = {
-    if (values1.size != values2.size) {
-      throw new IllegalArgumentException("Value sequences must be the same length.")
-    }
 
     val set1 = values1.toSet
     val set2 = values2.toSet
@@ -108,36 +93,24 @@ object CramersV {
    *
    * @param values Values co-sampled from variables 1 and 2
    * @param rounds Number of permutations to generate
-   * @param seed Seed for the Random number generator used to generate permutations
+   * @param seed (optional) Seed for the Random number generator used to generate permutations
    * @return p-value giving the probability of getting a lower association value
    */
-  def permutationTest[T, U](values : Seq[(T, U)], rounds : Int, seed : Long) : Double = {
+  def permutationTest[T, U](values : Seq[(T, U)], rounds : Int, seed : Long = -1) : Double = {
     val values1 = values.map { _._1 }
     val values2 = values.map { _._2 }
 
-    permutationTest(values1, values2, rounds, seed)
-  }
-
-  /**
-   * Perform a permutation test to get a p-value indicating the probability of getting
-   * a lower assocation value.  Take the association level as the null hypothesis, reject
-   * if the p-value is less than your desired threshold.
-   *
-   * @param values1 Values sampled from variable 1
-   * @param values2 Values sampled from variable 2
-   * @param rounds Number of permutations to generate
-   * @param 
-   * @return p-value giving the probability of getting a lower association value
-   */
-  def permutationTest[T, U](values1 : Seq[T], values2 : Seq[U], rounds : Int, seed : Long) : Double = {
-
-    val testV = cramersV(values1, values2)
-    val rng = new Random(seed)
+    val testV = CramersV(values)
+    val rng = if (seed > -1) {
+      new Random(seed)
+    } else {
+      new Random()
+    }
     
     val worseCount = (1 to rounds).iterator.map {
       i =>
         val shuffled = rng.shuffle(values1)
-        cramersV(shuffled, values2)
+        CramersV(shuffled.zip(values2))
     }
     .filter {
       v =>

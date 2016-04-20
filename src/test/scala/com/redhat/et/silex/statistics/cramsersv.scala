@@ -33,29 +33,20 @@ class CramersVSpec extends FlatSpec with Matchers with PerTestSparkContext {
     val values3 = Seq(1, 1, 1, 1, 2, 2, 1, 1)
     val values4 = Seq(3, 3, 3, 3, 4, 4, 3, 3)
 
-    val sameV12 = CramersV.cramersV(values1, values1)
-    val negatedV12 = CramersV.cramersV(values1, values2)
-    val v34 = CramersV.cramersV(values3, values4)
+    val sameV12 = CramersV(values1.zip(values1))
+    val negatedV12 = CramersV(values1.zip(values2))
+    val v34 = CramersV(values3.zip(values4))
 
     assert(math.abs(sameV12 - 1.0) < eps)
     assert(math.abs(negatedV12 - 1.0) < eps)
     assert(math.abs(v34 - 1.0) < eps)
   }
 
-  "CramersV.cramersV" should "throw IllegalArgumentException when given values of unequal lengths" in {
-    val values1 = Seq(1, 2, 3)
-    val values2 = Seq(1, 2)
-
-    intercept[IllegalArgumentException] {
-      CramersV.cramersV(values1, values2)
-    }
-  }
-
   "CramersV.cramersV" should "report 0.0 with no association" in {
     val values1 = Seq(1, 1, 1, 1, 0, 0, 0, 0)
     val values2 = Seq(0, 1, 0, 1, 1, 0, 1, 0)
  
-    val v = CramersV.cramersV(values1, values2)
+    val v = CramersV(values1.zip(values2))
 
     assert(v < eps) 
   }
@@ -64,7 +55,7 @@ class CramersVSpec extends FlatSpec with Matchers with PerTestSparkContext {
     val values1 = Seq(1, 1, 1, 1)
     val values2 = Seq(1, 1, 1, 1)
 
-    val v = CramersV.cramersV(values1, values2)
+    val v = CramersV(values1.zip(values2))
 
     assert(math.abs(v - 1.0) < eps)
   }
@@ -73,13 +64,13 @@ class CramersVSpec extends FlatSpec with Matchers with PerTestSparkContext {
     val values1 = Seq(1, 1, 1, 1)
     val values2 = Seq(1, 2, 3, 4)
 
-    val v = CramersV.cramersV(values1, values2)
+    val v = CramersV(values1.zip(values2))
 
     assert(v < eps)
   }
 
   "CramersV.cramersV" should "report 0.0 for empty sets" in {
-    val v = CramersV.cramersV(Seq[Int](), Seq[Int]())
+    val v = CramersV(Seq[(Int, Int)]())
 
     assert(v < eps)
   }
@@ -90,7 +81,7 @@ class CramersVSpec extends FlatSpec with Matchers with PerTestSparkContext {
         Seq(i, i)
     }
     
-    val pvalue = CramersV.permutationTest(values, values, 1000, 1234L)
+    val pvalue = CramersV.permutationTest(values.zip(values), 1000, 1234L)
 
     assert(math.abs(pvalue - 1.0) < eps)
   }
