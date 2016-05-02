@@ -27,7 +27,7 @@ class CramersVSpec extends FlatSpec with Matchers with PerTestSparkContext {
 
   val eps = 1e-5
 
-  "CramersV.cramersV" should "report 1.0 under perfect association" in {
+  "CramersV" should "report 1.0 under perfect association" in {
     val values1 = Seq(1, 1, 1, 0, 0, 0, 2, 2, 2)
     val values2 = Seq(0, 0, 0, 1, 1, 1, 2, 2, 2)
     val values3 = Seq(1, 1, 1, 1, 2, 2, 1, 1)
@@ -42,7 +42,7 @@ class CramersVSpec extends FlatSpec with Matchers with PerTestSparkContext {
     assert(math.abs(v34 - 1.0) < eps)
   }
 
-  "CramersV.cramersV" should "report 0.0 with no association" in {
+  "CramersV" should "report 0.0 with no association" in {
     val values1 = Seq(1, 1, 1, 1, 0, 0, 0, 0)
     val values2 = Seq(0, 1, 0, 1, 1, 0, 1, 0)
  
@@ -51,7 +51,7 @@ class CramersVSpec extends FlatSpec with Matchers with PerTestSparkContext {
     assert(v < eps) 
   }
 
-  "CramersV.cramersV" should "report 1.0 with single-value sets" in {
+  "CramersV" should "report 1.0 with single-value sets" in {
     val values1 = Seq(1, 1, 1, 1)
     val values2 = Seq(1, 1, 1, 1)
 
@@ -60,7 +60,7 @@ class CramersVSpec extends FlatSpec with Matchers with PerTestSparkContext {
     assert(math.abs(v - 1.0) < eps)
   }
 
-  "CramersV.cramersV" should "report 0.0 when one variable has 1 value and the other has more" in {
+  "CramersV" should "report 0.0 when one variable has 1 value and the other has more" in {
     val values1 = Seq(1, 1, 1, 1)
     val values2 = Seq(1, 2, 3, 4)
 
@@ -69,19 +69,19 @@ class CramersVSpec extends FlatSpec with Matchers with PerTestSparkContext {
     assert(v < eps)
   }
 
-  "CramersV.cramersV" should "report 0.0 for empty sets" in {
+  "CramersV" should "report 0.0 for empty sets" in {
     val v = CramersV(Seq[(Int, Int)]())
 
     assert(v < eps)
   }
 
-  "CramersV.permutationTest" should "report p-value 1.0 under perfect correlation" in {
+  "CramersV.pValueEstimate" should "report p-value 1.0 under perfect correlation" in {
     val values = (1 to 100).flatMap {
       i =>
         Seq(i, i)
     }
     
-    val pvalue = CramersV.permutationTest(values.zip(values), 1000, 1234L)
+    val pvalue = CramersV.pValueEstimate(values.zip(values), 1000, 1234L)
 
     assert(math.abs(pvalue - 1.0) < eps)
   }
