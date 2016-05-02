@@ -92,16 +92,12 @@ object CramersV {
    * @param seed (optional) Seed for the Random number generator used to generate permutations
    * @return p-value giving the probability of getting a lower association value
    */
-  def pValueEstimate[T, U](values : Seq[(T, U)], rounds : Int, seed : Long = -1) : Double = {
+  def pValueEstimate[T, U](values : Seq[(T, U)], rounds : Int, seed : Long = Random.nextLong) : Double = {
     val values1 = values.map { _._1 }
     val values2 = values.map { _._2 }
 
     val testV = CramersV(values)
-    val rng = if (seed > -1) {
-      new Random(seed)
-    } else {
-      new Random()
-    }
+    val rng = new Random(seed)
     
     val worseCount = (1 to rounds).iterator.map {
       i =>
