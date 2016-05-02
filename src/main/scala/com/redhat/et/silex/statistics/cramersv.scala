@@ -21,18 +21,14 @@ package com.redhat.et.silex.statistics
 
 import scala.util.Random
 
+import com.redhat.et.silex.utils.crossProduct
+
 /**
  * "[[https://en.wikipedia.org/wiki/Cram%C3%A9r%27s_V Cramers' V]] is a measure of
  * association between two nominal variables, giving a value between 0 and +1
  * (inclusive)." 
  */
 object CramersV {
-  private def cross[A, B](sa: TraversableOnce[A], sb: TraversableOnce[B]): Iterator[(A, B)] =
-    for(
-      a <- sa.toIterator;
-      b <- sb.toIterator
-    ) yield (a, b)
-
   private def countOccurrences[A](seq : Seq[A]) : Map[A, Double] = {
     seq.foldLeft(Map.empty[A, Double]) {
         case (counts, value) =>
@@ -56,7 +52,7 @@ object CramersV {
 
     if (set1.size == 1 && set2.size == 1) {
       1.0
-    } else if (values1.size == 0 || set1.size == 1 || set2.size == 1) {
+    } else if (values1.size == 0 || values2.size == 0 || set1.size == 1 || set2.size == 1) {
       0.0
     } else {
       val pairCounts = countOccurrences(values1.zip(values2))
@@ -65,7 +61,7 @@ object CramersV {
 
       val nObs = values1.size.toDouble
 
-      val chi2 = cross(set1, set2)
+      val chi2 = crossProduct(set1, set2)
         .foldLeft(0.0) {
           case (runningSum, (value1, value2)) =>
             val nij = pairCounts.getOrElse((value1, value2), 0.0)
@@ -96,7 +92,7 @@ object CramersV {
    * @param seed (optional) Seed for the Random number generator used to generate permutations
    * @return p-value giving the probability of getting a lower association value
    */
-  def permutationTest[T, U](values : Seq[(T, U)], rounds : Int, seed : Long = -1) : Double = {
+  def pValueEstimate[T, U](values : Seq[(T, U)], rounds : Int, seed : Long = -1) : Double = {
     val values1 = values.map { _._1 }
     val values2 = values.map { _._2 }
 
