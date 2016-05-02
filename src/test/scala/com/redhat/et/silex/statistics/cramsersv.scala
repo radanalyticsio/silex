@@ -75,7 +75,7 @@ class CramersVSpec extends FlatSpec with Matchers with PerTestSparkContext {
     assert(v < eps)
   }
 
-  "CramersV.pValueEstimate" should "report p-value 1.0 under perfect correlation" in {
+  "CramersV.pValueEstimate" should "report p-value 0.0 under perfect correlation" in {
     val values = (1 to 100).flatMap {
       i =>
         Seq(i, i)
@@ -83,6 +83,6 @@ class CramersVSpec extends FlatSpec with Matchers with PerTestSparkContext {
     
     val pvalue = CramersV.pValueEstimate(values.zip(values), 1000, 1234L)
 
-    assert(math.abs(pvalue - 1.0) < eps)
+    assert(math.abs(pvalue) < eps)
   }
 }

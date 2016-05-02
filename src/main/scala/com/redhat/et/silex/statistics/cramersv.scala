@@ -84,7 +84,7 @@ object CramersV {
 
   /**
    * Perform a permutation test to get a p-value indicating the probability of getting
-   * a lower assocation value.  Take the association level as the null hypothesis, reject
+   * a higher assocation value.  Take the association level as the null hypothesis, reject
    * if the p-value is less than your desired threshold.
    *
    * @param values Values co-sampled from variables 1 and 2
@@ -110,7 +110,7 @@ object CramersV {
     }
     .size
 
-    val pvalue = worseCount.toDouble / rounds.toDouble
+    val pvalue = 1.0 - worseCount.toDouble / rounds.toDouble
 
     pvalue
   }
