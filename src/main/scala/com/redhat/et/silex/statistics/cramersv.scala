@@ -55,7 +55,7 @@ object CramersV {
     } else if (values1.size == 0 || values2.size == 0 || set1.size == 1 || set2.size == 1) {
       0.0
     } else {
-      val pairCounts = countOccurrences(values1.zip(values2))
+      val pairCounts = countOccurrences(values)
       val counts1 = countOccurrences(values1)
       val counts2 = countOccurrences(values2)
 
