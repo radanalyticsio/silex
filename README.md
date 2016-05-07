@@ -15,7 +15,7 @@ resolvers += "Will's bintray" at "https://dl.bintray.com/willb/maven/"
 and then add Silex as a dependency:
 
 ```scala
-libraryDependencies += "com.redhat.et" %% "silex" % "0.0.9"
+libraryDependencies += "com.redhat.et" %% "silex" % "0.0.10"
 ```
 
 Since version 0.0.9, Silex is built for both Scala 2.10 and Scala 2.11.

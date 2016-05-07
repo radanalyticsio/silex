@@ -1,0 +1,15 @@
+---
+layout: post
+title:  "Silex 0.0.10"
+date:   2016-05-07 16:39:38
+categories: examples
+---
+
+Silex 0.0.10 is released!
+
+Here are the main improvements and additions:
+
+* Improved random forest clustering support
+* Cluster-count optimization based on the minimum description length principle
+* Implementation of Cramer's V
+* Implementation of self-organizing maps
