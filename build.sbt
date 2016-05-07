@@ -2,7 +2,7 @@ name := "silex"
 
 organization := "com.redhat.et"
 
-version := "0.0.9"
+version := "0.0.10"
 
 val SPARK_VERSION = "1.6.0"
 
@@ -17,8 +17,12 @@ def commonSettings = Seq(
     "org.apache.spark" %% "spark-mllib" % SPARK_VERSION % "provided",
     "joda-time" % "joda-time" % "2.7", 
     "org.joda" % "joda-convert" % "1.7",
+    "org.apache.commons" % "commons-math3" % "3.6",
     "org.scalatest" %% "scalatest" % "2.2.4" % Test,
-    "org.json4s" %% "json4s-jackson" % "3.2.10" % "provided"
+    "org.slf4j" % "slf4j-nop" % "1.7.6" % Test,
+    "org.json4s" %% "json4s-jackson" % "3.2.10" % "provided",
+    "org.scalanlp" %% "breeze" % "0.12",
+    "org.scalanlp" %% "breeze-natives" % "0.12"
   )
 )
 
@@ -36,7 +40,9 @@ scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
 
 scalacOptions in (Compile, doc) ++= Seq("-doc-root-content", baseDirectory.value+"/root-doc.txt")
 
-// fork in Test := true
+(dependencyClasspath in Test) <<= (dependencyClasspath in Test).map(
+  _.filterNot(_.data.name.contains("slf4j-log4j12"))
+)
 
 site.settings
 

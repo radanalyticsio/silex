@@ -32,7 +32,8 @@ import org.apache.spark.Logging
   * over data elements, as K-Means clustering does.
   *
   * @param metric The distance metric imposed on data elements
-  * @param k The number of clusters to use
+  * @param k The number of clusters to use.  If k is zero, the clustering will attempt to
+  * identify a number of clusters that is "good" w.r.t. Minimum Description Length.
   * @param maxIterations The maximum number of model refinement iterations to run
   * @param epsilon The epsilon threshold to use.  Must be >= 0.
   *
@@ -60,7 +61,7 @@ case class KMedoids[T](
   seed: Long
   ) extends Serializable with Logging {
 
-  require(k > 0, s"k= ${k} must be > 0")
+  require(k >= 0, s"k= ${k} must be >= 0")
   require(maxIterations > 0, s"maxIterations= ${maxIterations} must be > 0")
   require(epsilon >= 0.0, s"epsilon= ${epsilon} must be >= 0.0")
   require(fractionEpsilon >= 0.0, s"fractionEpsilon= ${fractionEpsilon} must be >= 0.0")
@@ -76,7 +77,8 @@ case class KMedoids[T](
 
   /** Set the number of clusters to train
     *
-    * @param k_ The number of clusters.  Must be > 0.
+    * @param k_ The number of clusters.  Must be >= 0.  If k is zero, the clustering will
+    * attempt to identify a number of clusters that is "good" w.r.t. Minimum Description Length.
     * @return Copy of this instance with new value for k
     */
   def setK(k_ : Int) = this.copy(k = k_)
@@ -190,7 +192,7 @@ case class KMedoids[T](
     logInfo(s"collecting data sample")
     val sample = KMedoids.sampleBySize(data, sampleSize, rng.nextLong)
     logInfo(s"sample size= ${sample.length}")
-    val model = doRun(sample, rng)
+    val model = if (k > 0) doRun(sample, rng) else doRunMDL(sample, rng)
     val runSeconds = (System.nanoTime - runStartTime) / 1e9
     logInfo(f"total clustering time= $runSeconds%.1f sec")
     model
@@ -207,7 +209,7 @@ case class KMedoids[T](
     logInfo(s"collecting data sample")
     val sample = KMedoids.sampleBySize(data, sampleSize, rng.nextLong)
     logInfo(s"sample size= ${sample.length}")
-    val model = doRun(sample, rng)
+    val model = if (k > 0) doRun(sample, rng) else doRunMDL(sample, rng)
     val runSeconds = (System.nanoTime - runStartTime) / 1e9
     logInfo(f"total clustering time= $runSeconds%.1f sec")
     model
@@ -230,6 +232,99 @@ case class KMedoids[T](
     val avgSeconds = (System.nanoTime - itrStartTime) / 1e9 / itr
     logInfo(f"finished at $itr iterations with model cost= $refinedCost%.6g   avg sec per iteration= $avgSeconds%.1f")
     new KMedoidsModel(refined, metric)
+  }
+
+  private def doRunMDL(data: Seq[T], rng: scala.util.Random) = {
+    val startTime = System.nanoTime
+    val threadPool = new ForkJoinPool(numThreads)
+
+    val n = data.length
+    var sigmaMin = Double.MaxValue
+
+    logInfo(s"initializing model for k = 1")
+    val itrStartTime = System.nanoTime
+    val initModel = Vector(medoid(data, threadPool))
+    val initClusters = Vector(data)
+    val initSeconds = (itrStartTime - startTime) / 1e9
+    logInfo(f"model initialization completed $initSeconds%.1f sec")
+
+    // Generate a sequence of clusterings, with increasing numbers of clusters.
+    // Uses a greedy algorithm that splits each cluster at each iteration, and keeps the
+    // resulting clustering with the best cluster cost.
+    // If the clustering can't be split, it fills in remaining values with empty clusters.
+    val maxI = maxIterations
+    val hypRaw = (2 to maxI).scanLeft((initModel, initClusters)) { case ((current, clusters), k) =>
+      if (current.length != k - 1) (Vector.empty[T], Vector.empty[Vector[T]]) else {
+        logInfo(s"testing split into $k clusters")
+        val next = Vector.tabulate(current.length) { jSplit =>
+          logInfo(s"Testing split on $jSplit")
+          val ma = current.slice(0, jSplit)
+          val mb = current.slice(jSplit + 1, current.length)
+          val cSplit = clusters(jSplit)
+          val m0 = cSplit.maxBy(metric(_, current(jSplit)))
+          val m1 = cSplit.maxBy(metric(_, m0))
+          if (metric(m0, m1) <= 0.0) Vector.empty[T] else {
+            val splitInit = Vector(m0, m1)
+            val (splitModel, _, _, _) =
+              refine(cSplit, splitInit, modelCost(splitInit, cSplit), threadPool)
+            val nxtInit = ma ++ splitModel ++ mb
+            val (nxt, _, _, _) = refine(data, nxtInit, modelCost(nxtInit, data), threadPool)
+            nxt
+          }
+        }.filter(_.length == k)
+
+        if (next.isEmpty) (Vector.empty[T], Vector.empty[Vector[T]]) else {
+          val nextModel = next.minBy(modelCost(_, data))
+          val nextClust = data.groupBy(medoidIdx(_, nextModel)).toVector.sortBy(_._1).map(_._2)
+          (nextModel, nextClust)
+        }
+      }
+    }
+    .filter { case (model, _) => model.length > 0 } // remove any empty clusters
+
+    // For each candidate cluster hypothesis,
+    // estimate it's Minimum Description Length (MDL) cost
+    val hyp = hypRaw.map { case (model, clusters) =>
+      val k = model.length
+
+      logInfo(s"""k= $k  model=\n${model.mkString("\n")}""")
+
+      // Identify some "good" PDF model for the distance data.
+      val (pdf, kFP) =
+        KMedoids.fitPDF(model.zip(clusters).flatMap {
+          case (mk, ck) => ck.map(metric(_, mk))
+        })
+
+      // Representation cost is the log-likelihood of the distances w.r.t. that PDF
+      val repCost = model.zip(clusters).foldLeft(0.0) { case (ss, (mk, ck)) =>
+        ck.foldLeft(ss) { case (s, x) =>
+          val f = pdf(metric(x, mk))
+          s + (if (f > 0.0) (-math.log(f)) else 100.0)
+        }
+      }
+
+      // The model cost is cost of (1/2) of the pdf model parameters plus the cost of centroids
+      val modCost = (k + (kFP / 2.0)) * math.log(data.length)
+
+      // The MDL cost is the representation cost plus the model cost
+      val modelCostMDL = repCost + modCost
+      logInfo(f"model cost= $modCost%.4g  rep cost= $repCost%.4g")
+      logInfo(f"MDL cost for $k%d clusters= $modelCostMDL%.4g")
+
+      // return the model with it's MDL cost
+      (model, modelCostMDL)
+    }
+
+    val ht = hyp.map { case (model, cost) => (model.length, cost) }
+    logInfo(s"""hypotheses=\n${ht.mkString("\n")}""")
+
+    // Identify the clustring model with the minimum MDL cost
+    val (best, bestCost) = hyp.minBy { case (_, cost) => cost }
+
+    val runtime = (System.nanoTime - itrStartTime) / 1e9
+    logInfo(f"finished at cluster size ${best.length} with model cost= $bestCost%.3g   runtime= $runtime")
+
+    new KMedoidsModel(best, metric)
   }
 
   private def refine(
@@ -473,4 +568,60 @@ object KMedoids extends Logging {
     */
   def sampleDistinct[T](data: Seq[T], k: Int): Seq[T] =
     sampleDistinct(data, k, scala.util.Random.nextLong())
+
+  /**
+   * Fit a PDF to some distance data.
+   * @param data The distance data.  All values are assumed to be >= 0.
+   * @return A pair (pdf, k), where 'pdf' is a PDF that maps a value to a density, and 'k' is
+   * the number of free parameters for the underlying distribution model.
+  */
+  private [cluster] def fitPDF(data: Seq[Double]) = {
+    import org.apache.commons.math3.stat.inference.{ KolmogorovSmirnovTest => KSTest }
+    import org.apache.commons.math3.distribution.GammaDistribution
+
+    // identify nonzero distances
+    val dgz = data.filter(_ > 0.0)
+    // If all distance data are zero, yield a "density" function that just returns a very high
+    // density value, since the distribution support is defined only at exactly zero.
+    if (dgz.isEmpty) ((x: Double) => 1e10, 0) else {
+      // This candidate is a gamma whose shape parameter 'k' is fit from (non-zero) data
+      // The shape parameter in this case will generally be > 1, and I specifically enforce that
+      // it is >= 1, because gamma distributions having a shape k < 1 are badly behaved on
+      // zero values, which I need to assume may be present.
+      val (k1, theta1) = {
+        // https://en.wikipedia.org/wiki/Gamma_distribution#Maximum_likelihood_estimation
+        val n = dgz.length.toDouble
+        val sx = dgz.foldLeft(0.0)(_ + _)
+        val slnx = dgz.foldLeft(0.0) { case (s, x) => s + math.log(x) }
+        val s = math.log(sx / n) - (slnx / n)
+        val k = math.max(1.0, (3.0 - s + math.sqrt(math.pow(s - 3.0, 2) + (24.0 * s))) / (12.0 * s))
+        val theta = sx / (k * n)
+        (k, theta)
+      }
+
+      // This candidate is gamma with k = 1, which is an exponential distribution.  It can handle
+      // distance data that includes zeros.
+      val (k2, theta2) = {
+        // https://en.wikipedia.org/wiki/Exponential_distribution#Maximum_likelihood
+        val sx = data.foldLeft(0.0)(_ + _)
+        val n = data.length.toDouble
+        val lambdaInv = sx / n
+        (1.0, lambdaInv)
+      }
+
+      // Identify the candidate distribution model with the smallest KS-D statistic, as the
+      // best fit.  If I ever include candidates that have variable numbers of parameters,
+      // I could use something like AIC metric instead, to compare them.
+      // https://en.wikipedia.org/wiki/Akaike_information_criterion
+      val ksTest = new KSTest()
+      val (kB, thetaB) = Seq((k1, theta1), (k2, theta2)).minBy { case (k, theta) =>
+        val gd = new GammaDistribution(k, theta)
+        ksTest.kolmogorovSmirnovStatistic(gd, data.toArray)
+      }
+
+      // Currently all candidates are gamma variants with free parameters k = 2
+      val dist = new GammaDistribution(kB, thetaB)
+      ((x: Double) => dist.density(x), 2)
+    }
+  }
 }
