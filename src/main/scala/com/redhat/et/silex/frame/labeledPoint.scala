@@ -42,8 +42,10 @@ trait VectorExtracting {
    * Converts a data frame to an [[RDD]] of [[SparkVec]]s, using the values in the specified columns.
    */
   def toDenseVectors(df: DataFrame, columns: Column*): RDD[SparkVec] = {
+    import df.sparkSession.implicits._
+    
     val castedColumns = columns.map { c => c.cast(DoubleType) }
-    df.select(castedColumns : _*).map { case r: Row => 
+    df.select(castedColumns : _*).rdd.map { case r: Row => 
       denseVec(Array((0 until r.length).map { pos => r.getDouble(pos)} : _*))
     }
   }
@@ -59,9 +61,11 @@ trait VectorExtracting {
    * Converts a data frame to an [[RDD]] of [[LabeledPoint]]s, taking labels and vector values from the specified columns.
    */
   def toLabeledPoints(df: DataFrame, labelCol: Column, vecCols: Column*): RDD[LabeledPoint] = {
+    import df.sparkSession.implicits._
+    
     val features = toDenseVectors(df, vecCols : _*)
     val labels = df.select(labelCol.cast(DoubleType)).map { case Row(label: Double) => label }
-    labels.zip(features).map { 
+    labels.rdd.zip(features).map { 
       case (label, vec) => LabeledPoint(label, vec)
     }
   }
