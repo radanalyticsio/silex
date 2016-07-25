@@ -18,15 +18,34 @@
 
 package com.redhat.et.silex.util
 
-object logging {
-  import org.apache.log4j.{Logger, ConsoleAppender, Level}
+trait Logging {
+  import org.slf4j.{Logger, LoggerFactory}
+  
+  @transient private var _logger: Logger = null
+  
+  def logger: Logger = {
+    if (_logger != null) {
+      _logger
+    } else {
+      _logger = LoggerFactory.getLogger(this.getClass.getName.stripSuffix("$"))
+      _logger
+    }
+  }
+  
+  protected def logInfo(msg: => String) {
+    if (logger.isInfoEnabled) logger.info(msg)
+  }
 
-  private def consoleAppender =
-    Logger.getRootLogger().getAppender("console").asInstanceOf[ConsoleAppender]
+  protected def logDebug(msg: => String) {
+    if (logger.isDebugEnabled) logger.debug(msg)
+  }
 
-  def consoleLogLevel(lev: Level) { consoleAppender.setThreshold(lev) }
-  def consoleLogInfo { consoleLogLevel(Level.INFO) }
-  def consoleLogWarn { consoleLogLevel(Level.WARN) }
-  def consoleLogError { consoleLogLevel(Level.ERROR) }
+  protected def logWarning(msg: => String) {
+    if (logger.isWarnEnabled) logger.warn(msg)
+  }
+
+  protected def logError(msg: => String) {
+    if (logger.isErrorEnabled) logger.error(msg)
+  }
+  
 }
-
