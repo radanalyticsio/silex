@@ -22,11 +22,13 @@ import scala.collection.mutable.ArrayBuffer
 
 import org.apache.spark.rdd.RDD
 
+import com.redhat.et.silex.util.Logging
+
 import com.redhat.et.silex.sample.iid.IIDFeatureSamplingMethods
 import com.redhat.et.silex.feature.extractor.FeatureSeq
 
 /** Implementation-specific subclass of [[IIDFeatureSamplingMethods]] for RDDs */
-class IIDFeatureSamplingMethodsRDD(data: RDD[Seq[Double]]) extends IIDFeatureSamplingMethods {
+class IIDFeatureSamplingMethodsRDD(data: RDD[Seq[Double]]) extends IIDFeatureSamplingMethods with Logging {
 
   import com.redhat.et.silex.sample.iid.infra._
 

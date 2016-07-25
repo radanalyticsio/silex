@@ -24,7 +24,7 @@ import scala.concurrent.forkjoin.ForkJoinPool
 import scala.collection.parallel.ForkJoinTaskSupport
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.Logging
+import com.redhat.et.silex.util.Logging
 
 /** An object for training a K-Medoid clustering model on Seq or RDD data.
   *

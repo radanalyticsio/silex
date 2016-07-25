@@ -19,7 +19,6 @@
 package com.redhat.et.silex.sample.iid
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.Logging
 
 import com.redhat.et.silex.feature.extractor.FeatureSeq
 
@@ -35,7 +34,7 @@ import com.redhat.et.silex.feature.extractor.FeatureSeq
   * rdd.iidFeatureSeqRDD(100000)
   * }}}
   */
-abstract class IIDFeatureSamplingMethods extends Serializable with Logging {
+abstract class IIDFeatureSamplingMethods extends Serializable {
   /** Generate a new synthetic RDD whose rows are iid sampled from input feature vectors
     *
     * @param n The number of iid samples to generate.

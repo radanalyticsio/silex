@@ -21,7 +21,7 @@ package com.redhat.et.silex.rdd.drop
 import scala.reflect.ClassTag
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.{SparkContext, Logging, Partition, TaskContext}
+import org.apache.spark.{SparkContext, Partition, TaskContext}
 import org.apache.spark.{Dependency, NarrowDependency, OneToOneDependency}
 
 import com.redhat.et.silex.rdd.promise.{ PromiseRDD, PromiseArgPartition }
@@ -40,7 +40,7 @@ class FanInDep[T: ClassTag](rdd: RDD[T]) extends NarrowDependency[T](rdd) {
   * import com.redhat.et.silex.rdd.drop.implicits._
   * }}}
   */
-class DropRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializable {
+class DropRDDFunctions[T :ClassTag](self: RDD[T]) extends Serializable {
 
   /** Obtain a new RDD formed by dropping the first (n) elements of the input RDD
     *

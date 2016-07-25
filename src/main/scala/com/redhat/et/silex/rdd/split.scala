@@ -23,12 +23,11 @@ import scala.reflect.ClassTag
 import org.apache.spark.storage.StorageLevel
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.Logging
 
 /**
  * Enhances RDDs with methods for splitting RDDs based on predicates or other functions
  */
-class SplitRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializable {
+class SplitRDDFunctions[T :ClassTag](self: RDD[T]) extends Serializable {
   import scala.collection.mutable.ArrayBuffer
   import com.redhat.et.silex.rdd.multiplex.implicits._
   import SplitRDDFunctions.defaultSL

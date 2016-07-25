@@ -23,7 +23,7 @@ import scala.reflect.ClassTag
 import scala.collection.mutable.ArrayBuffer
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.{SparkContext, Logging, Partition, TaskContext}
+import org.apache.spark.{SparkContext, Partition, TaskContext}
 import org.apache.spark.{Dependency, NarrowDependency, OneToOneDependency}
 
 import com.redhat.et.silex.rdd.util
@@ -61,7 +61,7 @@ class CascadeRDD[T: ClassTag, U: ClassTag]
   }
 }
 
-class CascadeRDDFunctions[T: ClassTag](self: RDD[T]) extends Logging with Serializable {
+class CascadeRDDFunctions[T: ClassTag](self: RDD[T]) extends Serializable {
 
   /** Applies a "cascading" function to the input RDD, such that each output partition is
     * a function of the corresponding input partition and the previous output partition.

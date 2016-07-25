@@ -19,6 +19,7 @@
 package com.redhat.et.silex.util
 
 trait Logging {
+  // Adapted from the Logging trait in Spark 1.x
   import org.slf4j.{Logger, LoggerFactory}
   
   @transient private var _logger: Logger = null

@@ -21,7 +21,7 @@ package com.redhat.et.silex.rdd.multiplex
 import scala.reflect.ClassTag
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.{SparkContext, Logging, Partition, TaskContext, 
+import org.apache.spark.{SparkContext, Partition, TaskContext, 
                          Dependency, NarrowDependency, OneToOneDependency}
 
 import org.apache.spark.storage.StorageLevel
@@ -46,7 +46,7 @@ import org.apache.spark.storage.StorageLevel
  * })
  * }}}
  */
-class MuxRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializable {
+class MuxRDDFunctions[T :ClassTag](self: RDD[T]) extends Serializable {
   import MuxRDDFunctions.defaultSL
 
   /** Obtain a sequence of (n) RDDs where the jth RDD is obtained from the jth element
