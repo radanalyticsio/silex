@@ -23,7 +23,7 @@ import scala.reflect.ClassTag
 import scala.collection.mutable.ArrayBuffer
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.{SparkContext, Logging, Partition, TaskContext}
+import org.apache.spark.{SparkContext, Partition, TaskContext}
 import org.apache.spark.{Dependency, NarrowDependency, OneToOneDependency}
 
 import com.redhat.et.silex.rdd.util
@@ -137,7 +137,7 @@ class ScanOutputRDD[U: ClassTag](scans: RDD[U], offsets: RDD[U], f: (U, U) => U)
 }
 
 
-class ScanRDDFunctions[T : ClassTag](self: RDD[T]) extends Logging with Serializable {
+class ScanRDDFunctions[T : ClassTag](self: RDD[T]) extends Serializable {
 
   /** Sequential-only prefix scan.  Analogous to scanLeft on scala sequences
     *

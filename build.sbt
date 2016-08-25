@@ -2,9 +2,9 @@ name := "silex"
 
 organization := "com.redhat.et"
 
-version := "0.0.10"
+version := "0.1.0"
 
-val SPARK_VERSION = "1.6.0"
+val SPARK_VERSION = "2.0.0"
 
 scalaVersion := "2.10.5"
 
@@ -69,6 +69,5 @@ lazy val spark = project.dependsOn(silex)
       |import org.apache.spark.rdd.RDD
       |val app = new com.redhat.et.silex.app.ConsoleApp()
       |val spark = app.context
-      |com.redhat.et.silex.util.logging.consoleLogWarn
     """.stripMargin,
     cleanupCommands in console := "spark.stop")

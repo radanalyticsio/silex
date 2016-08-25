@@ -21,10 +21,11 @@ package com.redhat.et.silex.rdd.promise
 import scala.reflect.ClassTag
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.{SparkContext, Logging, Partition, TaskContext, 
+import org.apache.spark.{SparkContext, Partition, TaskContext, 
                          Dependency, NarrowDependency}
 
 import com.redhat.et.silex.rdd.util
+import com.redhat.et.silex.util.Logging
 
 private[rdd]
 class FanOutDep[T: ClassTag](rdd: RDD[T]) extends NarrowDependency[T](rdd) {
@@ -84,7 +85,7 @@ class PromiseArgPartition(p: Partition, argv: Seq[PromiseRDD[_]]) extends Partit
   * import com.redhat.et.silex.rdd.promise.implicits._
   * }}}
   */
-class PromiseRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializable {
+class PromiseRDDFunctions[T :ClassTag](self: RDD[T]) extends Serializable {
 
   /** Obtain a PromiseRDD by applying a function 'f' to the partitions of this RDD
     *

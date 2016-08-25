@@ -23,7 +23,6 @@ import scala.reflect.ClassTag
 import org.apache.spark.storage.StorageLevel
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.Logging
 
 /**
  * Enhances RDDs with methods for split-sampling
@@ -41,7 +40,7 @@ import org.apache.spark.Logging
  * val splitsW = data.weightedSplitSample(Seq(1.0, 2.0, 3.0))
  * }}}
  */
-class SplitSampleRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializable {
+class SplitSampleRDDFunctions[T :ClassTag](self: RDD[T]) extends Serializable {
   import com.redhat.et.silex.rdd.multiplex.implicits._
 
   import SplitSampleRDDFunctions.{defaultSL, find}

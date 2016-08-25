@@ -5,7 +5,7 @@ date:   2016-05-07 16:39:38
 categories: examples
 ---
 
-Silex 0.0.10 is released!
+Silex 0.0.10 is released!  Thanks to Erik Erlandson and RJ Nowling for developing and reviewing some cool new features.
 
 Here are the main improvements and additions:
 
@@ -13,3 +13,9 @@ Here are the main improvements and additions:
 * Cluster-count optimization based on the minimum description length principle
 * Implementation of Cramer's V
 * Implementation of self-organizing maps
+
+You can:
+
+* [Include Silex](http://silex.freevariable.com/coordinates/) in your projects,
+* [fork Silex on GitHub](https://github.com/willb/silex), and
+* [read the API docs](http://silex.freevariable.com/latest/api/).
