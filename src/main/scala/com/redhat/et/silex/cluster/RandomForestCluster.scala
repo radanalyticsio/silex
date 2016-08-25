@@ -19,7 +19,7 @@
 package com.redhat.et.silex.cluster
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.Logging
+import com.redhat.et.silex.util.Logging
 import org.apache.spark.mllib.tree.RandomForest
 
 import com.redhat.et.silex.feature.extractor.Extractor

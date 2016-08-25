@@ -21,7 +21,6 @@ package com.redhat.et.silex.rdd.lineage
 import scala.reflect.ClassTag
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.Logging
 
 /**
  * Encodes an RDD dependency arc in the lineage DAG of a target RDD.
@@ -35,7 +34,7 @@ import org.apache.spark.Logging
 class Dependency(val rdd: RDD[_], val depth: Int, val successor: RDD[_])
 
 /** Enhances RDDs with lineage methods */
-class LineageRDDFunctions[T :ClassTag](self: RDD[T]) extends Logging with Serializable {
+class LineageRDDFunctions[T :ClassTag](self: RDD[T]) extends Serializable {
 
   /**
    * Obtain an iterator over an RDD's dependencies in its lineage DAG.  Iteration is
