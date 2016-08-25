@@ -2,7 +2,7 @@ name := "silex"
 
 organization := "com.redhat.et"
 
-version := "0.0.10"
+version := "0.1.0"
 
 val SPARK_VERSION = "2.0.0"
 
@@ -25,8 +25,6 @@ def commonSettings = Seq(
     "org.scalanlp" %% "breeze-natives" % "0.12"
   )
 )
-
-resolvers += "Spark 2.0 RC5" at "https://repository.apache.org/content/repositories/orgapachespark-1195/"
 
 seq(commonSettings:_*)
 
