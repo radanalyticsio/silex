@@ -6,9 +6,9 @@ version := "0.1.0"
 
 val SPARK_VERSION = "2.0.0"
 
-scalaVersion := "2.10.5"
+scalaVersion := "2.10.6"
 
-crossScalaVersions := Seq("2.10.5", "2.11.8")
+crossScalaVersions := Seq("2.10.6", "2.11.8")
 
 def commonSettings = Seq(
   libraryDependencies ++= Seq(
