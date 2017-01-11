@@ -24,7 +24,7 @@ package com.redhat.et.silex.util
  * On-line mean and variance estimates for a stream of Double values.
  * Uses Chan's formulae.
 */
-sealed class SampleSink(private var _count: Long, private var _min: Double, private var _max: Double, private var _mean: Double, private var _m2: Double) {
+sealed class SampleSink(private var _count: Long, private var _min: Double, private var _max: Double, private var _mean: Double, private var _m2: Double) extends java.io.Serializable {
   // TODO:  parameterize this over sample (at least), fractional (mean/variance), and integral (count) types
   
   @inline def put(sample: Double) = {

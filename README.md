@@ -15,7 +15,7 @@ resolvers += "Will's bintray" at "https://dl.bintray.com/willb/maven/"
 and then add Silex as a dependency:
 
 ```scala
-libraryDependencies += "com.redhat.et" %% "silex" % "0.1.0"
+libraryDependencies += "com.redhat.et" %% "silex" % "0.1.1"
 ```
 
 Since version 0.0.9, Silex is built for both Scala 2.10 and Scala 2.11.  Since version 0.1.0, Silex depends on Spark 2.0.
@@ -26,5 +26,5 @@ The [Silex web site](http://silex.freevariable.com/) includes some examples of S
 
 ### CI Status
 
-[![Build Status](https://travis-ci.org/willb/silex.svg?branch=develop)](https://travis-ci.org/willb/silex)
+[![Build Status](https://travis-ci.org/radanalyticsio/silex.svg?branch=develop)](https://travis-ci.org/radanalyticsio/silex)
 [![Coverage Status](https://coveralls.io/repos/github/willb/silex/badge.svg?branch=develop)](https://coveralls.io/github/willb/silex?branch=develop)
