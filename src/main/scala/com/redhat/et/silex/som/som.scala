@@ -216,3 +216,18 @@ object SOM {
     }
   }
 }
+
+object Example {
+  import org.apache.spark.mllib.linalg.{DenseVector => DV}
+   import org.apache.spark.SparkContext
+  
+  def apply(xdim: Int, ydim: Int, iterations: Int, sc: SparkContext, exampleCount: Int, seed: Option[Int] = None): SOM = {
+    val rnd = seed.map { s => new scala.util.Random(s)}.getOrElse(new scala.util.Random())
+    val colors = Array.fill(exampleCount)(new DV(Array.fill(3)(rnd.nextDouble)).compressed)
+    val examples = sc.parallelize(colors).repartition(sc.defaultParallelism * 8)
+    
+    def writeStep(step: Int, som: SOM) { }
+    
+    SOM.train(xdim, ydim, 3, iterations, examples, sigmaScale=0.7, hook=writeStep _)
+  }
+}
