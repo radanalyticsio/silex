@@ -15,6 +15,7 @@ def commonSettings = Seq(
     "org.apache.spark" %% "spark-core" % SPARK_VERSION % "provided",
     "org.apache.spark" %% "spark-sql" % SPARK_VERSION % "provided",
     "org.apache.spark" %% "spark-mllib" % SPARK_VERSION % "provided",
+    "com.twitter" %% "algebird-core" % "0.11.0",
     "joda-time" % "joda-time" % "2.7", 
     "org.joda" % "joda-convert" % "1.7",
     "org.apache.commons" % "commons-math3" % "3.6",
