@@ -40,7 +40,7 @@ trait NaturalJoining {
     val commonCols = leftCols.toSet intersect rightCols.toSet
     
     if(commonCols.isEmpty)
-      left.limit(0).join(right.limit(0))
+      left.limit(0).crossJoin(right.limit(0))
     else
       left
         .join(right, commonCols.map {col => left(col) === right(col) }.reduce(_ && _))

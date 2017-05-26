@@ -15,7 +15,7 @@ resolvers += "Will's bintray" at "https://dl.bintray.com/willb/maven/"
 and then add Silex as a dependency:
 
 ```scala
-libraryDependencies += "com.redhat.et" %% "silex" % "0.1.1"
+libraryDependencies += "com.redhat.et" %% "silex" % "0.1.2"
 ```
 
 Since version 0.0.9, Silex is built for both Scala 2.10 and Scala 2.11.  Since version 0.1.0, Silex depends on Spark 2.0.
@@ -23,6 +23,18 @@ Since version 0.0.9, Silex is built for both Scala 2.10 and Scala 2.11.  Since v
 ### Documentation
 
 The [Silex web site](http://silex.freevariable.com/) includes some examples of Silex functionality in use and [API docs](http://silex.freevariable.com/latest/api/#package).
+
+### Notes for developers
+
+To cut a new release, use the `git flow` release workflow.
+
+1.  Start a new release branch with `git flow release start x.y.z`
+2.  Incorporate any release-specific patches that do not belong on the `develop` branch
+3.  Bump version numbers in the [README](README.md), [build definition](build.sbt), and [Jekyll configuration](src/jekyll/_config.yml).
+4.  Run tests for every cross build:  `sbt +test`
+5.  Publish binary artifacts to bintray for each cross-build:  `sbt +publish`
+6.  Publish an updated site for the project:  `sbt ghpages-push-site`
+
 
 ### CI Status
 

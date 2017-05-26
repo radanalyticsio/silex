@@ -5,9 +5,9 @@ description: "Silex is a library of reusable code for Spark applications."
 baseurl: "http://silex.freevariable.com/"
 url: "http://silex.freevariable.com/"
 author:
-  name: William Benton and others
+  name: William Benton, Erik Erlandson, and contributors
 
-silexVersion: 0.1.1
+silexVersion: 0.1.2
 
 # Build settings
 markdown: kramdown
