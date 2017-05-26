@@ -20,6 +20,7 @@ package com.redhat.et.silex.app
 
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
+import org.apache.spark.sql.SparkSession
 
 import scala.reflect.runtime.universe._
 
@@ -44,13 +45,17 @@ trait AppCommon {
 
     configHooks.reverse.foldLeft(initialConf) {(c, f) => f(c)}
   }
-    
+  
+  private lazy val _session = {
+    SparkSession.builder.config(_conf).getOrCreate()
+  }
+
   private lazy val _context = { 
-    new SparkContext(_conf)
+    _session.sparkContext
   }
 
   private lazy val _sqlContext = {
-    new org.apache.spark.sql.SQLContext(context)
+    _session.sqlContext
   }
   
   /** The Spark master URL.
@@ -106,6 +111,8 @@ trait AppCommon {
   /** Override this to provide a <code>main</code> method for your app. */
   def appMain(args: Array[String]): Unit
   
+  def spark: SparkSession = _session
+
   def context: SparkContext = _context
 
   def sqlContext = _sqlContext
@@ -150,7 +157,8 @@ trait ReplAppLike {
         intp.interpret("import org.apache.spark.sql.types._")
         
         intp.bind("app", app)
-        intp.bind("spark", app.context)
+        intp.bind("spark", app.spark)
+        intp.bind("sc", app.context)
         intp.bind("sqlc", app.sqlContext)
         intp.interpret("import sqlc._")
         intp.interpret("import sqlc.implicits._")
