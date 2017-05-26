@@ -2,13 +2,13 @@ name := "silex"
 
 organization := "com.redhat.et"
 
-version := "0.1.1"
+version := "0.1.1-SNAPSHOT"
 
-val SPARK_VERSION = "2.0.0"
+val SPARK_VERSION = "2.1.0"
 
 scalaVersion := "2.10.6"
 
-crossScalaVersions := Seq("2.10.6", "2.11.8")
+crossScalaVersions := Seq("2.10.6", "2.11.11")
 
 def commonSettings = Seq(
   libraryDependencies ++= Seq(
