@@ -27,7 +27,7 @@ object FrameDir {
   
   /** Loads a directory of serialized data frames (e.g., Parquet files).  Returns a frame that is the union of the results of loading every file in <tt>dir</tt> */
   def loadDir(sqlc: SQLContext, dir: String): DataFrame = {
-    readdir(dir) map {file => sqlc.read.load(file)} reduce ((a, b) => a.unionAll(b))
+    readdir(dir) map {file => sqlc.read.load(file)} reduce ((a, b) => a.union(b))
   }
 }
 
