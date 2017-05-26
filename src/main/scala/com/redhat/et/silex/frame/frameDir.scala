@@ -18,16 +18,22 @@
 
 package com.redhat.et.silex.frame
 
-import org.apache.spark.sql.{DataFrame, SQLContext}
+import org.apache.spark.sql.{DataFrame, SQLContext, SparkSession}
 
-
-/** Module holding a utility function to load a directory of serialized data frames (e.g., Parquet files) */
 object FrameDir {
   import com.redhat.et.silex.util.DirUtils.readdir
   
-  /** Loads a directory of serialized data frames (e.g., Parquet files).  Returns a frame that is the union of the results of loading every file in <tt>dir</tt> */
-  def loadDir(sqlc: SQLContext, dir: String): DataFrame = {
-    readdir(dir) map {file => sqlc.read.load(file)} reduce ((a, b) => a.unionAll(b))
+  def loadDir(sesh: SparkSession, dir: String): DataFrame = {
+    loadDir(sesh.sqlContext, dir, 0)
+  }
+
+  def loadDir(sesh: SparkSession, dir: String, repartition: Int): DataFrame = {
+    loadDir(sesh.sqlContext, dir, repartition)
+  }
+
+  def loadDir(sqlc: SQLContext, dir: String, repartition: Int = 0): DataFrame = {
+    val frame = readdir(dir) map {file => sqlc.read.load(file)} reduce ((a, b) => a.union(b))
+    if (repartition > 0) frame.repartition(repartition) else frame
   }
 }
 
