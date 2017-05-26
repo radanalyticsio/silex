@@ -1,0 +1,21 @@
+---
+layout: post
+title:  "Silex 0.1.2"
+date:   2017-05-26 13:01:38
+categories: examples
+---
+
+Silex 0.1.2 is released!
+
+Here are the main improvements and additions:
+
+* Support for Spark 2.1.0
+* Built against Scala 2.11.11
+* The application skeleton now uses a `SparkSession`
+* Several sites using deprecated APIs were cleaned up
+
+You can:
+
+* [Include Silex](http://silex.freevariable.com/coordinates/) in your projects,
+* [fork Silex on GitHub](https://github.com/willb/silex), and
+* [read the API docs](http://silex.freevariable.com/latest/api/).
