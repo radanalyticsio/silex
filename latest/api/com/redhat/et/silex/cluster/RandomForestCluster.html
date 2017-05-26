@@ -1,0 +1,865 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>RandomForestCluster - com.redhat.et.silex.cluster.RandomForestCluster</title>
+          <meta name="description" content="RandomForestCluster - com.redhat.et.silex.cluster.RandomForestCluster" />
+          <meta name="keywords" content="RandomForestCluster com.redhat.et.silex.cluster.RandomForestCluster" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../../index.html';
+            var hash = 'com.redhat.et.silex.cluster.RandomForestCluster';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="type">
+      <div id="definition">
+        <a href="RandomForestCluster$.html" title="Go to companion"><img src="../../../../../lib/class_to_object_big.png" /></a>
+        <p id="owner"><a href="../../../../package.html" class="extype" name="com">com</a>.<a href="../../../package.html" class="extype" name="com.redhat">redhat</a>.<a href="../../package.html" class="extype" name="com.redhat.et">et</a>.<a href="../package.html" class="extype" name="com.redhat.et.silex">silex</a>.<a href="package.html" class="extype" name="com.redhat.et.silex.cluster">cluster</a></p>
+        <h1><a href="RandomForestCluster$.html" title="Go to companion">RandomForestCluster</a></h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <span class="name">RandomForestCluster</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="extractor">extractor: (<span class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster.T">T</span>) ⇒ <a href="../../../../../scala/package.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="scala.Double">Double</span>]</span>, <span name="categoryInfo">categoryInfo: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Int">Int</span>, <span class="extype" name="scala.Int">Int</span>]</span>, <span name="syntheticSS">syntheticSS: <span class="extype" name="scala.Int">Int</span></span>, <span name="rfNumTrees">rfNumTrees: <span class="extype" name="scala.Int">Int</span></span>, <span name="rfMaxDepth">rfMaxDepth: <span class="extype" name="scala.Int">Int</span></span>, <span name="rfMaxBins">rfMaxBins: <span class="extype" name="scala.Int">Int</span></span>, <span name="clusterK">clusterK: <span class="extype" name="scala.Int">Int</span></span>, <span name="clusterMaxIter">clusterMaxIter: <span class="extype" name="scala.Int">Int</span></span>, <span name="clusterEps">clusterEps: <span class="extype" name="scala.Double">Double</span></span>, <span name="clusterFractionEps">clusterFractionEps: <span class="extype" name="scala.Double">Double</span></span>, <span name="clusterSS">clusterSS: <span class="extype" name="scala.Int">Int</span></span>, <span name="clusterThreads">clusterThreads: <span class="extype" name="scala.Int">Int</span></span>, <span name="seed">seed: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span> with <a href="../util/Logging.html" class="extype" name="com.redhat.et.silex.util.Logging">Logging</a> with <span class="extype" name="scala.Product">Product</span></span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>An object for training a Random Forest clustering model on unsupervised data.</p><p>Data is required to have a mapping into a feature space of type Seq[Double].
+</p></div><dl class="paramcmts block"><dt class="param">extractor</dt><dd class="cmt"><p>A feature extraction function for data objects</p></dd><dt class="param">categoryInfo</dt><dd class="cmt"><p>A map from feature indexes into numbers of categories.  Feature indexes
+that do not have an entry in the map are assumed to be numeric, not categorical.  Defaults to
+category-info from <span class="extype" name="Extractor">Extractor</span>, if the feature extraction function is of this type.  Otherwise
+defaults to empty, i.e. all numeric features.</p></dd><dt class="param">syntheticSS</dt><dd class="cmt"><p>The size of synthetic (margin-sampled) data to be constructed.  Defaults to
+the size of the input data.</p></dd><dt class="param">rfNumTrees</dt><dd class="cmt"><p>The number of decision trees to train in the Random Forest  Defaults to 10.</p></dd><dt class="param">rfMaxDepth</dt><dd class="cmt"><p>Maximum decision tree depth.  Defaults to 5.</p></dd><dt class="param">rfMaxBins</dt><dd class="cmt"><p>Maximum histogramming bins to use for numeric data.  Defaults to 5.</p></dd><dt class="param">clusterK</dt><dd class="cmt"><p>The number of clusters to use when clustering leaf-id vectors.  Defaults to
+an automatic estimation of a &quot;good&quot; number of clusters.</p></dd><dt class="param">clusterMaxIter</dt><dd class="cmt"><p>Maximum clustering refinement iterations to compute.  Defaults to 25.</p></dd><dt class="param">clusterEps</dt><dd class="cmt"><p>Halt clustering if clustering metric-cost changes by less than this value.
+Defaults to 0</p></dd><dt class="param">clusterFractionEps</dt><dd class="cmt"><p>Halt clustering if clustering metric-cost changes by this fractional
+value from previous iteration.  Defaults to 0.0001</p></dd><dt class="param">clusterSS</dt><dd class="cmt"><p>If data is larger, use this random sample size.  Defaults to 1000.</p></dd><dt class="param">clusterThreads</dt><dd class="cmt"><p>Use this number of threads to accelerate clustering.  Defaults to 1.</p></dd><dt class="param">seed</dt><dd class="cmt"><p>A seed to use for RNG.  Defaults to using a randomized seed value.
+</p></dd></dl><div class="toggleContainer block">
+          <span class="toggle">Linear Supertypes</span>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="../util/Logging.html" class="extype" name="com.redhat.et.silex.util.Logging">Logging</a>, <span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="../../../../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
+        </div></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        <div id="order">
+              <span class="filtertype">Ordering</span>
+              <ol>
+                
+                <li class="alpha in"><span>Alphabetic</span></li>
+                <li class="inherit out"><span>By inheritance</span></li>
+              </ol>
+            </div>
+        <div id="ancestors">
+                <span class="filtertype">Inherited<br />
+                </span>
+                <ol id="linearization">
+                  <li class="in" name="com.redhat.et.silex.cluster.RandomForestCluster"><span>RandomForestCluster</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="com.redhat.et.silex.util.Logging"><span>Logging</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                </ol>
+              </div><div id="ancestors">
+            <span class="filtertype"></span>
+            <ol>
+              <li class="hideall out"><span>Hide All</span></li>
+              <li class="showall in"><span>Show all</span></li>
+            </ol>
+            <a href="http://docs.scala-lang.org/overviews/scaladoc/usage.html#members" target="_blank">Learn more about member selection</a>
+          </div>
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        <div id="constructors" class="members">
+              <h3>Instance Constructors</h3>
+              <ol><li name="com.redhat.et.silex.cluster.RandomForestCluster#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="&lt;init&gt;(extractor:T=&gt;Seq[Double],categoryInfo:Map[Int,Int],syntheticSS:Int,rfNumTrees:Int,rfMaxDepth:Int,rfMaxBins:Int,clusterK:Int,clusterMaxIter:Int,clusterEps:Double,clusterFractionEps:Double,clusterSS:Int,clusterThreads:Int,seed:Long):com.redhat.et.silex.cluster.RandomForestCluster[T]"></a>
+      <a id="&lt;init&gt;:RandomForestCluster[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">new</span>
+      </span>
+      <span class="symbol">
+        <span class="name">RandomForestCluster</span><span class="params">(<span name="extractor">extractor: (<span class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster.T">T</span>) ⇒ <a href="../../../../../scala/package.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="scala.Double">Double</span>]</span>, <span name="categoryInfo">categoryInfo: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Int">Int</span>, <span class="extype" name="scala.Int">Int</span>]</span>, <span name="syntheticSS">syntheticSS: <span class="extype" name="scala.Int">Int</span></span>, <span name="rfNumTrees">rfNumTrees: <span class="extype" name="scala.Int">Int</span></span>, <span name="rfMaxDepth">rfMaxDepth: <span class="extype" name="scala.Int">Int</span></span>, <span name="rfMaxBins">rfMaxBins: <span class="extype" name="scala.Int">Int</span></span>, <span name="clusterK">clusterK: <span class="extype" name="scala.Int">Int</span></span>, <span name="clusterMaxIter">clusterMaxIter: <span class="extype" name="scala.Int">Int</span></span>, <span name="clusterEps">clusterEps: <span class="extype" name="scala.Double">Double</span></span>, <span name="clusterFractionEps">clusterFractionEps: <span class="extype" name="scala.Double">Double</span></span>, <span name="clusterSS">clusterSS: <span class="extype" name="scala.Int">Int</span></span>, <span name="clusterThreads">clusterThreads: <span class="extype" name="scala.Int">Int</span></span>, <span name="seed">seed: <span class="extype" name="scala.Long">Long</span></span>)</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">extractor</dt><dd class="cmt"><p>A feature extraction function for data objects</p></dd><dt class="param">categoryInfo</dt><dd class="cmt"><p>A map from feature indexes into numbers of categories.  Feature indexes
+that do not have an entry in the map are assumed to be numeric, not categorical.  Defaults to
+category-info from <span class="extype" name="Extractor">Extractor</span>, if the feature extraction function is of this type.  Otherwise
+defaults to empty, i.e. all numeric features.</p></dd><dt class="param">syntheticSS</dt><dd class="cmt"><p>The size of synthetic (margin-sampled) data to be constructed.  Defaults to
+the size of the input data.</p></dd><dt class="param">rfNumTrees</dt><dd class="cmt"><p>The number of decision trees to train in the Random Forest  Defaults to 10.</p></dd><dt class="param">rfMaxDepth</dt><dd class="cmt"><p>Maximum decision tree depth.  Defaults to 5.</p></dd><dt class="param">rfMaxBins</dt><dd class="cmt"><p>Maximum histogramming bins to use for numeric data.  Defaults to 5.</p></dd><dt class="param">clusterK</dt><dd class="cmt"><p>The number of clusters to use when clustering leaf-id vectors.  Defaults to
+an automatic estimation of a &quot;good&quot; number of clusters.</p></dd><dt class="param">clusterMaxIter</dt><dd class="cmt"><p>Maximum clustering refinement iterations to compute.  Defaults to 25.</p></dd><dt class="param">clusterEps</dt><dd class="cmt"><p>Halt clustering if clustering metric-cost changes by less than this value.
+Defaults to 0</p></dd><dt class="param">clusterFractionEps</dt><dd class="cmt"><p>Halt clustering if clustering metric-cost changes by this fractional
+value from previous iteration.  Defaults to 0.0001</p></dd><dt class="param">clusterSS</dt><dd class="cmt"><p>If data is larger, use this random sample size.  Defaults to 1000.</p></dd><dt class="param">clusterThreads</dt><dd class="cmt"><p>Use this number of threads to accelerate clustering.  Defaults to 1.</p></dd><dt class="param">seed</dt><dd class="cmt"><p>A seed to use for RNG.  Defaults to using a randomized seed value.
+</p></dd></dl></div>
+    </li></ol>
+            </div>
+
+        
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="scala.AnyRef#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="!=(x$1:AnyRef):Boolean"></a>
+      <a id="!=(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="../../../../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.Any#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="!=(x$1:Any):Boolean"></a>
+      <a id="!=(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="scala.AnyRef###" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="##():Int"></a>
+      <a id="##():Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.AnyRef#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="==(x$1:AnyRef):Boolean"></a>
+      <a id="==(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="../../../../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.Any#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="==(x$1:Any):Boolean"></a>
+      <a id="==(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="asInstanceOf[T0]:T0"></a>
+      <a id="asInstanceOf[T0]:T0"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="com.redhat.et.silex.cluster.RandomForestCluster#categoryInfo" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="categoryInfo:Map[Int,Int]"></a>
+      <a id="categoryInfo:Map[Int,Int]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">categoryInfo</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Int">Int</span>, <span class="extype" name="scala.Int">Int</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">A map from feature indexes into numbers of categories.</p><div class="fullcomment"><div class="comment cmt"><p>A map from feature indexes into numbers of categories.  Feature indexes
+that do not have an entry in the map are assumed to be numeric, not categorical.  Defaults to
+category-info from <span class="extype" name="Extractor">Extractor</span>, if the feature extraction function is of this type.  Otherwise
+defaults to empty, i.e. all numeric features.</p></div></div>
+    </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="clone():Object"></a>
+      <a id="clone():AnyRef"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="../../../../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.CloneNotSupportedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="com.redhat.et.silex.cluster.RandomForestCluster#clusterEps" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="clusterEps:Double"></a>
+      <a id="clusterEps:Double"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">clusterEps</span><span class="result">: <span class="extype" name="scala.Double">Double</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Halt clustering if clustering metric-cost changes by less than this value.</p><div class="fullcomment"><div class="comment cmt"><p>Halt clustering if clustering metric-cost changes by less than this value.
+Defaults to 0</p></div></div>
+    </li><li name="com.redhat.et.silex.cluster.RandomForestCluster#clusterFractionEps" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="clusterFractionEps:Double"></a>
+      <a id="clusterFractionEps:Double"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">clusterFractionEps</span><span class="result">: <span class="extype" name="scala.Double">Double</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Halt clustering if clustering metric-cost changes by this fractional
+value from previous iteration.</p><div class="fullcomment"><div class="comment cmt"><p>Halt clustering if clustering metric-cost changes by this fractional
+value from previous iteration.  Defaults to 0.0001</p></div></div>
+    </li><li name="com.redhat.et.silex.cluster.RandomForestCluster#clusterK" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="clusterK:Int"></a>
+      <a id="clusterK:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">clusterK</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">The number of clusters to use when clustering leaf-id vectors.</p><div class="fullcomment"><div class="comment cmt"><p>The number of clusters to use when clustering leaf-id vectors.  Defaults to
+an automatic estimation of a &quot;good&quot; number of clusters.</p></div></div>
+    </li><li name="com.redhat.et.silex.cluster.RandomForestCluster#clusterMaxIter" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="clusterMaxIter:Int"></a>
+      <a id="clusterMaxIter:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">clusterMaxIter</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Maximum clustering refinement iterations to compute.</p><div class="fullcomment"><div class="comment cmt"><p>Maximum clustering refinement iterations to compute.  Defaults to 25.</p></div></div>
+    </li><li name="com.redhat.et.silex.cluster.RandomForestCluster#clusterSS" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="clusterSS:Int"></a>
+      <a id="clusterSS:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">clusterSS</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">If data is larger, use this random sample size.</p><div class="fullcomment"><div class="comment cmt"><p>If data is larger, use this random sample size.  Defaults to 1000.</p></div></div>
+    </li><li name="com.redhat.et.silex.cluster.RandomForestCluster#clusterThreads" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="clusterThreads:Int"></a>
+      <a id="clusterThreads:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">clusterThreads</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Use this number of threads to accelerate clustering.</p><div class="fullcomment"><div class="comment cmt"><p>Use this number of threads to accelerate clustering.  Defaults to 1.</p></div></div>
+    </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="eq(x$1:AnyRef):Boolean"></a>
+      <a id="eq(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="../../../../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="com.redhat.et.silex.cluster.RandomForestCluster#extractor" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="extractor:T=&gt;Seq[Double]"></a>
+      <a id="extractor:(T)⇒Seq[Double]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">extractor</span><span class="result">: (<span class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster.T">T</span>) ⇒ <a href="../../../../../scala/package.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="scala.Double">Double</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">A feature extraction function for data objects</p>
+    </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="finalize():Unit"></a>
+      <a id="finalize():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="symbol">classOf[java.lang.Throwable]</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="getClass():Class[_]"></a>
+      <a id="getClass():Class[_]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getClass</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="isInstanceOf[T0]:Boolean"></a>
+      <a id="isInstanceOf[T0]:Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="com.redhat.et.silex.util.Logging#logDebug" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="logDebug(msg:=&gt;String):Unit"></a>
+      <a id="logDebug(⇒String):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">logDebug</span><span class="params">(<span name="msg">msg: ⇒ <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="../util/Logging.html" class="extype" name="com.redhat.et.silex.util.Logging">Logging</a></dd></dl></div>
+    </li><li name="com.redhat.et.silex.util.Logging#logError" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="logError(msg:=&gt;String):Unit"></a>
+      <a id="logError(⇒String):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">logError</span><span class="params">(<span name="msg">msg: ⇒ <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="../util/Logging.html" class="extype" name="com.redhat.et.silex.util.Logging">Logging</a></dd></dl></div>
+    </li><li name="com.redhat.et.silex.util.Logging#logInfo" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="logInfo(msg:=&gt;String):Unit"></a>
+      <a id="logInfo(⇒String):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">logInfo</span><span class="params">(<span name="msg">msg: ⇒ <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="../util/Logging.html" class="extype" name="com.redhat.et.silex.util.Logging">Logging</a></dd></dl></div>
+    </li><li name="com.redhat.et.silex.util.Logging#logWarning" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="logWarning(msg:=&gt;String):Unit"></a>
+      <a id="logWarning(⇒String):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">logWarning</span><span class="params">(<span name="msg">msg: ⇒ <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="../util/Logging.html" class="extype" name="com.redhat.et.silex.util.Logging">Logging</a></dd></dl></div>
+    </li><li name="com.redhat.et.silex.util.Logging#logger" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="logger:org.slf4j.Logger"></a>
+      <a id="logger:Logger"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">logger</span><span class="result">: <span class="extype" name="org.slf4j.Logger">Logger</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../util/Logging.html" class="extype" name="com.redhat.et.silex.util.Logging">Logging</a></dd></dl></div>
+    </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ne(x$1:AnyRef):Boolean"></a>
+      <a id="ne(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="../../../../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#notify" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="notify():Unit"></a>
+      <a id="notify():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">notify</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#notifyAll" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="notifyAll():Unit"></a>
+      <a id="notifyAll():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="com.redhat.et.silex.cluster.RandomForestCluster#rfMaxBins" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="rfMaxBins:Int"></a>
+      <a id="rfMaxBins:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">rfMaxBins</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Maximum histogramming bins to use for numeric data.</p><div class="fullcomment"><div class="comment cmt"><p>Maximum histogramming bins to use for numeric data.  Defaults to 5.</p></div></div>
+    </li><li name="com.redhat.et.silex.cluster.RandomForestCluster#rfMaxDepth" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="rfMaxDepth:Int"></a>
+      <a id="rfMaxDepth:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">rfMaxDepth</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Maximum decision tree depth.</p><div class="fullcomment"><div class="comment cmt"><p>Maximum decision tree depth.  Defaults to 5.</p></div></div>
+    </li><li name="com.redhat.et.silex.cluster.RandomForestCluster#rfNumTrees" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="rfNumTrees:Int"></a>
+      <a id="rfNumTrees:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">rfNumTrees</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">The number of decision trees to train in the Random Forest  Defaults to 10.</p>
+    </li><li name="com.redhat.et.silex.cluster.RandomForestCluster#run" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="run(data:org.apache.spark.rdd.RDD[T]):com.redhat.et.silex.cluster.RandomForestClusterModel[T]"></a>
+      <a id="run(RDD[T]):RandomForestClusterModel[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">run</span><span class="params">(<span name="data">data: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster.T">T</span>]</span>)</span><span class="result">: <a href="RandomForestClusterModel.html" class="extype" name="com.redhat.et.silex.cluster.RandomForestClusterModel">RandomForestClusterModel</a>[<span class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster.T">T</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Train a Random Forest clustering model from input data</p><div class="fullcomment"><div class="comment cmt"><p>Train a Random Forest clustering model from input data</p></div><dl class="paramcmts block"><dt class="param">data</dt><dd class="cmt"><p>The input data objects to cluster</p></dd><dt>returns</dt><dd class="cmt"><p>An RF clustering model of the input data
+</p></dd></dl></div>
+    </li><li name="com.redhat.et.silex.cluster.RandomForestCluster#seed" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="seed:Long"></a>
+      <a id="seed:Long"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">seed</span><span class="result">: <span class="extype" name="scala.Long">Long</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">A seed to use for RNG.</p><div class="fullcomment"><div class="comment cmt"><p>A seed to use for RNG.  Defaults to using a randomized seed value.
+</p></div></div>
+    </li><li name="com.redhat.et.silex.cluster.RandomForestCluster#setCategoryInfo" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="setCategoryInfo(categoryInfoNew:Map[Int,Int]):com.redhat.et.silex.cluster.RandomForestCluster[T]"></a>
+      <a id="setCategoryInfo(Map[Int,Int]):RandomForestCluster[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">setCategoryInfo</span><span class="params">(<span name="categoryInfoNew">categoryInfoNew: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Int">Int</span>, <span class="extype" name="scala.Int">Int</span>]</span>)</span><span class="result">: <a href="" class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster">RandomForestCluster</a>[<span class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster.T">T</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Set a new category info map</p><div class="fullcomment"><div class="comment cmt"><p>Set a new category info map</p></div><dl class="paramcmts block"><dt class="param">categoryInfoNew</dt><dd class="cmt"><p>New category-info map to use</p></dd><dt>returns</dt><dd class="cmt"><p>Copy of this instance with new category info
+</p></dd></dl></div>
+    </li><li name="com.redhat.et.silex.cluster.RandomForestCluster#setClusterEps" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="setClusterEps(clusterEpsNew:Double):com.redhat.et.silex.cluster.RandomForestCluster[T]"></a>
+      <a id="setClusterEps(Double):RandomForestCluster[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">setClusterEps</span><span class="params">(<span name="clusterEpsNew">clusterEpsNew: <span class="extype" name="scala.Double">Double</span></span>)</span><span class="result">: <a href="" class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster">RandomForestCluster</a>[<span class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster.T">T</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Set a new clustering epsilon halting threshold</p><div class="fullcomment"><div class="comment cmt"><p>Set a new clustering epsilon halting threshold</p></div><dl class="paramcmts block"><dt class="param">clusterEpsNew</dt><dd class="cmt"><p>New epsilon halting threshold</p></dd><dt>returns</dt><dd class="cmt"><p>Copy of this instance with new clustering epsilon threshold
+</p></dd></dl></div>
+    </li><li name="com.redhat.et.silex.cluster.RandomForestCluster#setClusterFractionEps" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="setClusterFractionEps(clusterFractionEpsNew:Double):com.redhat.et.silex.cluster.RandomForestCluster[T]"></a>
+      <a id="setClusterFractionEps(Double):RandomForestCluster[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">setClusterFractionEps</span><span class="params">(<span name="clusterFractionEpsNew">clusterFractionEpsNew: <span class="extype" name="scala.Double">Double</span></span>)</span><span class="result">: <a href="" class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster">RandomForestCluster</a>[<span class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster.T">T</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Set a new clustering fractional epsilon halting threshold</p><div class="fullcomment"><div class="comment cmt"><p>Set a new clustering fractional epsilon halting threshold</p></div><dl class="paramcmts block"><dt class="param">clusterFractionEpsNew</dt><dd class="cmt"><p>New fractional epsilon value</p></dd><dt>returns</dt><dd class="cmt"><p>Copy of this instance with new fractional epsilon threshold
+</p></dd></dl></div>
+    </li><li name="com.redhat.et.silex.cluster.RandomForestCluster#setClusterK" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="setClusterK(clusterKNew:Int):com.redhat.et.silex.cluster.RandomForestCluster[T]"></a>
+      <a id="setClusterK(Int):RandomForestCluster[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">setClusterK</span><span class="params">(<span name="clusterKNew">clusterKNew: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <a href="" class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster">RandomForestCluster</a>[<span class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster.T">T</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Set a new target cluster size</p><div class="fullcomment"><div class="comment cmt"><p>Set a new target cluster size</p></div><dl class="paramcmts block"><dt class="param">clusterKNew</dt><dd class="cmt"><p>New target cluster number.  Zero sets to automatic determination.</p></dd><dt>returns</dt><dd class="cmt"><p>Copy of this instance with new target cluster size
+</p></dd></dl></div>
+    </li><li name="com.redhat.et.silex.cluster.RandomForestCluster#setClusterMaxIter" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="setClusterMaxIter(clusterMaxIterNew:Int):com.redhat.et.silex.cluster.RandomForestCluster[T]"></a>
+      <a id="setClusterMaxIter(Int):RandomForestCluster[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">setClusterMaxIter</span><span class="params">(<span name="clusterMaxIterNew">clusterMaxIterNew: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <a href="" class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster">RandomForestCluster</a>[<span class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster.T">T</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Set a new maximum clustering refinement iteration</p><div class="fullcomment"><div class="comment cmt"><p>Set a new maximum clustering refinement iteration</p></div><dl class="paramcmts block"><dt class="param">clusterMaxIterNew</dt><dd class="cmt"><p>New maximum number of refinement iterations</p></dd><dt>returns</dt><dd class="cmt"><p>Copy of this instance with new maximum iteration
+</p></dd></dl></div>
+    </li><li name="com.redhat.et.silex.cluster.RandomForestCluster#setClusterSS" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="setClusterSS(clusterSSNew:Int):com.redhat.et.silex.cluster.RandomForestCluster[T]"></a>
+      <a id="setClusterSS(Int):RandomForestCluster[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">setClusterSS</span><span class="params">(<span name="clusterSSNew">clusterSSNew: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <a href="" class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster">RandomForestCluster</a>[<span class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster.T">T</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Set a new clustering sample size</p><div class="fullcomment"><div class="comment cmt"><p>Set a new clustering sample size</p></div><dl class="paramcmts block"><dt class="param">clusterSSNew</dt><dd class="cmt"><p>New clustering sample size</p></dd><dt>returns</dt><dd class="cmt"><p>Copy of this instance with new sample size
+</p></dd></dl></div>
+    </li><li name="com.redhat.et.silex.cluster.RandomForestCluster#setClusterThreads" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="setClusterThreads(clusterThreadsNew:Int):com.redhat.et.silex.cluster.RandomForestCluster[T]"></a>
+      <a id="setClusterThreads(Int):RandomForestCluster[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">setClusterThreads</span><span class="params">(<span name="clusterThreadsNew">clusterThreadsNew: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <a href="" class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster">RandomForestCluster</a>[<span class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster.T">T</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Set a new clustering number of threads</p><div class="fullcomment"><div class="comment cmt"><p>Set a new clustering number of threads</p></div><dl class="paramcmts block"><dt class="param">clusterThreadsNew</dt><dd class="cmt"><p>New number of process threads to use</p></dd><dt>returns</dt><dd class="cmt"><p>Copy of this instance with new threading number
+</p></dd></dl></div>
+    </li><li name="com.redhat.et.silex.cluster.RandomForestCluster#setExtractor" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="setExtractor(extractorNew:T=&gt;Seq[Double]):com.redhat.et.silex.cluster.RandomForestCluster[T]"></a>
+      <a id="setExtractor((T)⇒Seq[Double]):RandomForestCluster[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">setExtractor</span><span class="params">(<span name="extractorNew">extractorNew: (<span class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster.T">T</span>) ⇒ <a href="../../../../../scala/package.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="scala.Double">Double</span>]</span>)</span><span class="result">: <a href="" class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster">RandomForestCluster</a>[<span class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster.T">T</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Set a new feature extraction function for input objects</p><div class="fullcomment"><div class="comment cmt"><p>Set a new feature extraction function for input objects</p></div><dl class="paramcmts block"><dt class="param">extractorNew</dt><dd class="cmt"><p>The feature extraction function</p></dd><dt>returns</dt><dd class="cmt"><p>Copy of this instance with new extractor
+</p></dd></dl></div>
+    </li><li name="com.redhat.et.silex.cluster.RandomForestCluster#setRfMaxBins" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="setRfMaxBins(rfMaxBinsNew:Int):com.redhat.et.silex.cluster.RandomForestCluster[T]"></a>
+      <a id="setRfMaxBins(Int):RandomForestCluster[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">setRfMaxBins</span><span class="params">(<span name="rfMaxBinsNew">rfMaxBinsNew: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <a href="" class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster">RandomForestCluster</a>[<span class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster.T">T</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Set a new Random Forest maximum numeric binning value</p><div class="fullcomment"><div class="comment cmt"><p>Set a new Random Forest maximum numeric binning value</p></div><dl class="paramcmts block"><dt class="param">rfMaxBinsNew</dt><dd class="cmt"><p>New maximum numeric binning value</p></dd><dt>returns</dt><dd class="cmt"><p>Copy of this instance with new maximum binning value
+</p></dd></dl></div>
+    </li><li name="com.redhat.et.silex.cluster.RandomForestCluster#setRfMaxDepth" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="setRfMaxDepth(rfMaxDepthNew:Int):com.redhat.et.silex.cluster.RandomForestCluster[T]"></a>
+      <a id="setRfMaxDepth(Int):RandomForestCluster[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">setRfMaxDepth</span><span class="params">(<span name="rfMaxDepthNew">rfMaxDepthNew: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <a href="" class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster">RandomForestCluster</a>[<span class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster.T">T</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Set a new Random Forest maximum tree depth</p><div class="fullcomment"><div class="comment cmt"><p>Set a new Random Forest maximum tree depth</p></div><dl class="paramcmts block"><dt class="param">rfMaxDepthNew</dt><dd class="cmt"><p>New maximum decision tree depth</p></dd><dt>returns</dt><dd class="cmt"><p>Copy of this instance with new maximum decision tree depth
+</p></dd></dl></div>
+    </li><li name="com.redhat.et.silex.cluster.RandomForestCluster#setRfNumTrees" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="setRfNumTrees(rfNumTreesNew:Int):com.redhat.et.silex.cluster.RandomForestCluster[T]"></a>
+      <a id="setRfNumTrees(Int):RandomForestCluster[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">setRfNumTrees</span><span class="params">(<span name="rfNumTreesNew">rfNumTreesNew: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <a href="" class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster">RandomForestCluster</a>[<span class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster.T">T</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Set a new number of Random Forest trees to train for the model</p><div class="fullcomment"><div class="comment cmt"><p>Set a new number of Random Forest trees to train for the model</p></div><dl class="paramcmts block"><dt class="param">rfNumTreesNew</dt><dd class="cmt"><p>New number of trees to use for the RF</p></dd><dt>returns</dt><dd class="cmt"><p>Copy of this instance with new Random Forest size
+</p></dd></dl></div>
+    </li><li name="com.redhat.et.silex.cluster.RandomForestCluster#setSeed" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="setSeed(seedNew:Long):com.redhat.et.silex.cluster.RandomForestCluster[T]"></a>
+      <a id="setSeed(Long):RandomForestCluster[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">setSeed</span><span class="params">(<span name="seedNew">seedNew: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <a href="" class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster">RandomForestCluster</a>[<span class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster.T">T</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Set a new RNG seed</p><div class="fullcomment"><div class="comment cmt"><p>Set a new RNG seed</p></div><dl class="paramcmts block"><dt class="param">seedNew</dt><dd class="cmt"><p>New RNG seed to use</p></dd><dt>returns</dt><dd class="cmt"><p>Copy of this instance with new RNG seed
+</p></dd></dl></div>
+    </li><li name="com.redhat.et.silex.cluster.RandomForestCluster#setSyntheticSS" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="setSyntheticSS(syntheticSSNew:Int):com.redhat.et.silex.cluster.RandomForestCluster[T]"></a>
+      <a id="setSyntheticSS(Int):RandomForestCluster[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">setSyntheticSS</span><span class="params">(<span name="syntheticSSNew">syntheticSSNew: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <a href="" class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster">RandomForestCluster</a>[<span class="extype" name="com.redhat.et.silex.cluster.RandomForestCluster.T">T</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Set a new synthetic data sample size</p><div class="fullcomment"><div class="comment cmt"><p>Set a new synthetic data sample size</p></div><dl class="paramcmts block"><dt class="param">syntheticSSNew</dt><dd class="cmt"><p>New synthetic data size to use</p></dd><dt>returns</dt><dd class="cmt"><p>Copy of this instance with new synthetic data size
+</p></dd></dl></div>
+    </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
+      <a id="synchronized[T0](⇒T0):T0"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="com.redhat.et.silex.cluster.RandomForestCluster#syntheticSS" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="syntheticSS:Int"></a>
+      <a id="syntheticSS:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">syntheticSS</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">The size of synthetic (margin-sampled) data to be constructed.</p><div class="fullcomment"><div class="comment cmt"><p>The size of synthetic (margin-sampled) data to be constructed.  Defaults to
+the size of the input data.</p></div></div>
+    </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="wait():Unit"></a>
+      <a id="wait():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="wait(x$1:Long,x$2:Int):Unit"></a>
+      <a id="wait(Long,Int):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>, <span name="arg1">arg1: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="wait(x$1:Long):Unit"></a>
+      <a id="wait(Long):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        <div class="parent" name="scala.Product">
+              <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
+            </div><div class="parent" name="scala.Equals">
+              <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
+            </div><div class="parent" name="com.redhat.et.silex.util.Logging">
+              <h3>Inherited from <a href="../util/Logging.html" class="extype" name="com.redhat.et.silex.util.Logging">Logging</a></h3>
+            </div><div class="parent" name="scala.Serializable">
+              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="java.io.Serializable">
+              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="scala.AnyRef">
+              <h3>Inherited from <a href="../../../../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></h3>
+            </div><div class="parent" name="scala.Any">
+              <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
+            </div>
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../lib/template.js"></script>
+    </body>
+      </html>

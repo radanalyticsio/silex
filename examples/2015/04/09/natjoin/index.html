@@ -1,0 +1,134 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+    <title>Using NaturalJoin on DataFrames</title>
+    
+    <meta name="author" content="William Benton, Erik Erlandson, and contributors">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="http://silex.freevariable.com/assets/themes/bootstrap/resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/syntax.css" rel="stylesheet">
+    
+    <!--[if lt IE 9]>
+      <script src="http://silex.freevariable.com/assets/themes/bootstrap/resources/respond/Respond.min.js"></script>
+    <![endif]-->
+
+    <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+    <link href="/rss.xml" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+    <script src="http://freevariable.com/mint/?js" type="text/javascript"></script>
+    
+  </head>
+
+  <body>
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Silex</a>
+        </div>
+
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+
+
+  
+    
+      
+      	
+      	<li><a href="/docs/">Docs</a></li>
+      	
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/coordinates/">Ivy coordinates</a></li>
+      	
+      
+    
+  
+    
+  
+    
+  
+
+
+
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+      
+<div class="page-header">
+  <h1>Using NaturalJoin on DataFrames </h1>
+</div>
+
+<div class="row post-full">
+  <div class="col-md-12">
+    <div class="date">
+      <span>09 April 2015</span>
+    </div>
+    <div class="content">
+      <p>Since version 0.0.2, Silex has included <a href="/latest/api/#com.redhat.et.silex.frame.NaturalJoining">a simple interface to perform natural join operations on data frames</a>.  (For more background, <a href="http://chapeau.freevariable.com/2015/04/natural-join-for-spark-dataframes.html">see here</a>.)  Here’s an example of this functionality in action:</p>
+
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="cm">/* Apologies to Paul Revere, but we wanted a join that</span>
+<span class="cm">   would actually filter some rows out. */</span>
+<span class="k">case</span> <span class="k">class</span> <span class="nc">TwoIfByLand</span><span class="o">(</span><span class="n">i</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">byLand</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="o">{}</span>
+<span class="k">case</span> <span class="k">class</span> <span class="nc">ThreeIfBySea</span><span class="o">(</span><span class="n">i</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">bySea</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="o">{}</span>
+
+<span class="k">val</span> <span class="n">landDF</span> <span class="k">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">parallelize</span><span class="o">((</span><span class="mi">0</span> <span class="n">to</span> <span class="mi">50</span> <span class="n">by</span> <span class="mi">2</span><span class="o">).</span><span class="n">map</span> <span class="o">{</span> <span class="n">i</span> <span class="k">=&gt;</span> <span class="nc">TwoIfByLand</span><span class="o">(</span><span class="n">i</span><span class="o">,</span> <span class="s">s&quot;land: </span><span class="si">$i</span><span class="s">&quot;</span><span class="o">)</span> <span class="o">}).</span><span class="n">toDF</span><span class="o">()</span>
+<span class="k">val</span> <span class="n">seaDF</span> <span class="k">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">parallelize</span><span class="o">((</span><span class="mi">0</span> <span class="n">to</span> <span class="mi">50</span> <span class="n">by</span> <span class="mi">3</span><span class="o">).</span><span class="n">map</span> <span class="o">{</span> <span class="n">i</span> <span class="k">=&gt;</span> <span class="nc">ThreeIfBySea</span><span class="o">(</span><span class="n">i</span><span class="o">,</span> <span class="s">s&quot;sea: </span><span class="si">$i</span><span class="s">&quot;</span><span class="o">)</span> <span class="o">}).</span><span class="n">toDF</span><span class="o">()</span>
+
+<span class="k">import</span> <span class="nn">com.redhat.et.silex.frame.NaturalJoin.implicits._</span>
+
+<span class="n">landDF</span><span class="o">.</span><span class="n">natjoin</span><span class="o">(</span><span class="n">seaDF</span><span class="o">).</span><span class="n">orderBy</span><span class="o">(</span><span class="s">&quot;i&quot;</span><span class="o">).</span><span class="n">show</span></code></pre></figure>
+
+<p>That should produce the following output.</p>
+
+<pre><code>i  byLand   bySea  
+0  land: 0  sea: 0 
+6  land: 6  sea: 6 
+12 land: 12 sea: 12
+18 land: 18 sea: 18
+24 land: 24 sea: 24
+30 land: 30 sea: 30
+36 land: 36 sea: 36
+42 land: 42 sea: 42
+48 land: 48 sea: 48
+</code></pre>
+
+
+    </div>
+
+    
+  </div>
+</div>
+
+
+      <hr>
+      <footer>
+        <p>
+          &copy; 2017 William Benton, Erik Erlandson, and contributors
+        </p>
+      </footer>
+    </div>
+
+    
+
+    <script src="http://silex.freevariable.com/assets/themes/bootstrap/resources/jquery/jquery.min.js"></script>
+    <script src="http://silex.freevariable.com/assets/themes/bootstrap/resources/bootstrap/js/bootstrap.min.js"></script>
+  </body>
+</html>
+

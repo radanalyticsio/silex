@@ -1,0 +1,317 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>util - com.redhat.et.silex.util</title>
+          <meta name="description" content="util - com.redhat.et.silex.util" />
+          <meta name="keywords" content="util com.redhat.et.silex.util" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../../index.html';
+            var hash = 'com.redhat.et.silex.util.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../../package.html" class="extype" name="com">com</a>.<a href="../../../package.html" class="extype" name="com.redhat">redhat</a>.<a href="../../package.html" class="extype" name="com.redhat.et">et</a>.<a href="../package.html" class="extype" name="com.redhat.et.silex">silex</a></p>
+        <h1>util</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">util</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="com.redhat.et.silex.util.DateTimeUTC" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DateTimeUTCextendsProductwithSerializable"></a>
+      <a id="DateTimeUTC:DateTimeUTC"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="DateTimeUTC.html"><span class="name">DateTimeUTC</span></a><span class="params">(<span name="year">year: <span class="extype" name="scala.Int">Int</span></span>, <span name="month">month: <span class="extype" name="scala.Int">Int</span></span>, <span name="day">day: <span class="extype" name="scala.Int">Int</span></span>, <span name="hour">hour: <span class="extype" name="scala.Int">Int</span></span>, <span name="minute">minute: <span class="extype" name="scala.Int">Int</span></span>, <span name="second">second: <span class="extype" name="scala.Int">Int</span></span>, <span name="millis">millis: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">0</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">A simple structure representing a calendar date in UTC.</p>
+    </li><li name="com.redhat.et.silex.util.Logging" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="LoggingextendsAnyRef"></a>
+      <a id="Logging:Logging"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Logging.html"><span class="name">Logging</span></a><span class="result"> extends <a href="../../../../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.redhat.et.silex.util.OptionalArg" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="OptionalArg[A]extendsAnyVal"></a>
+      <a id="OptionalArg[A]:OptionalArg[A]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="OptionalArg.html"><span class="name">OptionalArg</span></a><span class="tparams">[<span name="A">A</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyVal">AnyVal</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Provides idiomatic optional parameter values on top of <span class="extype" name="Option">Option</span>, but which can be passed in as
+raw values, instead of having to pass in Some(value)</p>
+    </li><li name="com.redhat.et.silex.util.SampleSink" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SampleSinkextendsSerializable"></a>
+      <a id="SampleSink:SampleSink"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="SampleSink.html"><span class="name">SampleSink</span></a><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">On-line mean and variance estimates for a stream of Double values.</p>
+    </li><li name="com.redhat.et.silex.util.TimeLens" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="TimeLensextendsAnyRef"></a>
+      <a id="TimeLens:TimeLens"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="TimeLens.html"><span class="name">TimeLens</span></a><span class="result"> extends <a href="../../../../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">A function object to convert to and from times in some particular string format</p>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="com.redhat.et.silex.util.AWSTimeLens" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="AWSTimeLens"></a>
+      <a id="AWSTimeLens:AWSTimeLens"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="AWSTimeLens$.html"><span class="name">AWSTimeLens</span></a><span class="result"> extends <a href="TimeLens.html" class="extype" name="com.redhat.et.silex.util.TimeLens">TimeLens</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">A function object to convert to and from times in the AWS billing format.</p>
+    </li><li name="com.redhat.et.silex.util.Amortizer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Amortizer"></a>
+      <a id="Amortizer:Amortizer"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Amortizer$.html"><span class="name">Amortizer</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="com.redhat.et.silex.util.DateTimeUTC" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DateTimeUTC"></a>
+      <a id="DateTimeUTC:DateTimeUTC"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="DateTimeUTC$.html"><span class="name">DateTimeUTC</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.redhat.et.silex.util.DirUtils" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DirUtils"></a>
+      <a id="DirUtils:DirUtils"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="DirUtils$.html"><span class="name">DirUtils</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="com.redhat.et.silex.util.OptionalArg" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="OptionalArg"></a>
+      <a id="OptionalArg:OptionalArg"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="OptionalArg$.html"><span class="name">OptionalArg</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">Factory methods and implicit conversions from raw values and Option to <a href="OptionalArg.html" class="extype" name="com.redhat.et.silex.util.OptionalArg">OptionalArg</a></p>
+    </li><li name="com.redhat.et.silex.util.ProductToCSV" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ProductToCSV"></a>
+      <a id="ProductToCSV:ProductToCSV"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="ProductToCSV$.html"><span class="name">ProductToCSV</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="com.redhat.et.silex.util.RegexImplicits" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RegexImplicits"></a>
+      <a id="RegexImplicits:RegexImplicits"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="RegexImplicits$.html"><span class="name">RegexImplicits</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="com.redhat.et.silex.util.SampleSink" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SampleSink"></a>
+      <a id="SampleSink:SampleSink"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="SampleSink$.html"><span class="name">SampleSink</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.redhat.et.silex.util.TimeUtils" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TimeUtils"></a>
+      <a id="TimeUtils:TimeUtils"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="TimeUtils$.html"><span class="name">TimeUtils</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="com.redhat.et.silex.util.VectorID" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="VectorID"></a>
+      <a id="VectorID:VectorID"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a href="VectorID/package.html"><span class="name">VectorID</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="com.redhat.et.silex.util.richslice" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="richslice"></a>
+      <a id="richslice:richslice"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="richslice$.html"><span class="name">richslice</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt"></p>
+    </li><li name="com.redhat.et.silex.util.vectors" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="vectors"></a>
+      <a id="vectors:vectors"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a href="vectors/package.html"><span class="name">vectors</span></a>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../lib/template.js"></script>
+    </body>
+      </html>
