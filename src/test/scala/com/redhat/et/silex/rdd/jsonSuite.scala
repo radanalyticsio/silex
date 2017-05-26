@@ -95,12 +95,12 @@ class JSONTransformerSpec extends FlatSpec with Matchers with PerTestSparkContex
   }
   
   "JSONTransformer" should "not conflict with Spark SQL's use of JSON" in {
-    val sqlc = new SQLContext(context)
+    val sqlc = SparkSession.builder.master(context.master).getOrCreate().sqlContext
     
     import sqlc.implicits._
     
     val df = context.parallelize(1 to 100).toDF("i")
-    df.show(0)
+    df.collect()
   }
 }
 
