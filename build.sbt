@@ -52,7 +52,7 @@ site.jekyllSupport()
 
 ghpages.settings
 
-git.remoteRepo := "git@github.com:willb/silex.git"
+git.remoteRepo := "git@github.com:radanalyticsio/silex.git"
 
 lazy val silex = project in file(".")
 
