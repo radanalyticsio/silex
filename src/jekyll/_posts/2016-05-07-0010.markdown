@@ -17,5 +17,5 @@ Here are the main improvements and additions:
 You can:
 
 * [Include Silex](http://silex.freevariable.com/coordinates/) in your projects,
-* [fork Silex on GitHub](https://github.com/willb/silex), and
+* [fork Silex on GitHub](https://github.com/radanalyticsio/silex), and
 * [read the API docs](http://silex.freevariable.com/latest/api/).
