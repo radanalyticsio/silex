@@ -154,9 +154,9 @@ object SOM {
       val (xc, yc) = (idx / ydim, idx % ydim)
       val counts = state.counts(idx).toDouble
       val hood = Neighborhood.mat(xc, xdim, xsigma, yc, ydim, ysigma).reshape(xdim * ydim, 1).toDenseVector
-      neighborhoods = neighborhoods :+ (hood * counts)
+      neighborhoods = neighborhoods +:+ (hood * counts)
       val update = DenseVector(hood.toArray.map { hoodDistance => state.weights(idx) * hoodDistance})
-      weights = weights :+ update
+      weights = weights +:+ update
     }
     
     val newWeights = DenseVector((weights.values.iterator.zip(lastState.entries.iterator)).zip(neighborhoods.values.iterator).map { 

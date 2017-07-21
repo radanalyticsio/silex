@@ -36,7 +36,7 @@ class FrameDirSpec extends FlatSpec with Matchers with TempDirFixtures with PerT
       frame.write.parquet("%s/test%d.parquet".format(tempPath, id))
     }
     
-    val union = frames map { case (_, frame) => frame } reduce { (l, r) => l unionAll r }
+    val union = frames map { case (_, frame) => frame } reduce { (l, r) => l union r }
     val loaded = FrameDir.loadDir(sqlc, tempPath)
     
     assert(union.count() == loaded.count())
