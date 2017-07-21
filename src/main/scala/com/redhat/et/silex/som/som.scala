@@ -232,7 +232,8 @@ object SOM {
 
 object Example {
   import org.apache.spark.ml.linalg.{DenseVector => DV}
-   import org.apache.spark.SparkContext
+  import org.apache.spark.SparkContext
+  import org.apache.spark.sql.SparkSession
   
   def apply(xdim: Int, ydim: Int, iterations: Int, sc: SparkContext, exampleCount: Int, seed: Option[Int] = None): SOM = {
     val rnd = seed.map { s => new scala.util.Random(s)}.getOrElse(new scala.util.Random())
@@ -242,5 +243,20 @@ object Example {
     def writeStep(step: Int, som: SOM) { }
     
     SOM.train(xdim, ydim, 3, iterations, examples, sigmaScale=0.7, hook=writeStep _)
+  }
+  
+  def applyDF(xdim: Int, ydim: Int, iterations: Int, sc: SparkContext, exampleCount: Int, seed: Option[Int] = None): SOM = {
+    val rnd = seed.map { s => new scala.util.Random(s)}.getOrElse(new scala.util.Random())
+    import org.apache.spark.ml.linalg.{VectorUDT, Vectors}
+    
+    val colors = Array.fill(exampleCount)(Tuple1(Vectors.dense(Array.fill(3)(rnd.nextDouble)).compressed))
+      
+    val session = SparkSession.builder.getOrCreate()
+    
+    val examples = session.createDataFrame(colors).toDF("features")
+    
+    def writeStep(step: Int, som: SOM) { }
+    
+    SOM.trainDF(xdim, ydim, 3, iterations, examples, sigmaScale=0.7, hook=writeStep _)
   }
 }
