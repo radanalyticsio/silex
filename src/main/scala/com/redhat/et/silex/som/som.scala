@@ -43,7 +43,7 @@ object Neighborhood {
 
 class SOM(val xdim: Int, val ydim: Int, val fdim: Int, _entries: DenseVector[DenseVector[Double]], private val mqsink: SampleSink) extends Serializable {
   import breeze.numerics._
-  import org.apache.spark.mllib.linalg.{Vector=>SV, DenseVector=>SDV, SparseVector=>SSV}
+  import org.apache.spark.ml.linalg.{Vector=>SV, DenseVector=>SDV, SparseVector=>SSV}
   
   val entries = _entries.toArray
   
@@ -77,7 +77,8 @@ class SOM(val xdim: Int, val ydim: Int, val fdim: Int, _entries: DenseVector[Den
 object SOM {
   import breeze.numerics._
   import org.apache.spark.rdd.RDD
-  import org.apache.spark.mllib.linalg.{Vector=>SV, DenseVector=>SDV, SparseVector=>SSV}
+  import org.apache.spark.sql.{DataFrame, Row}
+  import org.apache.spark.ml.linalg.{Vector=>SV, DenseVector=>SDV, SparseVector=>SSV}
 
   import com.esotericsoftware.kryo.Kryo
   import com.esotericsoftware.kryo.io.{Input, Output}
@@ -182,6 +183,18 @@ object SOM {
     }
   }
   
+  /** Train a self-organizing map from a data frame of <tt>examples</tt> for <tt>iterations</tt> iterations, starting with a randomly-weighted map with <tt>xdim</tt> columns, <tt>ydim</tt> rows, and <tt>fdim</tt> features per cell. Optional parameters include <tt>sigmaScale</tt>, to specify the width of the neighborhood function as a factor of each map dimension, <tt>minSigma</tt>, which sets the neighborhood width at the last iteration, and <tt>hook</tt>, which is a callback function to run after each iteration. */
+  def trainDF(xdim: Int, ydim: Int, fdim: Int, iterations: Int, examples: DataFrame, seed: Option[Int] = None, sigmaScale: Double = 0.95, minSigma: Double = 1, exampleCol: String = "features", hook: (Int, SOM) => Unit = { case (_,_) => }): SOM = {
+    import examples.sparkSession.implicits._
+    import org.apache.spark.ml.linalg.VectorUDT
+
+    val ds = examples.select(exampleCol).rdd.map {
+      case Row(sv: SV) => sv
+    }
+    train(xdim, ydim, fdim, iterations, ds, seed, sigmaScale, minSigma, hook)
+  }
+  
+  
   /** Train a self-organizing map from an RDD of <tt>examples</tt> for <tt>iterations</tt> iterations, starting with a randomly-weighted map with <tt>xdim</tt> columns, <tt>ydim</tt> rows, and <tt>fdim</tt> features per cell. Optional parameters include <tt>sigmaScale</tt>, to specify the width of the neighborhood function as a factor of each map dimension, <tt>minSigma</tt>, which sets the neighborhood width at the last iteration, and <tt>hook</tt>, which is a callback function to run after each iteration. */
   def train(xdim: Int, ydim: Int, fdim: Int, iterations: Int, examples: RDD[SV], seed: Option[Int] = None, sigmaScale: Double = 0.95, minSigma: Double = 1, hook: (Int, SOM) => Unit = { case (_,_) => }): SOM = {
     val xSigmaStep = ((xdim * sigmaScale) - minSigma) / iterations
@@ -218,8 +231,9 @@ object SOM {
 }
 
 object Example {
-  import org.apache.spark.mllib.linalg.{DenseVector => DV}
-   import org.apache.spark.SparkContext
+  import org.apache.spark.ml.linalg.{DenseVector => DV}
+  import org.apache.spark.SparkContext
+  import org.apache.spark.sql.SparkSession
   
   def apply(xdim: Int, ydim: Int, iterations: Int, sc: SparkContext, exampleCount: Int, seed: Option[Int] = None): SOM = {
     val rnd = seed.map { s => new scala.util.Random(s)}.getOrElse(new scala.util.Random())
@@ -229,5 +243,20 @@ object Example {
     def writeStep(step: Int, som: SOM) { }
     
     SOM.train(xdim, ydim, 3, iterations, examples, sigmaScale=0.7, hook=writeStep _)
+  }
+  
+  def applyDF(xdim: Int, ydim: Int, iterations: Int, sc: SparkContext, exampleCount: Int, seed: Option[Int] = None): SOM = {
+    val rnd = seed.map { s => new scala.util.Random(s)}.getOrElse(new scala.util.Random())
+    import org.apache.spark.ml.linalg.{VectorUDT, Vectors}
+    
+    val colors = Array.fill(exampleCount)(Tuple1(Vectors.dense(Array.fill(3)(rnd.nextDouble)).compressed))
+      
+    val session = SparkSession.builder.getOrCreate()
+    
+    val examples = session.createDataFrame(colors).toDF("features")
+    
+    def writeStep(step: Int, som: SOM) { }
+    
+    SOM.trainDF(xdim, ydim, 3, iterations, examples, sigmaScale=0.7, hook=writeStep _)
   }
 }
