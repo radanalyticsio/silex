@@ -38,7 +38,7 @@ private[som] trait SOMParams extends Params with DefaultParamsWritable /* with H
   final def setEpochs(value: Int): this.type = set(epochs, value)
   final def setFeaturesCol(value: String): this.type = set(featuresCol, value)
   final def setPredictionCol(value: String): this.type = set(predictionCol, value)
-  final def setProbabilityCol(value: String): this.type = set(probabilityCol, value)
+  final def setSimilarityCol(value: String): this.type = set(similarityCol, value)
   final def setSeed(value: Int): this.type = set(seed, value)
 
   /**
@@ -73,15 +73,15 @@ private[som] trait SOMParams extends Params with DefaultParamsWritable /* with H
   final def getPredictionCol: String = $(predictionCol)
   
   /**
-   * Param for Column name for predicted class conditional probabilities. Note: Not all models output well-calibrated probability estimates! These probabilities should be treated as confidences, not precise probabilities.
+   * Param for Column name for predicted class conditional probabilities. Note: Not all models output well-calibrated similarity estimates! These probabilities should be treated as confidences, not precise probabilities.
    * @group param
    */
-  final val probabilityCol: Param[String] = new Param[String](this, "probabilityCol", "Column name for predicted class conditional probabilities. Note: Not all models output well-calibrated probability estimates! These probabilities should be treated as confidences, not precise probabilities")
+  final val similarityCol: Param[String] = new Param[String](this, "similarityCol", "Column name for predicted class conditional probabilities. Note: Not all models output well-calibrated similarity estimates! These probabilities should be treated as confidences, not precise probabilities")
 
-  setDefault(probabilityCol, "probability")
+  setDefault(similarityCol, "similarity")
 
   /** @group getParam */
-  final def getProbabilityCol: String = $(probabilityCol)
+  final def getSimilarityCol: String = $(similarityCol)
   
   /**
    * Param for random seed.
@@ -115,9 +115,9 @@ private[som] trait SOMParams extends Params with DefaultParamsWritable /* with H
     
     // but we don't want the output columns to exist
     require(!schema.fieldNames.contains($(predictionCol)))
-    require(!schema.fieldNames.contains($(probabilityCol)))
+    require(!schema.fieldNames.contains($(similarityCol)))
     
-    schema.add($(predictionCol), "int").add($(probabilityCol), "double")
+    schema.add($(predictionCol), "int").add($(similarityCol), "double")
   }
 }
 
@@ -138,7 +138,7 @@ class SOMModel(override val uid: String, private val model: SOM) extends Model[S
     val predictUDF = udf((vector: SV) => model.closestWithSimilarity(vector, None))
     dataset
       .withColumn($(predictionCol), predictUDF(col($(featuresCol))))
-      .select(dataset.columns.map(column(_)) ++ Seq(column($(predictionCol) + "._1").as($(predictionCol)), column($(predictionCol) + "._2").as($(probabilityCol))) : _*)
+      .select(dataset.columns.map(column(_)) ++ Seq(column($(predictionCol) + "._1").as($(predictionCol)), column($(predictionCol) + "._2").as($(similarityCol))) : _*)
   }
 }
 
