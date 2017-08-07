@@ -16,16 +16,16 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.feature.extractor.spark
+package io.radanalytics.silex.feature.extractor.spark
 
 import org.scalatest._
 
 class SparkFeatureSeqSpec extends FlatSpec with Matchers {
-  import com.redhat.et.silex.feature.extractor._
-  import com.redhat.et.silex.feature.extractor.spark.implicits._
+  import io.radanalytics.silex.feature.extractor._
+  import io.radanalytics.silex.feature.extractor.spark.implicits._
 
-  import com.redhat.et.silex.feature.extractor.FeatureSeqSpecSupport._
-  import com.redhat.et.silex.scalatest.matchers._
+  import io.radanalytics.silex.feature.extractor.FeatureSeqSpecSupport._
+  import io.radanalytics.silex.scalatest.matchers._
 
   import org.apache.spark.mllib.linalg._
   import org.apache.spark.mllib.regression.LabeledPoint

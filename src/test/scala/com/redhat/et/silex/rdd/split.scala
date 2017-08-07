@@ -15,15 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package com.redhat.et.silex.rdd.split
+package io.radanalytics.silex.rdd.split
 
 import org.scalatest._
 
-import com.redhat.et.silex.testing.PerTestSparkContext
+import io.radanalytics.silex.testing.PerTestSparkContext
 
 class SplitRDDFunctionsSpec extends FlatSpec with Matchers with PerTestSparkContext {
-  import com.redhat.et.silex.testing.matchers._
-  import com.redhat.et.silex.rdd.split.implicits._
+  import io.radanalytics.silex.testing.matchers._
+  import io.radanalytics.silex.rdd.split.implicits._
 
   it should "provide splitFilter method" in {
     val data = Vector(1, 0, 2, 0, 3, 0, 4, 0, 5, 0)

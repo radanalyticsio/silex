@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.cluster
+package io.radanalytics.silex.cluster
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.mllib.tree.model.RandomForestModel
@@ -25,7 +25,7 @@ import org.apache.spark.mllib.linalg.{
   DenseVector => DenseSparkVec
 }
 
-import com.redhat.et.silex.util.vectors.implicits._
+import io.radanalytics.silex.util.vectors.implicits._
 import ClusteringRandomForestModel._
 
 /** Represents a Random Forest clustering model of some data objects

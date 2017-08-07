@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.feature
+package io.radanalytics.silex.feature
 
 /** Provides a feature extraction type system that supports concatenation of feature extraction
   * functions in a logically constant and type safe manner.  Extraction functions are represented by

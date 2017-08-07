@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.util
+package io.radanalytics.silex.util
 
 object RegexImplicits {
   // this nice custom interpolator is from http://stackoverflow.com/a/16256935/192616

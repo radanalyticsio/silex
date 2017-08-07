@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.sample.iid
+package io.radanalytics.silex.sample.iid
 
 private [sample] object infra {
   import scala.collection.mutable.ArrayBuffer
@@ -26,8 +26,8 @@ private [sample] object infra {
     SparseVector => SparseSV
   }
 
-  import com.redhat.et.silex.feature.extractor.spark.implicits._
-  import com.redhat.et.silex.feature.extractor.{ FeatureSeq, Extractor }
+  import io.radanalytics.silex.feature.extractor.spark.implicits._
+  import io.radanalytics.silex.feature.extractor.{ FeatureSeq, Extractor }
 
   class CompactSampler(n: Int, n1: Int, non01: ArrayBuffer[Double]) {
     require(n > 0  &&  n1 >= 0)

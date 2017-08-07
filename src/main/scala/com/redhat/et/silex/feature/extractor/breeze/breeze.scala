@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.feature.extractor.breeze
+package io.radanalytics.silex.feature.extractor.breeze
 
-import com.redhat.et.silex.feature.extractor.FeatureSeq
+import io.radanalytics.silex.feature.extractor.FeatureSeq
 
 import _root_.breeze.linalg.{
   Vector => BV,
@@ -45,9 +45,9 @@ sealed class BreezeFS(bv: BV[Double]) extends FeatureSeq {
 /** Implicit conversions from Breeze vectors to [[FeatureSeq]].
   *
   * {{{
-  * import com.redhat.et.silex.feature.extractor.{ FeatureSeq, Extractor }
-  * import com.redhat.et.silex.feature.extractor.breeze
-  * import com.redhat.et.silex.feature.extractor.breeze.implicits._
+  * import io.radanalytics.silex.feature.extractor.{ FeatureSeq, Extractor }
+  * import io.radanalytics.silex.feature.extractor.breeze
+  * import io.radanalytics.silex.feature.extractor.breeze.implicits._
   * import _root_.breeze.linalg.DenseVector
   *
   * val bv = new DenseVector(Array(1.0, 2.0))

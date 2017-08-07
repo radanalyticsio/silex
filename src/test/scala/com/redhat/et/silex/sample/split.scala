@@ -15,16 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package com.redhat.et.silex.rdd.multiplex
+package io.radanalytics.silex.rdd.multiplex
 
 import org.scalatest._
 
-import com.redhat.et.silex.testing.PerTestSparkContext
+import io.radanalytics.silex.testing.PerTestSparkContext
 
 class SplitSampleSpec extends FlatSpec with Matchers with PerTestSparkContext {
-  import com.redhat.et.silex.testing.matchers._
-  import com.redhat.et.silex.sample.split.implicits._
-  import com.redhat.et.silex.testing.KSTesting.{ medianKSD, SamplingIterator, D }
+  import io.radanalytics.silex.testing.matchers._
+  import io.radanalytics.silex.sample.split.implicits._
+  import io.radanalytics.silex.testing.KSTesting.{ medianKSD, SamplingIterator, D }
 
   scala.util.Random.setSeed(235711)
 

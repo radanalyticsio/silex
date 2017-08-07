@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.rdd.scan
+package io.radanalytics.silex.rdd.scan
 
 import scala.reflect.ClassTag
 
@@ -26,8 +26,8 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkContext, Partition, TaskContext}
 import org.apache.spark.{Dependency, NarrowDependency, OneToOneDependency}
 
-import com.redhat.et.silex.rdd.util
-import com.redhat.et.silex.rdd.cascade.implicits._
+import io.radanalytics.silex.rdd.util
+import io.radanalytics.silex.rdd.cascade.implicits._
 
 private[rdd]
 class ScanPlyPartition[U: ClassTag](idx: Int, cur: (Int, Partition), prv: (Int, Partition))
@@ -200,7 +200,7 @@ class ScanRDDFunctions[T : ClassTag](self: RDD[T]) extends Serializable {
 /** Implicit conversions for enhancing RDDs with scan and scanLeft methods.
   *
   *{{{
-  * import com.redhat.et.silex.rdd.scan.implicits._
+  * import io.radanalytics.silex.rdd.scan.implicits._
   *
   * rdd.scanLeft(z)(f)
   * rdd.scan(z)(g)

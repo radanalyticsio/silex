@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.util
+package io.radanalytics.silex.util
 
 import org.joda.time.{DateTime, DateTimeZone, Period, Days}
 import scala.language.implicitConversions

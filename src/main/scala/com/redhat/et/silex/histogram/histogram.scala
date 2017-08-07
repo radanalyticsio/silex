@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.histogram
+package io.radanalytics.silex.histogram
 
 import scala.reflect.ClassTag
 

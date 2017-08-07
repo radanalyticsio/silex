@@ -16,16 +16,16 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.feature.extractor.breeze
+package io.radanalytics.silex.feature.extractor.breeze
 
 import org.scalatest._
 
 class BreezeFeatureSeqSpec extends FlatSpec with Matchers {
-  import com.redhat.et.silex.feature.extractor._
-  import com.redhat.et.silex.feature.extractor.breeze.implicits._
+  import io.radanalytics.silex.feature.extractor._
+  import io.radanalytics.silex.feature.extractor.breeze.implicits._
 
-  import com.redhat.et.silex.feature.extractor.FeatureSeqSpecSupport._
-  import com.redhat.et.silex.scalatest.matchers._
+  import io.radanalytics.silex.feature.extractor.FeatureSeqSpecSupport._
+  import io.radanalytics.silex.scalatest.matchers._
 
   import _root_.breeze.linalg._
 

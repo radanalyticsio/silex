@@ -17,9 +17,9 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.statistics
+package io.radanalytics.silex.statistics
 
-import com.redhat.et.silex.testing.PerTestSparkContext
+import io.radanalytics.silex.testing.PerTestSparkContext
 
 import org.scalatest._
 

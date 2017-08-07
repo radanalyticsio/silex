@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.util
+package io.radanalytics.silex.util
 
 trait Logging {
   // Adapted from the Logging trait in Spark 1.x

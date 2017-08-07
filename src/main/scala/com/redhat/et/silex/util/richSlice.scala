@@ -16,11 +16,11 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.util
+package io.radanalytics.silex.util
 
 /**
   * @define rsExamples {{{
-  * import com.redhat.et.silex.util.richslice._
+  * import io.radanalytics.silex.util.richslice._
   * RichSlice(1)             // selects element(1)
   * RichSlice(2, 3, 5 to 11) // selects elements 2, 3 and 5 through 11
   * RichSlice(9 to 0 by -1)  // selects first 10 elements in reverse order
@@ -28,7 +28,7 @@ package com.redhat.et.silex.util
   * }}}
   *
   * @define rsStarExamples {{{
-  * import com.redhat.et.silex.util.richslice._
+  * import io.radanalytics.silex.util.richslice._
   * data.richSlice(* to 5)   // selects elements 0 through 5
   * data.richSlice(5 to *)   // selects elmeents 5 up to end of data
   * data.richSlice(*)        // selects all data
@@ -110,7 +110,7 @@ object richslice {
     /** Create an iterator that iterates over the sequence elements selcted by zero or more
       * slice expresions.
       * {{{
-      * import com.redhat.et.silex.util.richslice._
+      * import io.radanalytics.silex.util.richslice._
       * data.richSliceIterator(1)             // iterate over data(1)
       * data.richSliceIterator(2, 3, 5 to 11) // over data(2), data(3) and data(5) through data(11)
       * data.richSliceIterator(9 to 0 by -1)  // over 1st 10 elements of data in reverse
@@ -123,7 +123,7 @@ object richslice {
     /** Create an iterator that iterates over the sequence elements selected by the given
       * rich slice object
       * {{{
-      * import com.redhat.et.silex.util.richslice._
+      * import io.radanalytics.silex.util.richslice._
       * val rs = RichSlice(2, 3, 5 to 11)
       * data.richSliceIterator(rs) // iterate over data(2), data(3) and data(5) through data(11)
       * }}}
@@ -162,7 +162,7 @@ object richslice {
     /** Create a new sub sequence from the elements selcted by zero or more
       * slice expresions.
       * {{{
-      * import com.redhat.et.silex.util.richslice._
+      * import io.radanalytics.silex.util.richslice._
       * data.richSlice(1)             // select data(1)
       * data.richSlice(2, 3, 5 to 11) // select data(2), data(3) and data(5) through data(11)
       * data.richSlice(9 to 0 by -1)  // select 1st 10 elements of data in reverse
@@ -174,7 +174,7 @@ object richslice {
 
     /** Create a new subsequence from the elmenents selected by a given rich slice object
       * {{{
-      * import com.redhat.et.silex.util.richslice._
+      * import io.radanalytics.silex.util.richslice._
       * val rs = RichSlice(2, 3, 5 to 11)
       * data.richSlice(rs) // select data(2), data(3) and data(5) through data(11)
       * }}}

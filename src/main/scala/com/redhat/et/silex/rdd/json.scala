@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.rdd.json
+package io.radanalytics.silex.rdd.json
 
 import org.apache.spark.rdd._
 

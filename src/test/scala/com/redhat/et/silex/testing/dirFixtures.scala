@@ -16,11 +16,11 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.testing
+package io.radanalytics.silex.testing
 
 import org.scalatest._
 
-import com.redhat.et.silex.app.TestConsoleApp
+import io.radanalytics.silex.app.TestConsoleApp
 
 import java.io.File
 import java.nio.file.{Path, Files}

@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.rdd
+package io.radanalytics.silex.rdd
 
 private[silex] object util {
   import org.apache.commons.lang3.reflect.{ FieldUtils, MethodUtils }

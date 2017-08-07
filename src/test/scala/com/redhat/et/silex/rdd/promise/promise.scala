@@ -16,16 +16,16 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.rdd.promise
+package io.radanalytics.silex.rdd.promise
 
-import com.redhat.et.silex.testing.PerTestSparkContext
+import io.radanalytics.silex.testing.PerTestSparkContext
 
 import org.scalatest._
 
 import org.apache.spark.{ TaskContext }
 
 class PromiseRDDSpec extends FlatSpec with Matchers with PerTestSparkContext {
-  import com.redhat.et.silex.rdd.promise.implicits._
+  import io.radanalytics.silex.rdd.promise.implicits._
 
   it should "construct a simple promise" in {
     // a promise RDD having no RDD dependencies

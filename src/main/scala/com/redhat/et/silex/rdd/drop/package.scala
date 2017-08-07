@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.rdd
+package io.radanalytics.silex.rdd
 
 /** Provides [[DropRDDFunctions]] enriched methods */
 package object drop {}

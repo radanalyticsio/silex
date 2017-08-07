@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.feature
+package io.radanalytics.silex.feature
 
 /** Provides [[IndexFunction]] and [[InvertibleIndexFunction]], specialized subclasses of Scala 
   * functions Int => V that map integers over an interval to some value type, and which may be

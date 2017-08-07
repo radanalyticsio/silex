@@ -16,14 +16,14 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.rdd.scan
+package io.radanalytics.silex.rdd.scan
 
-import com.redhat.et.silex.testing.PerTestSparkContext
+import io.radanalytics.silex.testing.PerTestSparkContext
 
 import org.scalatest._
 
 class ScanRDDFunctionsSpec extends FunSuite with PerTestSparkContext {
-  import com.redhat.et.silex.rdd.scan.implicits._
+  import io.radanalytics.silex.rdd.scan.implicits._
 
   test("empty") {
     val e = context.emptyRDD[Int]

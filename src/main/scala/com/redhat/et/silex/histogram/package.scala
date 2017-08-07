@@ -16,11 +16,11 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex
+package io.radanalytics.silex
 
 /** Enriched RDD methods for histogramming and counting of sequence-like objects
   * {{{
-  * import com.redhat.et.silex.histogram.implicits._
+  * import io.radanalytics.silex.histogram.implicits._
   * rdd.countBy(f)
   * rdd.histBy(f)
   * rdd.countByFlat(f)

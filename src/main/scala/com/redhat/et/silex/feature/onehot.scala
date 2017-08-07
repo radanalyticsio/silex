@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.feature.onehot
+package io.radanalytics.silex.feature.onehot
 
 import scala.reflect.ClassTag
 import scala.collection.immutable.SortedSet
@@ -28,12 +28,12 @@ import org.apache.spark.mllib.linalg.{
   SparseVector => SparseSV
 }
 
-import com.redhat.et.silex.feature.extractor._
-import com.redhat.et.silex.feature.extractor.spark.implicits._
-import com.redhat.et.silex.feature.indexfunction._
-import com.redhat.et.silex.util.OptionalArg
-import com.redhat.et.silex.util.OptionalArg.fullOptionSupport
-import com.redhat.et.silex.histogram.implicits._
+import io.radanalytics.silex.feature.extractor._
+import io.radanalytics.silex.feature.extractor.spark.implicits._
+import io.radanalytics.silex.feature.indexfunction._
+import io.radanalytics.silex.util.OptionalArg
+import io.radanalytics.silex.util.OptionalArg.fullOptionSupport
+import io.radanalytics.silex.histogram.implicits._
 
 /** A model for generating Extractor objects from a histogram of values
   *

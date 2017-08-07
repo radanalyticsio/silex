@@ -16,13 +16,13 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.feature.extractor
+package io.radanalytics.silex.feature.extractor
 
 /** Provides conversions from Spark vectors to [[FeatureSeq]], and vice versa.
   * {{{
-  * import com.redhat.et.silex.feature.extractor.{ FeatureSeq, Extractor }
-  * import com.redhat.et.silex.feature.extractor.spark
-  * import com.redhat.et.silex.feature.extractor.spark.implicits._
+  * import io.radanalytics.silex.feature.extractor.{ FeatureSeq, Extractor }
+  * import io.radanalytics.silex.feature.extractor.spark
+  * import io.radanalytics.silex.feature.extractor.spark.implicits._
   * import org.apache.spark.mllib.linalg.DenseVector
   * import org.apache.spark.mllib.regression.LabeledPoint
   *

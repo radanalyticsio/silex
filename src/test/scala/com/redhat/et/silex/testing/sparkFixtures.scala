@@ -16,11 +16,11 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.testing
+package io.radanalytics.silex.testing
 
 import org.scalatest._
 
-import com.redhat.et.silex.app.TestConsoleApp
+import io.radanalytics.silex.app.TestConsoleApp
 
 trait AbstractBeforeAndAfter extends BeforeAndAfterEach {
   self: BeforeAndAfterEach with Suite =>

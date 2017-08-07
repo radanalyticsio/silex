@@ -16,7 +16,7 @@
  * limitations under the License
  */
 
-package com.redhat.et.silex.rdd.split
+package io.radanalytics.silex.rdd.split
 
 import scala.reflect.ClassTag
 
@@ -29,7 +29,7 @@ import org.apache.spark.rdd.RDD
  */
 class SplitRDDFunctions[T :ClassTag](self: RDD[T]) extends Serializable {
   import scala.collection.mutable.ArrayBuffer
-  import com.redhat.et.silex.rdd.multiplex.implicits._
+  import io.radanalytics.silex.rdd.multiplex.implicits._
   import SplitRDDFunctions.defaultSL
 
   /**

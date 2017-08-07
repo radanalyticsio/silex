@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.app
+package io.radanalytics.silex.app
 
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
@@ -140,7 +140,7 @@ trait ReplAppLike {
   import scala.tools.nsc.interpreter._
   import scala.tools.nsc.Settings
   
-  def makeApp: AppCommon = new com.redhat.et.silex.app.ConsoleApp()
+  def makeApp: AppCommon = new io.radanalytics.silex.app.ConsoleApp()
   
   def main(args: Array[String]) {
     val repl = new ILoop {

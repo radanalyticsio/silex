@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.testing
+package io.radanalytics.silex.testing
 
 import scala.util.Random
 import org.scalatest._

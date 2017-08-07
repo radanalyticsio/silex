@@ -16,14 +16,14 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.util
+package io.radanalytics.silex.util
 
 import org.scalatest._
 
-import com.redhat.et.silex.testing.matchers._
+import io.radanalytics.silex.testing.matchers._
 
 class RichSliceSpec extends FlatSpec with Matchers {
-  import com.redhat.et.silex.util.richslice._
+  import io.radanalytics.silex.util.richslice._
 
   it should "slice with single indices" in {
     val data = (0 until 10).toVector

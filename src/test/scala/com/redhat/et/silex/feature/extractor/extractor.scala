@@ -16,12 +16,12 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.feature.extractor
+package io.radanalytics.silex.feature.extractor
 
 import org.scalatest._
 
 object FeatureSeqSpecSupport extends FlatSpec with Matchers {
-  import com.redhat.et.silex.scalatest.matchers._
+  import io.radanalytics.silex.scalatest.matchers._
 
   val densityEpsilon = 0.0001
 
@@ -194,9 +194,9 @@ class FeatureSeqSpec extends FlatSpec with Matchers {
 }
 
 object ExtractorSpecSupport extends FlatSpec with Matchers {
-  import com.redhat.et.silex.feature.extractor.Extractor
-  import com.redhat.et.silex.scalatest.matchers._
-  import com.redhat.et.silex.feature.indexfunction.{
+  import io.radanalytics.silex.feature.extractor.Extractor
+  import io.radanalytics.silex.scalatest.matchers._
+  import io.radanalytics.silex.feature.indexfunction.{
     IndexFunctionSpecSupport,
     InvertibleIndexFunctionSpecSupport
   }
@@ -270,10 +270,10 @@ object ExtractorSpecSupport extends FlatSpec with Matchers {
 }
 
 class ExtractorSpec extends FlatSpec with Matchers {
-  import com.redhat.et.silex.scalatest.matchers._
-  import com.redhat.et.silex.feature.extractor.Extractor
+  import io.radanalytics.silex.scalatest.matchers._
+  import io.radanalytics.silex.feature.extractor.Extractor
   import ExtractorSpecSupport._
-  import com.redhat.et.silex.feature.indexfunction.{
+  import io.radanalytics.silex.feature.indexfunction.{
     IndexFunction,
     InvertibleIndexFunction,
     IndexFunctionSpecSupport,

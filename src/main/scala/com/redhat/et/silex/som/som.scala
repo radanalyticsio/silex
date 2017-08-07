@@ -18,9 +18,9 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.som
+package io.radanalytics.silex.som
 
-import com.redhat.et.silex.util.SampleSink
+import io.radanalytics.silex.util.SampleSink
 
 import breeze.linalg._
 import breeze.numerics._

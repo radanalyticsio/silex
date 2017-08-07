@@ -16,14 +16,14 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.rdd.drop
+package io.radanalytics.silex.rdd.drop
 
-import com.redhat.et.silex.testing.PerTestSparkContext
+import io.radanalytics.silex.testing.PerTestSparkContext
 
 import org.scalatest._
 
 class DropRDDFunctionsSpec extends FunSuite with PerTestSparkContext {
-  import com.redhat.et.silex.rdd.drop.implicits._
+  import io.radanalytics.silex.rdd.drop.implicits._
 
   test("drop") {
     val rdd = context.makeRDD(Array(1, 2, 3, 4, 5, 6), 2)

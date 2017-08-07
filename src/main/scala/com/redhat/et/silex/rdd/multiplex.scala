@@ -16,7 +16,7 @@
  * limitations under the License
  */
 
-package com.redhat.et.silex.rdd.multiplex
+package io.radanalytics.silex.rdd.multiplex
 
 import scala.reflect.ClassTag
 
@@ -31,7 +31,7 @@ import org.apache.spark.storage.StorageLevel
  * @tparam T the element type of the RDD
  * {{{
  * // enable multiplexing methods
- * import com.redhat.et.silex.rdd.multiplex.implicits._
+ * import io.radanalytics.silex.rdd.multiplex.implicits._
  *
  * // A boolean predicate on data elements
  * val pred: Int => Boolean = ....

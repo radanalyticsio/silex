@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.util
+package io.radanalytics.silex.util
 
 /**
  * On-line mean and variance estimates for a stream of Double values.

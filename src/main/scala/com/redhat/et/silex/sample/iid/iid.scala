@@ -16,11 +16,11 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.sample.iid
+package io.radanalytics.silex.sample.iid
 
 import org.apache.spark.rdd.RDD
 
-import com.redhat.et.silex.feature.extractor.FeatureSeq
+import io.radanalytics.silex.feature.extractor.FeatureSeq
 
 /** Interface for enriched iid feature sampling methods on sequence-like collections of
   * feature vectors.  A feature vector is some sequential collection of Double values, whose
@@ -29,7 +29,7 @@ import com.redhat.et.silex.feature.extractor.FeatureSeq
   * is not assumed by this interface; multiple representations might be supported
   *
   * {{{
-  * import com.redhat.et.silex.sample.iid.implicits._
+  * import io.radanalytics.silex.sample.iid.implicits._
   *
   * rdd.iidFeatureSeqRDD(100000)
   * }}}
@@ -55,7 +55,7 @@ abstract class IIDFeatureSamplingMethods extends Serializable {
 
 /** Implicit conversions to support enriched iid feature sampling methods.
   * {{{
-  * import com.redhat.et.silex.sample.iid.implicits._
+  * import io.radanalytics.silex.sample.iid.implicits._
   *
   * rdd.iidFeatureSeqRDD(100000)
   * }}}

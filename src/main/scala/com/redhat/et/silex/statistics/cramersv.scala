@@ -17,11 +17,11 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.statistics
+package io.radanalytics.silex.statistics
 
 import scala.util.Random
 
-import com.redhat.et.silex.utils.crossProduct
+import io.radanalytics.silex.utils.crossProduct
 
 /**
  * "[[https://en.wikipedia.org/wiki/Cram%C3%A9r%27s_V Cramers' V]] is a measure of

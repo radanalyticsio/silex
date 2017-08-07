@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.testing
+package io.radanalytics.silex.testing
 
 /**
   * There are no actual KS tests implemented for scala (that I can find) - and so what I

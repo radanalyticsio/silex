@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.frame
+package io.radanalytics.silex.frame
 
 import org.apache.spark.sql.DataFrame
 import scala.language.implicitConversions

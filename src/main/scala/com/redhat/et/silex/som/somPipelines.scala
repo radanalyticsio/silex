@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.som
+package io.radanalytics.silex.som
 
 import org.apache.spark.ml.{Estimator, Model}
 import org.apache.spark.ml.hacks.Hacks
@@ -123,7 +123,7 @@ private[som] trait SOMParams extends Params with DefaultParamsWritable /* with H
 
 class SOMModel(override val uid: String, private val model: SOM) extends Model[SOMModel] with SOMParams {
   // Members declared in org.apache.spark.ml.Model
-  override def copy(extra: org.apache.spark.ml.param.ParamMap): com.redhat.et.silex.som.SOMModel = ???
+  override def copy(extra: org.apache.spark.ml.param.ParamMap): io.radanalytics.silex.som.SOMModel = ???
   
   // Members declared in org.apache.spark.ml.PipelineStage
   def transformSchema(schema: org.apache.spark.sql.types.StructType): org.apache.spark.sql.types.StructType = {
@@ -150,8 +150,8 @@ class SOMEstimator(override val uid: String) extends Estimator[SOMModel] with SO
   
   def this() = this(Identifiable.randomUID("silex-som"))
   
-  override def copy(extra: org.apache.spark.ml.param.ParamMap): org.apache.spark.ml.Estimator[com.redhat.et.silex.som.SOMModel] = ???
-  def fit(dataset: org.apache.spark.sql.Dataset[_]): com.redhat.et.silex.som.SOMModel = {
+  override def copy(extra: org.apache.spark.ml.param.ParamMap): org.apache.spark.ml.Estimator[io.radanalytics.silex.som.SOMModel] = ???
+  def fit(dataset: org.apache.spark.sql.Dataset[_]): io.radanalytics.silex.som.SOMModel = {
     
     transformSchema(dataset.schema)
     

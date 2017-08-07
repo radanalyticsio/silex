@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.util.vectors
+package io.radanalytics.silex.util.vectors
 
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.mllib.linalg.{
@@ -32,7 +32,7 @@ import breeze.linalg.{
   HashVector => HashBV
 }
 
-import com.redhat.et.silex.feature.extractor.FeatureSeq
+import io.radanalytics.silex.feature.extractor.FeatureSeq
 
 /** Implicit method enhancements for vector library interoperability */
 object implicits {

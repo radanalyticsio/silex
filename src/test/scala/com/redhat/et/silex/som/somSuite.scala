@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.som
+package io.radanalytics.silex.som
 
-import com.redhat.et.silex.testing.{PerTestSparkContext, TempDirFixtures}
+import io.radanalytics.silex.testing.{PerTestSparkContext, TempDirFixtures}
 
 import org.scalatest._
 

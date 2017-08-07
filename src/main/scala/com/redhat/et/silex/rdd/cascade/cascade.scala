@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.rdd.cascade
+package io.radanalytics.silex.rdd.cascade
 
 import scala.reflect.ClassTag
 
@@ -26,7 +26,7 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkContext, Partition, TaskContext}
 import org.apache.spark.{Dependency, NarrowDependency, OneToOneDependency}
 
-import com.redhat.et.silex.rdd.util
+import io.radanalytics.silex.rdd.util
 
 private[rdd]
 class CascadeDep[T: ClassTag](rdd: RDD[T], pid: Int) extends NarrowDependency[T](rdd) {
@@ -92,7 +92,7 @@ class CascadeRDDFunctions[T: ClassTag](self: RDD[T]) extends Serializable {
   * method.
   *
   * {{{
-  * import com.redhat.et.silex.rdd.cascade.implicits._
+  * import io.radanalytics.silex.rdd.cascade.implicits._
   *
   * rdd.cascadePartitions(cascadingFunction)
   * }}}

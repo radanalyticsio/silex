@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.util
+package io.radanalytics.silex.util
 
 object ProductToCSV {
   def productToCSV[P <: Product](p: P): String = 

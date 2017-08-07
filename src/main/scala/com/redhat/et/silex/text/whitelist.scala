@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.text;
+package io.radanalytics.silex.text;
 
 import org.apache.spark.rdd.RDD
 

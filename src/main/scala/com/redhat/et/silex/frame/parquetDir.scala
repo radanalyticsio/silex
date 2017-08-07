@@ -16,13 +16,13 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.frame
+package io.radanalytics.silex.frame
 
 import org.apache.spark.sql.{DataFrame, SQLContext, SparkSession}
 
 /** @deprecated */
 object ParquetDir {
-  import com.redhat.et.silex.frame.FrameDir.loadDir
+  import io.radanalytics.silex.frame.FrameDir.loadDir
 
   /** @deprecated */
   def loadParquetDir(sesh: SparkSession, dir: String): DataFrame = loadDir(sesh.sqlContext, dir, 0)

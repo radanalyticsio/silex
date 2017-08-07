@@ -16,16 +16,16 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.cluster
+package io.radanalytics.silex.cluster
 
 import org.apache.spark.rdd.RDD
-import com.redhat.et.silex.util.Logging
+import io.radanalytics.silex.util.Logging
 import org.apache.spark.mllib.tree.RandomForest
 
-import com.redhat.et.silex.feature.extractor.Extractor
+import io.radanalytics.silex.feature.extractor.Extractor
 
-import com.redhat.et.silex.sample.iid.implicits._
-import com.redhat.et.silex.util.vectors.implicits._
+import io.radanalytics.silex.sample.iid.implicits._
+import io.radanalytics.silex.util.vectors.implicits._
 import ClusteringRandomForestModel._
 
 /**

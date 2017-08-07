@@ -16,7 +16,7 @@
  * limitations under the License
  */
 
-package com.redhat.et.silex.sample.split
+package io.radanalytics.silex.sample.split
 
 import scala.reflect.ClassTag
 
@@ -29,7 +29,7 @@ import org.apache.spark.rdd.RDD
  * @tparam T The row type of the RDD
  * {{{
  * // import conversions to enhance RDDs with split sampling
- * import com.redhat.et.silex.sample.split.implicits._
+ * import io.radanalytics.silex.sample.split.implicits._
  *
  * // obtain a sequence of 5 RDDs randomly split from RDD 'data', where each element
  * // has probability 1/5 of being assigned to each output.
@@ -41,7 +41,7 @@ import org.apache.spark.rdd.RDD
  * }}}
  */
 class SplitSampleRDDFunctions[T :ClassTag](self: RDD[T]) extends Serializable {
-  import com.redhat.et.silex.rdd.multiplex.implicits._
+  import io.radanalytics.silex.rdd.multiplex.implicits._
 
   import SplitSampleRDDFunctions.{defaultSL, find}
 

@@ -16,12 +16,12 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.frame
+package io.radanalytics.silex.frame
 
 import org.apache.spark.sql.{DataFrame, SQLContext, SparkSession}
 
 object FrameDir {
-  import com.redhat.et.silex.util.DirUtils.readdir
+  import io.radanalytics.silex.util.DirUtils.readdir
   
   def loadDir(sesh: SparkSession, dir: String): DataFrame = {
     loadDir(sesh.sqlContext, dir, 0)

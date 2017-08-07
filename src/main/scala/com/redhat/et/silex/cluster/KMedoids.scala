@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.cluster
+package io.radanalytics.silex.cluster
 
 import scala.util.Random
 
@@ -24,7 +24,7 @@ import scala.concurrent.forkjoin.ForkJoinPool
 import scala.collection.parallel.ForkJoinTaskSupport
 
 import org.apache.spark.rdd.RDD
-import com.redhat.et.silex.util.Logging
+import io.radanalytics.silex.util.Logging
 
 /** An object for training a K-Medoid clustering model on Seq or RDD data.
   *

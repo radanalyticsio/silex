@@ -16,11 +16,11 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.util
+package io.radanalytics.silex.util
 
 import org.scalatest._
 
-import com.redhat.et.silex.testing.matchers._
+import io.radanalytics.silex.testing.matchers._
 
 object OptionalArgProperties extends FlatSpec with Matchers {
   def testEmpty[A](a: OptionalArg[A], d: => A) = {

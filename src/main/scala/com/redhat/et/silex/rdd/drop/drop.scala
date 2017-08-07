@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.rdd.drop
+package io.radanalytics.silex.rdd.drop
 
 import scala.reflect.ClassTag
 
@@ -24,8 +24,8 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkContext, Partition, TaskContext}
 import org.apache.spark.{Dependency, NarrowDependency, OneToOneDependency}
 
-import com.redhat.et.silex.rdd.promise.{ PromiseRDD, PromiseArgPartition }
-import com.redhat.et.silex.rdd.promise.implicits._
+import io.radanalytics.silex.rdd.promise.{ PromiseRDD, PromiseArgPartition }
+import io.radanalytics.silex.rdd.promise.implicits._
 
 private [rdd]
 class FanInDep[T: ClassTag](rdd: RDD[T]) extends NarrowDependency[T](rdd) {
@@ -37,7 +37,7 @@ class FanInDep[T: ClassTag](rdd: RDD[T]) extends NarrowDependency[T](rdd) {
 /** Enriched methods for providing the RDD analogs of Scala drop, dropRight and dropWhile,
   * which return an RDD as a result
   * {{{
-  * import com.redhat.et.silex.rdd.drop.implicits._
+  * import io.radanalytics.silex.rdd.drop.implicits._
   * }}}
   */
 class DropRDDFunctions[T :ClassTag](self: RDD[T]) extends Serializable {
@@ -181,7 +181,7 @@ class DropRDDFunctions[T :ClassTag](self: RDD[T]) extends Serializable {
 /** Provides implicit enrichment of an RDD with methods from [[DropRDDFunctions]]
   *
   * {{{
-  * import com.redhat.et.silex.rdd.drop.implicits._
+  * import io.radanalytics.silex.rdd.drop.implicits._
   * }}}
   */
 object implicits {

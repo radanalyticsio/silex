@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.util.VectorID
+package io.radanalytics.silex.util.VectorID
 
 import org.apache.spark.mllib.linalg.{Vector => MLVec, DenseVector => MLDenseVec, SparseVector => MLSparseVec}
 

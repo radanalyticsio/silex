@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.feature.extractor.spark
+package io.radanalytics.silex.feature.extractor.spark
 
-import com.redhat.et.silex.feature.extractor.FeatureSeq
+import io.radanalytics.silex.feature.extractor.FeatureSeq
 
 import org.apache.spark.mllib.linalg.{
   Vector => SV,
@@ -51,9 +51,9 @@ sealed class SparkFS(v: SV) extends FeatureSeq {
 
 /** Implicit conversions from Spark vectors to [[FeatureSeq]], and vice versa.
   * {{{
-  * import com.redhat.et.silex.feature.extractor.{ FeatureSeq, Extractor }
-  * import com.redhat.et.silex.feature.extractor.spark
-  * import com.redhat.et.silex.feature.extractor.spark.implicits._
+  * import io.radanalytics.silex.feature.extractor.{ FeatureSeq, Extractor }
+  * import io.radanalytics.silex.feature.extractor.spark
+  * import io.radanalytics.silex.feature.extractor.spark.implicits._
   * import org.apache.spark.mllib.linalg.DenseVector
   * import org.apache.spark.mllib.regression.LabeledPoint
   *

@@ -16,17 +16,17 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.sample.iid.rdd
+package io.radanalytics.silex.sample.iid.rdd
 
-import com.redhat.et.silex.testing.PerTestSparkContext
+import io.radanalytics.silex.testing.PerTestSparkContext
 
 import org.scalatest._
 
-import com.redhat.et.silex.testing.matchers._
-import com.redhat.et.silex.testing.KSTesting.{ medianKSD, SamplingIterator, D }
+import io.radanalytics.silex.testing.matchers._
+import io.radanalytics.silex.testing.KSTesting.{ medianKSD, SamplingIterator, D }
 
 class IIDFeatureSamplingMethodsRDDSpec extends FlatSpec with Matchers with PerTestSparkContext {
-  import com.redhat.et.silex.sample.iid.implicits._
+  import io.radanalytics.silex.sample.iid.implicits._
 
   def iidTest(data: SamplingIterator[Seq[Double]]) = {
     var success = true

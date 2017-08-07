@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.text;
+package io.radanalytics.silex.text;
 
 trait LogTokenizing {
   import scala.util.matching.Regex

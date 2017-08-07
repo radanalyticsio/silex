@@ -16,13 +16,13 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.feature.extractor
+package io.radanalytics.silex.feature.extractor
 
 /** Provides conversions from Breeze vectors to [[FeatureSeq]], and vice versa.
   * {{{
-  * import com.redhat.et.silex.feature.extractor.{ FeatureSeq, Extractor }
-  * import com.redhat.et.silex.feature.extractor.breeze
-  * import com.redhat.et.silex.feature.extractor.breeze.implicits._
+  * import io.radanalytics.silex.feature.extractor.{ FeatureSeq, Extractor }
+  * import io.radanalytics.silex.feature.extractor.breeze
+  * import io.radanalytics.silex.feature.extractor.breeze.implicits._
   * import _root_.breeze.linalg.DenseVector
   *
   * val bv = new DenseVector(Array(1.0, 2.0))

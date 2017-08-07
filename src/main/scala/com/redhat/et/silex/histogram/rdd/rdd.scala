@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.histogram.rdd
+package io.radanalytics.silex.histogram.rdd
 
 import scala.reflect.ClassTag
 import scala.collection.mutable
@@ -24,12 +24,12 @@ import scala.collection.mutable
 import org.apache.spark.AccumulableParam
 import org.apache.spark.rdd.RDD
 
-import com.redhat.et.silex.histogram.HistogramMethods
-import com.redhat.et.silex.histogram.details._
+import io.radanalytics.silex.histogram.HistogramMethods
+import io.radanalytics.silex.histogram.details._
 
 /** Enriched RDD methods for histogramming and counting from [[HistogramMethods]]
   * {{{
-  * import com.redhat.et.silex.histogram.implicits._
+  * import io.radanalytics.silex.histogram.implicits._
   * rdd.histBy(f)  // or other methods from HistogramMethods interface
   * }}}
   */

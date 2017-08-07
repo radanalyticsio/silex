@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.cluster
+package io.radanalytics.silex.cluster
 
 import org.apache.spark.rdd.RDD
 

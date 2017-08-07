@@ -16,15 +16,15 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.cluster
+package io.radanalytics.silex.cluster
 
 import scala.util.Random
 import org.scalatest._
 
 import org.apache.spark.rdd.RDD
 
-import com.redhat.et.silex.testing.PerTestSparkContext
-import com.redhat.et.silex.testing.KSTesting
+import io.radanalytics.silex.testing.PerTestSparkContext
+import io.radanalytics.silex.testing.KSTesting
 import KSTesting.SamplingIterator
 
 object KMedoidsSpecSupport {
@@ -73,7 +73,7 @@ object KMedoidsSpecSupport {
 }
 
 class SparklessKMedoidsSpec extends FlatSpec with Matchers {
-  import com.redhat.et.silex.testing.matchers._
+  import io.radanalytics.silex.testing.matchers._
   import KMedoidsSpecSupport._
 
   scala.util.Random.setSeed(23571113)
@@ -159,7 +159,7 @@ class SparklessKMedoidsSpec extends FlatSpec with Matchers {
 }
 
 class KMedoidsSpec extends FlatSpec with Matchers with PerTestSparkContext {
-  import com.redhat.et.silex.testing.matchers._
+  import io.radanalytics.silex.testing.matchers._
   import KMedoidsSpecSupport._
 
   scala.util.Random.setSeed(23571113)

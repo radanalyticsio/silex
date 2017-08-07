@@ -16,7 +16,7 @@
  * limitations under the License
  */
 
-package com.redhat.et.silex.rdd.lineage
+package io.radanalytics.silex.rdd.lineage
 
 import scala.reflect.ClassTag
 

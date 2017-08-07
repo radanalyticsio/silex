@@ -16,13 +16,13 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.util
+package io.radanalytics.silex.util
 
 /**
  * Provides idiomatic optional parameter values on top of [[Option]], but which can be passed in as
  * raw values, instead of having to pass in Some(value)
  * {{{
- * import com.redhat.et.silex.util.OptionalArg
+ * import io.radanalytics.silex.util.OptionalArg
  *
  * def possiblyFilter(data: Seq[Int], filterMax: OptionalArg[Int] = None) = {
  *   // Treat an OptionalArg like an Option, for idiomatic handling of unset vals as None

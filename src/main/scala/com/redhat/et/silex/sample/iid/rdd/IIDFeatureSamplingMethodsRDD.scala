@@ -16,21 +16,21 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.sample.iid.rdd
+package io.radanalytics.silex.sample.iid.rdd
 
 import scala.collection.mutable.ArrayBuffer
 
 import org.apache.spark.rdd.RDD
 
-import com.redhat.et.silex.util.Logging
+import io.radanalytics.silex.util.Logging
 
-import com.redhat.et.silex.sample.iid.IIDFeatureSamplingMethods
-import com.redhat.et.silex.feature.extractor.FeatureSeq
+import io.radanalytics.silex.sample.iid.IIDFeatureSamplingMethods
+import io.radanalytics.silex.feature.extractor.FeatureSeq
 
 /** Implementation-specific subclass of [[IIDFeatureSamplingMethods]] for RDDs */
 class IIDFeatureSamplingMethodsRDD(data: RDD[Seq[Double]]) extends IIDFeatureSamplingMethods with Logging {
 
-  import com.redhat.et.silex.sample.iid.infra._
+  import io.radanalytics.silex.sample.iid.infra._
 
   /** @inheritdoc */
   def iidFeatureSeqRDD(

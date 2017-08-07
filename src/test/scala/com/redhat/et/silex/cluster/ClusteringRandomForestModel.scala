@@ -16,11 +16,11 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.cluster
+package io.radanalytics.silex.cluster
 
 import org.scalatest._
-import com.redhat.et.silex.testing.PerTestSparkContext
-import com.redhat.et.silex.scalatest.matchers._
+import io.radanalytics.silex.testing.PerTestSparkContext
+import io.radanalytics.silex.scalatest.matchers._
 
 class ClusteringRandomForestModelSpec extends FlatSpec with Matchers with PerTestSparkContext {
   import scala.language.implicitConversions

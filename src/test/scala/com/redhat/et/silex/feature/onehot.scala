@@ -16,12 +16,12 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.feature.onehot
+package io.radanalytics.silex.feature.onehot
 
 import org.scalatest._
 
-import com.redhat.et.silex.testing.PerTestSparkContext
-import com.redhat.et.silex.testing.matchers._
+import io.radanalytics.silex.testing.PerTestSparkContext
+import io.radanalytics.silex.testing.matchers._
 
 class OneHotModelSpec extends FlatSpec with Matchers {
   it should "provide oneHotExtractor" in {
@@ -273,7 +273,7 @@ class OneHotModelSpec extends FlatSpec with Matchers {
 }
 
 class OneHotMethodsRDDSpec extends FlatSpec with Matchers  with PerTestSparkContext {
-  import com.redhat.et.silex.feature.onehot.implicits._
+  import io.radanalytics.silex.feature.onehot.implicits._
 
   it should "provide oneHotBy" in {
     val data = context.parallelize(Seq(3, 2, 1, 2, 1, 1), 2)

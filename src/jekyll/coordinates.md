@@ -13,5 +13,5 @@ resolvers += "Will's bintray" at "https://dl.bintray.com/willb/maven/"
 and then add Silex as a dependency:
 
 {% highlight scala %}
-libraryDependencies += "com.redhat.et" %% "silex" % "{{ site.silexVersion }}"
+libraryDependencies += "io.radanalytics" %% "silex" % "{{ site.silexVersion }}"
 {% endhighlight %}

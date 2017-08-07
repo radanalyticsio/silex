@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.rdd.promise
+package io.radanalytics.silex.rdd.promise
 
 import scala.reflect.ClassTag
 
@@ -24,8 +24,8 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkContext, Partition, TaskContext, 
                          Dependency, NarrowDependency}
 
-import com.redhat.et.silex.rdd.util
-import com.redhat.et.silex.util.Logging
+import io.radanalytics.silex.rdd.util
+import io.radanalytics.silex.util.Logging
 
 private[rdd]
 class FanOutDep[T: ClassTag](rdd: RDD[T]) extends NarrowDependency[T](rdd) {
@@ -82,7 +82,7 @@ class PromiseArgPartition(p: Partition, argv: Seq[PromiseRDD[_]]) extends Partit
   *
   * To enable these methods, import:
   * {{{
-  * import com.redhat.et.silex.rdd.promise.implicits._
+  * import io.radanalytics.silex.rdd.promise.implicits._
   * }}}
   */
 class PromiseRDDFunctions[T :ClassTag](self: RDD[T]) extends Serializable {
@@ -123,7 +123,7 @@ class PromiseRDDFunctions[T :ClassTag](self: RDD[T]) extends Serializable {
 /** Provides implicit enrichment of an RDD with methods from [[PromiseRDDFunctions]]
   *
   * {{{
-  * import com.redhat.et.silex.rdd.promise.implicits._
+  * import io.radanalytics.silex.rdd.promise.implicits._
   * }}}
   */
 object implicits {

@@ -15,15 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package com.redhat.et.silex.rdd.lineage
+package io.radanalytics.silex.rdd.lineage
 
 import org.scalatest._
 
-import com.redhat.et.silex.testing.PerTestSparkContext
+import io.radanalytics.silex.testing.PerTestSparkContext
 
 class LineageRDDFunctionsSpec extends FlatSpec with Matchers with PerTestSparkContext {
-  import com.redhat.et.silex.testing.matchers._
-  import com.redhat.et.silex.rdd.lineage.implicits._
+  import io.radanalytics.silex.testing.matchers._
+  import io.radanalytics.silex.rdd.lineage.implicits._
 
   it should "iterate correctly over lineage" in {
     val rdd1 = context.parallelize(1 to 10)

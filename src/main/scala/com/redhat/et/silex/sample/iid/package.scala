@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.sample
+package io.radanalytics.silex.sample
 
 /** A package that provides 'iid' sampling functionality on various collections whose elements
   * constitute some kind of feature vector representation, eg Seq, [[FeatureSeq]], etc.  The
@@ -25,7 +25,7 @@ package com.redhat.et.silex.sample
   * colums, but are statistically independent of any other columns, which is not necessarily true
   * of the input.
   * {{{
-  * import com.redhat.et.silex.sample.iid.implicits._
+  * import io.radanalytics.silex.sample.iid.implicits._
   *
   * rdd.iidFeatureSeqRDD(100000)
   * }}}

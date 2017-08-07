@@ -15,15 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package com.redhat.et.silex.rdd.multiplex
+package io.radanalytics.silex.rdd.multiplex
 
 import org.scalatest._
 
-import com.redhat.et.silex.testing.PerTestSparkContext
+import io.radanalytics.silex.testing.PerTestSparkContext
 
 class MuxRDDFunctionsSpec extends FlatSpec with Matchers with PerTestSparkContext {
-  import com.redhat.et.silex.testing.matchers._
-  import com.redhat.et.silex.rdd.multiplex.implicits._
+  import io.radanalytics.silex.testing.matchers._
+  import io.radanalytics.silex.rdd.multiplex.implicits._
 
   it should "provide muxPartitions for sequence" in {
     val rdd = context.parallelize((1 to 10), 2)

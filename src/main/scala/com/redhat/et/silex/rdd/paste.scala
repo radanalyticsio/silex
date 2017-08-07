@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.rdd.paste
+package io.radanalytics.silex.rdd.paste
 
 import scala.reflect.ClassTag
 

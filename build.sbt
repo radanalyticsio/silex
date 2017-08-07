@@ -1,6 +1,6 @@
 name := "silex"
 
-organization := "com.redhat.et"
+organization := "io.radanalytics"
 
 version := "0.1.2"
 
@@ -67,7 +67,7 @@ lazy val spark = project.dependsOn(silex)
       |import org.apache.spark.SparkContext
       |import org.apache.spark.SparkContext._
       |import org.apache.spark.rdd.RDD
-      |val app = new com.redhat.et.silex.app.ConsoleApp()
+      |val app = new io.radanalytics.silex.app.ConsoleApp()
       |val spark = app.context
     """.stripMargin,
     cleanupCommands in console := "spark.stop")

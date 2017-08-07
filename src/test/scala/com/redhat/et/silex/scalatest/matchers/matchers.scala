@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.scalatest
+package io.radanalytics.silex.scalatest
 
 object matchers {
   import org.scalatest.matchers.{ Matcher, MatchResult }

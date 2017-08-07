@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.feature.extractor
+package io.radanalytics.silex.feature.extractor
 
-import com.redhat.et.silex.feature.indexfunction._
+import io.radanalytics.silex.feature.indexfunction._
 
 /** An immutable sequence of Double values representing feature vectors extracted by an
   * [[Extractor]].  [[FeatureSeq]] is a monoid with respect to the concatenation operator

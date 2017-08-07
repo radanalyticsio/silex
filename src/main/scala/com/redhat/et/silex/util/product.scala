@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.utils
+package io.radanalytics.silex.utils
 
 object crossProduct {
   /**

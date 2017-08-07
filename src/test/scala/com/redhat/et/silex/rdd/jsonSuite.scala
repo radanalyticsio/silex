@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.rdd.json
+package io.radanalytics.silex.rdd.json
 
-import com.redhat.et.silex.rdd.json.JSONTransform.implicits._
-import com.redhat.et.silex.testing.PerTestSparkContext
+import io.radanalytics.silex.rdd.json.JSONTransform.implicits._
+import io.radanalytics.silex.testing.PerTestSparkContext
 
 import org.scalatest._
 

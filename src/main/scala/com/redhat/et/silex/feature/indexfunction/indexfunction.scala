@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.redhat.et.silex.feature.indexfunction
+package io.radanalytics.silex.feature.indexfunction
 
 import scala.language.implicitConversions
 
