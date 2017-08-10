@@ -1,0 +1,20 @@
+---
+layout: post
+title:  "Silex 0.2.0"
+date:   2017-08-10 13:01:38
+categories: examples
+---
+
+Silex 0.2.0 is released!
+
+Here are the main improvements and additions:
+
+* Preliminary support for ML pipeline training of self-organizing maps
+* All artifacts have been migrated to the [radanalytics.io](radanalytics.io) group
+* Silex is now built against Spark 2.2 and the most recent release of Scala 2.11
+
+You can:
+
+* [Include Silex](https://silex.radanalytics.io/coordinates/) in your projects,
+* [fork Silex on GitHub](https://github.com/radanalyticsio/silex), and
+* [read the API docs](https://silex.radanalytics.io/latest/api/).
