@@ -1,0 +1,197 @@
+<!DOCTYPE html >
+<html>
+        <head>
+          <title>iid - io.radanalytics.silex.sample.iid</title>
+          <meta name="description" content="iid - io.radanalytics.silex.sample.iid" />
+          <meta name="keywords" content="iid io.radanalytics.silex.sample.iid" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../lib/tools.tooltip.js"></script>
+      
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../../index.html';
+            var hash = 'io.radanalytics.silex.sample.iid.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img alt="Package" src="../../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../../package.html" class="extype" name="io">io</a>.<a href="../../../package.html" class="extype" name="io.radanalytics">radanalytics</a>.<a href="../../package.html" class="extype" name="io.radanalytics.silex">silex</a>.<a href="../package.html" class="extype" name="io.radanalytics.silex.sample">sample</a></p>
+        <h1>iid</h1><span class="permalink">
+      <a href="../../../../../index.html#io.radanalytics.silex.sample.iid.package" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">iid</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>A package that provides 'iid' sampling functionality on various collections whose elements
+constitute some kind of feature vector representation, eg Seq, <span class="extype" name="FeatureSeq">FeatureSeq</span>, etc.  The
+acronym 'iid' stands for 'independent, identically distributed', and refers to the property
+that sampled columns share the identical marginal distribution with corresponding input
+colums, but are statistically independent of any other columns, which is not necessarily true
+of the input.</p><pre><span class="kw">import</span> io.radanalytics.silex.sample.iid.implicits._
+
+rdd.iidFeatureSeqRDD(<span class="num">100000</span>)</pre></div><div class="toggleContainer block">
+          <span class="toggle">Linear Supertypes</span>
+          <div class="superTypes hiddenContent"><a href="../../../../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
+        </div></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        <div id="order">
+              <span class="filtertype">Ordering</span>
+              <ol>
+                
+                <li class="alpha in"><span>Alphabetic</span></li>
+                <li class="inherit out"><span>By Inheritance</span></li>
+              </ol>
+            </div>
+        <div id="ancestors">
+                <span class="filtertype">Inherited<br />
+                </span>
+                <ol id="linearization">
+                  <li class="in" name="io.radanalytics.silex.sample.iid"><span>iid</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                </ol>
+              </div><div id="ancestors">
+            <span class="filtertype"></span>
+            <ol>
+              <li class="hideall out"><span>Hide All</span></li>
+              <li class="showall in"><span>Show All</span></li>
+            </ol>
+          </div>
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="io.radanalytics.silex.sample.iid.IIDFeatureSamplingMethods" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="IIDFeatureSamplingMethodsextendsSerializable"></a>
+      <a id="IIDFeatureSamplingMethods:IIDFeatureSamplingMethods"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="IIDFeatureSamplingMethods.html"><span class="name">IIDFeatureSamplingMethods</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#io.radanalytics.silex.sample.iid.package@IIDFeatureSamplingMethodsextendsSerializable" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Interface for enriched iid feature sampling methods on sequence-like collections of
+feature vectors.</p><div class="fullcomment"><div class="comment cmt"><p>Interface for enriched iid feature sampling methods on sequence-like collections of
+feature vectors.  A feature vector is some sequential collection of Double values, whose
+values may be iid sampled to generate new synthetic feature vectors having the same
+marginal distributions as the input features.  The underlying feature vector representation
+is not assumed by this interface; multiple representations might be supported</p><pre><span class="kw">import</span> io.radanalytics.silex.sample.iid.implicits._
+
+rdd.iidFeatureSeqRDD(<span class="num">100000</span>)</pre></div></div>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="io.radanalytics.silex.sample.iid.implicits" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="implicits"></a>
+      <a id="implicits:implicits"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="implicits$.html"><span class="name">implicits</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#io.radanalytics.silex.sample.iid.package@implicits" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Implicit conversions to support enriched iid feature sampling methods.</p><div class="fullcomment"><div class="comment cmt"><p>Implicit conversions to support enriched iid feature sampling methods.</p><pre><span class="kw">import</span> io.radanalytics.silex.sample.iid.implicits._
+
+rdd.iidFeatureSeqRDD(<span class="num">100000</span>)</pre></div></div>
+    </li><li name="io.radanalytics.silex.sample.iid.rdd" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="rdd"></a>
+      <a id="rdd:rdd"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a href="rdd/package.html"><span class="name">rdd</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#io.radanalytics.silex.sample.iid.package@rdd" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        <div class="parent" name="scala.AnyRef">
+              <h3>Inherited from <a href="../../../../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></h3>
+            </div><div class="parent" name="scala.Any">
+              <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
+            </div>
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+
+
+    </body>
+      </html>

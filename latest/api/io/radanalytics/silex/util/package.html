@@ -1,0 +1,426 @@
+<!DOCTYPE html >
+<html>
+        <head>
+          <title>util - io.radanalytics.silex.util</title>
+          <meta name="description" content="util - io.radanalytics.silex.util" />
+          <meta name="keywords" content="util io.radanalytics.silex.util" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../lib/tools.tooltip.js"></script>
+      
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../index.html';
+            var hash = 'io.radanalytics.silex.util.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img alt="Package" src="../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../package.html" class="extype" name="io">io</a>.<a href="../../package.html" class="extype" name="io.radanalytics">radanalytics</a>.<a href="../package.html" class="extype" name="io.radanalytics.silex">silex</a></p>
+        <h1>util</h1><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.util.package" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">util</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="io.radanalytics.silex.util.DateTimeUTC" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="DateTimeUTCextendsProductwithSerializable"></a>
+      <a id="DateTimeUTC:DateTimeUTC"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="DateTimeUTC.html"><span class="name">DateTimeUTC</span></a><span class="params">(<span name="year">year: <span class="extype" name="scala.Int">Int</span></span>, <span name="month">month: <span class="extype" name="scala.Int">Int</span></span>, <span name="day">day: <span class="extype" name="scala.Int">Int</span></span>, <span name="hour">hour: <span class="extype" name="scala.Int">Int</span></span>, <span name="minute">minute: <span class="extype" name="scala.Int">Int</span></span>, <span name="second">second: <span class="extype" name="scala.Int">Int</span></span>, <span name="millis">millis: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">0</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.util.package@DateTimeUTCextendsProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A simple structure representing a calendar date in UTC.</p><div class="fullcomment"><div class="comment cmt"><p>A simple structure representing a calendar date in UTC.</p><p>This class is deliberately extremely simple and delegates out to <code>joda-time</code>
+for its actual functionality; it exists solely to abstract away our choice of
+date and time library.  (In JDK 8, it would probably make sense to use the new
+standard library date and time classes.)</p><p>If you need to deal with multiple time zones or different calendars,
+you're probably best served by using something more sophisticated (although the
+<code>from</code> method in the companion object to convert from a <span class="extype" name="org.joda.time.DateTime">org.joda.time.DateTime</span>
+will convert to UTC first).
+</p></div></div>
+    </li><li name="io.radanalytics.silex.util.Logging" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="LoggingextendsAnyRef"></a>
+      <a id="Logging:Logging"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Logging.html"><span class="name">Logging</span></a><span class="result"> extends <a href="../../../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.util.package@LoggingextendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="io.radanalytics.silex.util.OptionalArg" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="OptionalArg[A]extendsAnyVal"></a>
+      <a id="OptionalArg[A]:OptionalArg[A]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="OptionalArg.html"><span class="name">OptionalArg</span></a><span class="tparams">[<span name="A">A</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyVal">AnyVal</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.util.package@OptionalArg[A]extendsAnyVal" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Provides idiomatic optional parameter values on top of <span class="extype" name="Option">Option</span>, but which can be passed in as
+raw values, instead of having to pass in Some(value)</p><div class="fullcomment"><div class="comment cmt"><p>Provides idiomatic optional parameter values on top of <span class="extype" name="Option">Option</span>, but which can be passed in as
+raw values, instead of having to pass in Some(value)</p><pre><span class="kw">import</span> io.radanalytics.silex.util.OptionalArg
+
+<span class="kw">def</span> possiblyFilter(data: <span class="std">Seq</span>[<span class="std">Int</span>], filterMax: OptionalArg[<span class="std">Int</span>] = <span class="std">None</span>) = {
+  <span class="cmt">// Treat an OptionalArg like an Option, for idiomatic handling of unset vals as None</span>
+  <span class="kw">if</span> (filterMax.isEmpty) data <span class="kw">else</span> data.filter(_ &lt;= filterMax.get)
+}
+
+<span class="kw">val</span> data = <span class="std">Seq</span>(<span class="num">1</span>, -<span class="num">1</span>, <span class="num">2</span>)
+
+<span class="cmt">// default filterMax is None</span>
+possiblyFilter(data) <span class="cmt">// returns data unfiltered</span>
+
+<span class="cmt">// provide argument as (-1), instead of having to specify Some(-1)</span>
+possiblyFilter(data, filterMax = -<span class="num">1</span>) <span class="cmt">// returns Seq(-1)</span>
+
+<span class="cmt">// Support full Option methods and implicit conversion to Option</span>
+<span class="kw">import</span> OptionalArg.fullOptionSupport
+<span class="kw">def</span> possiblyFilterUsingMap(data: <span class="std">Seq</span>[<span class="std">Int</span>], filterMax: OptionalArg[<span class="std">Int</span>] = <span class="std">None</span>) = {
+  <span class="cmt">// use the 'map' method on an OptionalArg:</span>
+  filterMax.map(t <span class="kw">=&gt;</span> data.filter(_ &lt;= t)).getOrElse(data)
+}</pre></div><dl class="paramcmts block"><dt class="tparam">A</dt><dd class="cmt"><p>The underlying value type.</p></dd></dl></div>
+    </li><li name="io.radanalytics.silex.util.SampleSink" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="SampleSinkextendsSerializable"></a>
+      <a id="SampleSink:SampleSink"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="SampleSink.html"><span class="name">SampleSink</span></a><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.util.package@SampleSinkextendsSerializable" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">On-line mean and variance estimates for a stream of Double values.</p><div class="fullcomment"><div class="comment cmt"><p>On-line mean and variance estimates for a stream of Double values.
+Uses Chan's formulae.</p></div></div>
+    </li><li name="io.radanalytics.silex.util.TimeLens" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="TimeLensextendsAnyRef"></a>
+      <a id="TimeLens:TimeLens"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="TimeLens.html"><span class="name">TimeLens</span></a><span class="result"> extends <a href="../../../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.util.package@TimeLensextendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A function object to convert to and from times in some particular string format</p>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="io.radanalytics.silex.util.AWSTimeLens" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="AWSTimeLens"></a>
+      <a id="AWSTimeLens:AWSTimeLens"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="AWSTimeLens$.html"><span class="name">AWSTimeLens</span></a><span class="result"> extends <a href="TimeLens.html" class="extype" name="io.radanalytics.silex.util.TimeLens">TimeLens</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.util.package@AWSTimeLens" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A function object to convert to and from times in the AWS billing format.</p><div class="fullcomment"><div class="comment cmt"><p>A function object to convert to and from times in the AWS billing format.</p><p>These are UTC, in the form <code>YYYY-MM-DD HH:MM:SS</code>.  By converting to the <a href="DateTimeUTC.html" class="extype" name="io.radanalytics.silex.util.DateTimeUTC">DateTimeUTC</a>
+format, you can manipulate individual components or convert to another format for further
+processing.
+</p></div></div>
+    </li><li name="io.radanalytics.silex.util.Amortizer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Amortizer"></a>
+      <a id="Amortizer:Amortizer"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Amortizer$.html"><span class="name">Amortizer</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.util.package@Amortizer" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="io.radanalytics.silex.util.DateTimeUTC" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DateTimeUTC"></a>
+      <a id="DateTimeUTC:DateTimeUTC"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="DateTimeUTC$.html"><span class="name">DateTimeUTC</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.util.package@DateTimeUTC" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="io.radanalytics.silex.util.DirUtils" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DirUtils"></a>
+      <a id="DirUtils:DirUtils"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="DirUtils$.html"><span class="name">DirUtils</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.util.package@DirUtils" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="io.radanalytics.silex.util.OptionalArg" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="OptionalArg"></a>
+      <a id="OptionalArg:OptionalArg"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="OptionalArg$.html"><span class="name">OptionalArg</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.util.package@OptionalArg" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Factory methods and implicit conversions from raw values and Option to <a href="OptionalArg.html" class="extype" name="io.radanalytics.silex.util.OptionalArg">OptionalArg</a></p>
+    </li><li name="io.radanalytics.silex.util.ProductToCSV" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ProductToCSV"></a>
+      <a id="ProductToCSV:ProductToCSV"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="ProductToCSV$.html"><span class="name">ProductToCSV</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.util.package@ProductToCSV" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="io.radanalytics.silex.util.RegexImplicits" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RegexImplicits"></a>
+      <a id="RegexImplicits:RegexImplicits"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="RegexImplicits$.html"><span class="name">RegexImplicits</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.util.package@RegexImplicits" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="io.radanalytics.silex.util.SampleSink" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SampleSink"></a>
+      <a id="SampleSink:SampleSink"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="SampleSink$.html"><span class="name">SampleSink</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.util.package@SampleSink" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="io.radanalytics.silex.util.TimeUtils" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TimeUtils"></a>
+      <a id="TimeUtils:TimeUtils"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="TimeUtils$.html"><span class="name">TimeUtils</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.util.package@TimeUtils" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="io.radanalytics.silex.util.VectorID" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="VectorID"></a>
+      <a id="VectorID:VectorID"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a href="VectorID/package.html"><span class="name">VectorID</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.util.package@VectorID" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="io.radanalytics.silex.util.richslice" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="richslice"></a>
+      <a id="richslice:richslice"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="richslice$.html"><span class="name">richslice</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.util.package@richslice" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p>
+    </li><li name="io.radanalytics.silex.util.vectors" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="vectors"></a>
+      <a id="vectors:vectors"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a href="vectors/package.html"><span class="name">vectors</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.util.package@vectors" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+
+
+    </body>
+      </html>

@@ -9,11 +9,11 @@
     <meta name="author" content="William Benton, Erik Erlandson, and contributors">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link href="http://silex.freevariable.com/assets/themes/bootstrap/resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://silex.radanalytics.io/assets/themes/bootstrap/resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/syntax.css" rel="stylesheet">
     
     <!--[if lt IE 9]>
-      <script src="http://silex.freevariable.com/assets/themes/bootstrap/resources/respond/Respond.min.js"></script>
+      <script src="https://silex.radanalytics.io/assets/themes/bootstrap/resources/respond/Respond.min.js"></script>
     <![endif]-->
 
     <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
@@ -83,13 +83,13 @@
     <div class="content">
       <p>Since version 0.0.2, Silex has included <a href="/latest/api/#com.redhat.et.silex.frame.NaturalJoining">a simple interface to perform natural join operations on data frames</a>.  (For more background, <a href="http://chapeau.freevariable.com/2015/04/natural-join-for-spark-dataframes.html">see here</a>.)  Here’s an example of this functionality in action:</p>
 
-<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="cm">/* Apologies to Paul Revere, but we wanted a join that</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="cm">/* Apologies to Paul Revere, but we wanted a join that</span>
 <span class="cm">   would actually filter some rows out. */</span>
 <span class="k">case</span> <span class="k">class</span> <span class="nc">TwoIfByLand</span><span class="o">(</span><span class="n">i</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">byLand</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="o">{}</span>
 <span class="k">case</span> <span class="k">class</span> <span class="nc">ThreeIfBySea</span><span class="o">(</span><span class="n">i</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">bySea</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="o">{}</span>
 
-<span class="k">val</span> <span class="n">landDF</span> <span class="k">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">parallelize</span><span class="o">((</span><span class="mi">0</span> <span class="n">to</span> <span class="mi">50</span> <span class="n">by</span> <span class="mi">2</span><span class="o">).</span><span class="n">map</span> <span class="o">{</span> <span class="n">i</span> <span class="k">=&gt;</span> <span class="nc">TwoIfByLand</span><span class="o">(</span><span class="n">i</span><span class="o">,</span> <span class="s">s&quot;land: </span><span class="si">$i</span><span class="s">&quot;</span><span class="o">)</span> <span class="o">}).</span><span class="n">toDF</span><span class="o">()</span>
-<span class="k">val</span> <span class="n">seaDF</span> <span class="k">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">parallelize</span><span class="o">((</span><span class="mi">0</span> <span class="n">to</span> <span class="mi">50</span> <span class="n">by</span> <span class="mi">3</span><span class="o">).</span><span class="n">map</span> <span class="o">{</span> <span class="n">i</span> <span class="k">=&gt;</span> <span class="nc">ThreeIfBySea</span><span class="o">(</span><span class="n">i</span><span class="o">,</span> <span class="s">s&quot;sea: </span><span class="si">$i</span><span class="s">&quot;</span><span class="o">)</span> <span class="o">}).</span><span class="n">toDF</span><span class="o">()</span>
+<span class="k">val</span> <span class="n">landDF</span> <span class="k">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">parallelize</span><span class="o">((</span><span class="mi">0</span> <span class="n">to</span> <span class="mi">50</span> <span class="n">by</span> <span class="mi">2</span><span class="o">).</span><span class="n">map</span> <span class="o">{</span> <span class="n">i</span> <span class="k">=&gt;</span> <span class="nc">TwoIfByLand</span><span class="o">(</span><span class="n">i</span><span class="o">,</span> <span class="n">s</span><span class="s">&quot;land: $i&quot;</span><span class="o">)</span> <span class="o">}).</span><span class="n">toDF</span><span class="o">()</span>
+<span class="k">val</span> <span class="n">seaDF</span> <span class="k">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">parallelize</span><span class="o">((</span><span class="mi">0</span> <span class="n">to</span> <span class="mi">50</span> <span class="n">by</span> <span class="mi">3</span><span class="o">).</span><span class="n">map</span> <span class="o">{</span> <span class="n">i</span> <span class="k">=&gt;</span> <span class="nc">ThreeIfBySea</span><span class="o">(</span><span class="n">i</span><span class="o">,</span> <span class="n">s</span><span class="s">&quot;sea: $i&quot;</span><span class="o">)</span> <span class="o">}).</span><span class="n">toDF</span><span class="o">()</span>
 
 <span class="k">import</span> <span class="nn">com.redhat.et.silex.frame.NaturalJoin.implicits._</span>
 
@@ -127,8 +127,8 @@
 
     
 
-    <script src="http://silex.freevariable.com/assets/themes/bootstrap/resources/jquery/jquery.min.js"></script>
-    <script src="http://silex.freevariable.com/assets/themes/bootstrap/resources/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://silex.radanalytics.io/assets/themes/bootstrap/resources/jquery/jquery.min.js"></script>
+    <script src="https://silex.radanalytics.io/assets/themes/bootstrap/resources/bootstrap/js/bootstrap.min.js"></script>
   </body>
 </html>
 

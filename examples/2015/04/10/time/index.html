@@ -9,11 +9,11 @@
     <meta name="author" content="William Benton, Erik Erlandson, and contributors">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link href="http://silex.freevariable.com/assets/themes/bootstrap/resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://silex.radanalytics.io/assets/themes/bootstrap/resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/syntax.css" rel="stylesheet">
     
     <!--[if lt IE 9]>
-      <script src="http://silex.freevariable.com/assets/themes/bootstrap/resources/respond/Respond.min.js"></script>
+      <script src="https://silex.radanalytics.io/assets/themes/bootstrap/resources/respond/Respond.min.js"></script>
     <![endif]-->
 
     <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
@@ -85,7 +85,7 @@
 
 <p>Here’s a simple example of it in action:</p>
 
-<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="k">import</span> <span class="nn">com.redhat.et.silex.util._</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">import</span> <span class="nn">com.redhat.et.silex.util._</span>
 
 <span class="k">val</span> <span class="n">utc</span> <span class="k">=</span> <span class="nc">DateTimeUTC</span><span class="o">.</span><span class="n">fromSecondsSinceEpoch</span><span class="o">(</span><span class="mi">1428690706</span><span class="o">)</span>
 <span class="c1">// utc: com.redhat.et.silex.util.DateTimeUTC = DateTimeUTC(2015,4,10,18,31,46,0)</span>
@@ -122,7 +122,7 @@
 
 <p>The second interface is the <a href="/latest/api/index.html#com.redhat.et.silex.util.TimeLens"><code>TimeLens</code></a> trait, which lets applications define conversions from a particular string-based time format to a <code>DateTimeUTC</code> instance and back.  (This is not exactly a “lens” in the functional programming sense, since it doesn’t extract or modify individual components of the time, but it provides the round-trip functionality of a lens.)  Silex currently includes one <code>TimeLens</code> (to convert to and from timestamps in the format used by Amazon Web Services billing data); we’ve reproduced it below as an example:</p>
 
-<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="cm">/** </span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="cm">/** </span>
 <span class="cm">  * A function object to convert to and from times in the AWS billing format.</span>
 <span class="cm">  * </span>
 <span class="cm">  * These are UTC, in the form &lt;code&gt;YYYY-MM-DD HH:MM:SS&lt;/code&gt;.  By converting to the </span>
@@ -163,8 +163,8 @@
 
     
 
-    <script src="http://silex.freevariable.com/assets/themes/bootstrap/resources/jquery/jquery.min.js"></script>
-    <script src="http://silex.freevariable.com/assets/themes/bootstrap/resources/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://silex.radanalytics.io/assets/themes/bootstrap/resources/jquery/jquery.min.js"></script>
+    <script src="https://silex.radanalytics.io/assets/themes/bootstrap/resources/bootstrap/js/bootstrap.min.js"></script>
   </body>
 </html>
 

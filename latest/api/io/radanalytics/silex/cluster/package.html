@@ -1,0 +1,343 @@
+<!DOCTYPE html >
+<html>
+        <head>
+          <title>cluster - io.radanalytics.silex.cluster</title>
+          <meta name="description" content="cluster - io.radanalytics.silex.cluster" />
+          <meta name="keywords" content="cluster io.radanalytics.silex.cluster" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../lib/tools.tooltip.js"></script>
+      
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../index.html';
+            var hash = 'io.radanalytics.silex.cluster.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img alt="Package" src="../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../package.html" class="extype" name="io">io</a>.<a href="../../package.html" class="extype" name="io.radanalytics">radanalytics</a>.<a href="../package.html" class="extype" name="io.radanalytics.silex">silex</a></p>
+        <h1>cluster</h1><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.cluster.package" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">cluster</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="io.radanalytics.silex.cluster.ClusteringRandomForestModel" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ClusteringRandomForestModelextendsSerializable"></a>
+      <a id="ClusteringRandomForestModel:ClusteringRandomForestModel"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="ClusteringRandomForestModel.html"><span class="name">ClusteringRandomForestModel</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.cluster.package@ClusteringRandomForestModelextendsSerializable" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Enhance Spark RandomForestModel objects with methods for Random Forest Clustering</p>
+    </li><li name="io.radanalytics.silex.cluster.ClusteringTreeModel" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ClusteringTreeModelextendsSerializable"></a>
+      <a id="ClusteringTreeModel:ClusteringTreeModel"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="ClusteringTreeModel.html"><span class="name">ClusteringTreeModel</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.cluster.package@ClusteringTreeModelextendsSerializable" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Enhance a Spark DecisionTreeModel object with methods for Random Forest clustering</p>
+    </li><li name="io.radanalytics.silex.cluster.KMedoids" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="KMedoids[T]extendsSerializablewithLoggingwithProduct"></a>
+      <a id="KMedoids[T]:KMedoids[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="KMedoids.html"><span class="name">KMedoids</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="metric">metric: (<span class="extype" name="io.radanalytics.silex.cluster.KMedoids.T">T</span>, <span class="extype" name="io.radanalytics.silex.cluster.KMedoids.T">T</span>) ⇒ <span class="extype" name="scala.Double">Double</span></span>, <span name="k">k: <span class="extype" name="scala.Int">Int</span></span>, <span name="maxIterations">maxIterations: <span class="extype" name="scala.Int">Int</span></span>, <span name="epsilon">epsilon: <span class="extype" name="scala.Double">Double</span></span>, <span name="fractionEpsilon">fractionEpsilon: <span class="extype" name="scala.Double">Double</span></span>, <span name="sampleSize">sampleSize: <span class="extype" name="scala.Int">Int</span></span>, <span name="numThreads">numThreads: <span class="extype" name="scala.Int">Int</span></span>, <span name="seed">seed: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span> with <a href="../util/Logging.html" class="extype" name="io.radanalytics.silex.util.Logging">Logging</a> with <span class="extype" name="scala.Product">Product</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.cluster.package@KMedoids[T]extendsSerializablewithLoggingwithProduct" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">An object for training a K-Medoid clustering model on Seq or RDD data.</p><div class="fullcomment"><div class="comment cmt"><p>An object for training a K-Medoid clustering model on Seq or RDD data.</p><p>Data is required to have a metric function defined on it, but it does not require an algebra
+over data elements, as K-Means clustering does.
+</p></div><dl class="paramcmts block"><dt class="param">metric</dt><dd class="cmt"><p>The distance metric imposed on data elements</p></dd><dt class="param">k</dt><dd class="cmt"><p>The number of clusters to use.  If k is zero, the clustering will attempt to
+identify a number of clusters that is &quot;good&quot; w.r.t. Minimum Description Length.</p></dd><dt class="param">maxIterations</dt><dd class="cmt"><p>The maximum number of model refinement iterations to run</p></dd><dt class="param">epsilon</dt><dd class="cmt"><p>The epsilon threshold to use.  Must be &gt;= 0.
+If c1 is the current clustering model cost, and c0 is the cost of the previous model,
+then refinement halts when (c0 - c1) &lt;= epsilon (Lower cost is better).</p></dd><dt class="param">fractionEpsilon</dt><dd class="cmt"><p>The fractionEpsilon threshold to use.  Must be &gt;= 0.
+If c1 is the current clustering model cost, and c0 is the cost of the previous model,
+then refinement halts when (c0 - c1) / c0 &lt;= fractionEpsilon (Lower cost is better).</p></dd><dt class="param">sampleSize</dt><dd class="cmt"><p>The target size of the random sample.  Must be &gt; 0.</p></dd><dt class="param">numThreads</dt><dd class="cmt"><p>The number of threads to use while clustering</p></dd><dt class="param">seed</dt><dd class="cmt"><p>The random seed to use for RNG.
+Cluster training runs with the same starting random seed will be the same.  By default,
+training runs will vary randomly.</p></dd></dl></div>
+    </li><li name="io.radanalytics.silex.cluster.KMedoidsModel" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="KMedoidsModel[T]extendsSerializable"></a>
+      <a id="KMedoidsModel[T]:KMedoidsModel[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="KMedoidsModel.html"><span class="name">KMedoidsModel</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.cluster.package@KMedoidsModel[T]extendsSerializable" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Represents a K-Medoids clustering model
+</p>
+    </li><li name="io.radanalytics.silex.cluster.RandomForestCluster" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="RandomForestCluster[T]extendsSerializablewithLoggingwithProduct"></a>
+      <a id="RandomForestCluster[T]:RandomForestCluster[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="RandomForestCluster.html"><span class="name">RandomForestCluster</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="extractor">extractor: (<span class="extype" name="io.radanalytics.silex.cluster.RandomForestCluster.T">T</span>) ⇒ <a href="../../../../scala/package.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="scala.Double">Double</span>]</span>, <span name="categoryInfo">categoryInfo: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Int">Int</span>, <span class="extype" name="scala.Int">Int</span>]</span>, <span name="syntheticSS">syntheticSS: <span class="extype" name="scala.Int">Int</span></span>, <span name="rfNumTrees">rfNumTrees: <span class="extype" name="scala.Int">Int</span></span>, <span name="rfMaxDepth">rfMaxDepth: <span class="extype" name="scala.Int">Int</span></span>, <span name="rfMaxBins">rfMaxBins: <span class="extype" name="scala.Int">Int</span></span>, <span name="clusterK">clusterK: <span class="extype" name="scala.Int">Int</span></span>, <span name="clusterMaxIter">clusterMaxIter: <span class="extype" name="scala.Int">Int</span></span>, <span name="clusterEps">clusterEps: <span class="extype" name="scala.Double">Double</span></span>, <span name="clusterFractionEps">clusterFractionEps: <span class="extype" name="scala.Double">Double</span></span>, <span name="clusterSS">clusterSS: <span class="extype" name="scala.Int">Int</span></span>, <span name="clusterThreads">clusterThreads: <span class="extype" name="scala.Int">Int</span></span>, <span name="seed">seed: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span> with <a href="../util/Logging.html" class="extype" name="io.radanalytics.silex.util.Logging">Logging</a> with <span class="extype" name="scala.Product">Product</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.cluster.package@RandomForestCluster[T]extendsSerializablewithLoggingwithProduct" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">An object for training a Random Forest clustering model on unsupervised data.</p><div class="fullcomment"><div class="comment cmt"><p>An object for training a Random Forest clustering model on unsupervised data.</p><p>Data is required to have a mapping into a feature space of type Seq[Double].
+</p></div><dl class="paramcmts block"><dt class="param">extractor</dt><dd class="cmt"><p>A feature extraction function for data objects</p></dd><dt class="param">categoryInfo</dt><dd class="cmt"><p>A map from feature indexes into numbers of categories.  Feature indexes
+that do not have an entry in the map are assumed to be numeric, not categorical.  Defaults to
+category-info from <span class="extype" name="Extractor">Extractor</span>, if the feature extraction function is of this type.  Otherwise
+defaults to empty, i.e. all numeric features.</p></dd><dt class="param">syntheticSS</dt><dd class="cmt"><p>The size of synthetic (margin-sampled) data to be constructed.  Defaults to
+the size of the input data.</p></dd><dt class="param">rfNumTrees</dt><dd class="cmt"><p>The number of decision trees to train in the Random Forest  Defaults to 10.</p></dd><dt class="param">rfMaxDepth</dt><dd class="cmt"><p>Maximum decision tree depth.  Defaults to 5.</p></dd><dt class="param">rfMaxBins</dt><dd class="cmt"><p>Maximum histogramming bins to use for numeric data.  Defaults to 5.</p></dd><dt class="param">clusterK</dt><dd class="cmt"><p>The number of clusters to use when clustering leaf-id vectors.  Defaults to
+an automatic estimation of a &quot;good&quot; number of clusters.</p></dd><dt class="param">clusterMaxIter</dt><dd class="cmt"><p>Maximum clustering refinement iterations to compute.  Defaults to 25.</p></dd><dt class="param">clusterEps</dt><dd class="cmt"><p>Halt clustering if clustering metric-cost changes by less than this value.
+Defaults to 0</p></dd><dt class="param">clusterFractionEps</dt><dd class="cmt"><p>Halt clustering if clustering metric-cost changes by this fractional
+value from previous iteration.  Defaults to 0.0001</p></dd><dt class="param">clusterSS</dt><dd class="cmt"><p>If data is larger, use this random sample size.  Defaults to 1000.</p></dd><dt class="param">clusterThreads</dt><dd class="cmt"><p>Use this number of threads to accelerate clustering.  Defaults to 1.</p></dd><dt class="param">seed</dt><dd class="cmt"><p>A seed to use for RNG.  Defaults to using a randomized seed value.</p></dd></dl></div>
+    </li><li name="io.radanalytics.silex.cluster.RandomForestClusterModel" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RandomForestClusterModel[T]extendsSerializable"></a>
+      <a id="RandomForestClusterModel[T]:RandomForestClusterModel[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="RandomForestClusterModel.html"><span class="name">RandomForestClusterModel</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.cluster.package@RandomForestClusterModel[T]extendsSerializable" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Represents a Random Forest clustering model of some data objects</p>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="io.radanalytics.silex.cluster.ClusteringRandomForestModel" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ClusteringRandomForestModel"></a>
+      <a id="ClusteringRandomForestModel:ClusteringRandomForestModel"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="ClusteringRandomForestModel$.html"><span class="name">ClusteringRandomForestModel</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.cluster.package@ClusteringRandomForestModel" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="io.radanalytics.silex.cluster.ClusteringTreeModel" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ClusteringTreeModel"></a>
+      <a id="ClusteringTreeModel:ClusteringTreeModel"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="ClusteringTreeModel$.html"><span class="name">ClusteringTreeModel</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.cluster.package@ClusteringTreeModel" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Class definitions for ClusteringTreeModel methods</p>
+    </li><li name="io.radanalytics.silex.cluster.KMedoids" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="KMedoids"></a>
+      <a id="KMedoids:KMedoids"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="KMedoids$.html"><span class="name">KMedoids</span></a><span class="result"> extends <a href="../util/Logging.html" class="extype" name="io.radanalytics.silex.util.Logging">Logging</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.cluster.package@KMedoids" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Utilities used by K-Medoids clustering</p>
+    </li><li name="io.radanalytics.silex.cluster.KMedoidsModel" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="KMedoidsModel"></a>
+      <a id="KMedoidsModel:KMedoidsModel"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="KMedoidsModel$.html"><span class="name">KMedoidsModel</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.cluster.package@KMedoidsModel" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Utility functions for KMedoidsModel</p>
+    </li><li name="io.radanalytics.silex.cluster.RandomForestCluster" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RandomForestCluster"></a>
+      <a id="RandomForestCluster:RandomForestCluster"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="RandomForestCluster$.html"><span class="name">RandomForestCluster</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.cluster.package@RandomForestCluster" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Factory functions and implicits for RandomForestCluster</p>
+    </li><li name="io.radanalytics.silex.cluster.RandomForestClusterModel" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RandomForestClusterModel"></a>
+      <a id="RandomForestClusterModel:RandomForestClusterModel"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="RandomForestClusterModel$.html"><span class="name">RandomForestClusterModel</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.cluster.package@RandomForestClusterModel" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Factory functions and implicits for RandomForestClusterModel</p>
+    </li><li name="io.radanalytics.silex.cluster.infra" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="infra"></a>
+      <a id="infra:infra"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a href="infra/package.html"><span class="name">infra</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.cluster.package@infra" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+
+
+    </body>
+      </html>
