@@ -1,12 +1,12 @@
 name := "silex"
 
-organization := "com.redhat.et"
+organization := "io.radanalytics"
 
-version := "0.1.2"
+version := "0.2.0"
 
-val SPARK_VERSION = "2.1.0"
+val SPARK_VERSION = "2.2.0"
 
-scalaVersion := "2.10.6"
+scalaVersion := "2.11.11"
 
 crossScalaVersions := Seq("2.10.6", "2.11.11")
 
@@ -20,9 +20,9 @@ def commonSettings = Seq(
     "org.apache.commons" % "commons-math3" % "3.6",
     "org.scalatest" %% "scalatest" % "2.2.4" % Test,
     "org.slf4j" % "slf4j-nop" % "1.7.6" % Test,
-    "org.json4s" %% "json4s-jackson" % "3.2.10" % "provided",
-    "org.scalanlp" %% "breeze" % "0.12",
-    "org.scalanlp" %% "breeze-natives" % "0.12"
+    "org.json4s" %% "json4s-jackson" % "3.2.11" % "provided",
+    "org.scalanlp" %% "breeze" % "0.13.1",
+    "org.scalanlp" %% "breeze-natives" % "0.13.1"
   )
 )
 
@@ -52,7 +52,7 @@ site.jekyllSupport()
 
 ghpages.settings
 
-git.remoteRepo := "git@github.com:willb/silex.git"
+git.remoteRepo := "git@github.com:radanalyticsio/silex.git"
 
 lazy val silex = project in file(".")
 
@@ -67,7 +67,7 @@ lazy val spark = project.dependsOn(silex)
       |import org.apache.spark.SparkContext
       |import org.apache.spark.SparkContext._
       |import org.apache.spark.rdd.RDD
-      |val app = new com.redhat.et.silex.app.ConsoleApp()
+      |val app = new io.radanalytics.silex.app.ConsoleApp()
       |val spark = app.context
     """.stripMargin,
     cleanupCommands in console := "spark.stop")

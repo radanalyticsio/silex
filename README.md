@@ -15,14 +15,14 @@ resolvers += "Will's bintray" at "https://dl.bintray.com/willb/maven/"
 and then add Silex as a dependency:
 
 ```scala
-libraryDependencies += "com.redhat.et" %% "silex" % "0.1.2"
+libraryDependencies += "io.radanalytics" %% "silex" % "0.2.0"
 ```
 
 Since version 0.0.9, Silex is built for both Scala 2.10 and Scala 2.11.  Since version 0.1.0, Silex depends on Spark 2.0.
 
 ### Documentation
 
-The [Silex web site](http://silex.freevariable.com/) includes some examples of Silex functionality in use and [API docs](http://silex.freevariable.com/latest/api/#package).
+The [Silex web site](https://silex.radanalytics.io/) includes some examples of Silex functionality in use and [API docs](https://silex.radanalytics.io/latest/api/#package).
 
 ### Notes for developers
 
@@ -39,4 +39,4 @@ To cut a new release, use the `git flow` release workflow.
 ### CI Status
 
 [![Build Status](https://travis-ci.org/radanalyticsio/silex.svg?branch=develop)](https://travis-ci.org/radanalyticsio/silex)
-[![Coverage Status](https://coveralls.io/repos/github/willb/silex/badge.svg?branch=develop)](https://coveralls.io/github/willb/silex?branch=develop)
+[![Coverage Status](https://coveralls.io/repos/github/radanalyticsio/silex/badge.svg?branch=develop)](https://coveralls.io/github/radanalyticsio/silex?branch=develop)
