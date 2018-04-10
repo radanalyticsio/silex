@@ -259,3 +259,83 @@ object Example {
     SOM.trainDF(xdim, ydim, 3, iterations, examples, sigmaScale=0.7, hook=writeStep _)
   }
 }
+
+object ImageExample {
+  import org.apache.spark.SparkContext
+  import org.apache.spark.ml.linalg.{DenseVector => DV}
+  
+  import java.awt.image.BufferedImage
+  import javax.imageio.ImageIO
+
+  import scala.util.Try
+
+  import breeze.linalg.{DenseVector => BDV}
+
+  object ImageCallbacks {
+    type CoordinateHook = Int => (Int, Int)
+    type ColorHook = BDV[Double] => Int
+  
+    def rowMajor(cols: Int)(idx: Int) = (idx / cols, idx % cols)
+    def columnMajor(rows: Int)(idx: Int) = (idx / rows, idx % rows)
+  
+    def normalizedToGrayscale(dv: BDV[Double]): Int = {
+      assert(dv.length == 1)
+      ((dv(0) * 255).toInt << 16) | ((dv(0) * 255).toInt << 8) | (dv(0) * 255).toInt
+    }
+  
+    def normalizedToGrayscaleInverse(dv: BDV[Double]): Int = {
+      assert(dv.length == 1)
+      val v = ((1.0 - dv(0)) * 255).toInt
+      (v << 16) | (v << 8) | v
+    }
+  
+    def vec2rgb(dv: BDV[Double]): Int = {
+      assert(dv.length >= 3)
+      ((dv(0) * 255).toInt << 16) | ((dv(1) * 255).toInt << 8) | (dv(2) * 255).toInt
+    }
+  
+    def vec2argb(dv: BDV[Double]): Int = {
+      assert(dv.length >= 4)
+      ((dv(0) * 255).toInt << 24) | ((dv(1) * 255).toInt << 16) | ((dv(2) * 255).toInt << 8) | (dv(3) * 255).toInt
+    }
+  }
+
+  object ImageWriter {  
+    import ImageCallbacks._
+  
+    def write(xdim: Int, ydim: Int, vecs: Seq[BDV[Double]], file: String, kind: String = "PNG") {
+      write(xdim, ydim, vecs, file, kind, columnMajor(ydim), vec2rgb _)
+    }
+  
+    def write(xdim: Int, ydim: Int, vecs: Seq[BDV[Double]], file: String, kind: String, coordFunc: CoordinateHook, colFunc: ColorHook) {
+      val image = new BufferedImage(xdim, ydim, BufferedImage.TYPE_INT_RGB)
+      val ifile = new java.io.File(file)
+    
+      vecs.zipWithIndex.foreach { case (vec, idx) => 
+        val color = colFunc(vec)
+        val (x, y) = coordFunc(idx)
+        image.setRGB(x, y, color)
+      }
+    
+      javax.imageio.ImageIO.write(image, kind, ifile)
+    }
+  }
+  
+  def main(args: Array[String]) {
+    val app = new io.radanalytics.silex.app.ConsoleApp()
+    run(64, 32, 40, app.context, 10000)
+    app.context.stop
+  }
+  
+  def run(xdim: Int, ydim: Int, iterations: Int, sc: SparkContext, exampleCount: Int, seed: Option[Int] = None) {
+    def writeStep(step: Int, som: SOM) {
+      ImageWriter.write(xdim, ydim, som.entries(*, ::).iterator.toSeq, "som-step-%04d.png".format(step))
+    }
+    
+    val rnd = seed.map { s => new scala.util.Random(s)}.getOrElse(new scala.util.Random())
+    val colors = Array.fill(exampleCount)(new DV(Array.fill(3)(rnd.nextDouble)).compressed)
+    val examples = sc.parallelize(colors).repartition(sc.defaultParallelism * 8)
+    
+    SOM.train(xdim, ydim, 3, iterations, examples, sigmaScale=0.7, hook=writeStep _)
+  }
+}
