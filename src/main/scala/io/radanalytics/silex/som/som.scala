@@ -41,13 +41,13 @@ object Neighborhood {
   }
 }
 
-class SOM(val xdim: Int, val ydim: Int, val fdim: Int, _entries: DenseVector[DenseVector[Double]], private val mqsink: SampleSink) extends Serializable {
+class SOM(val xdim: Int, val ydim: Int, val fdim: Int, _entries: DenseMatrix[Double], private val mqsink: SampleSink) extends Serializable {
   import breeze.numerics._
   import org.apache.spark.ml.linalg.{Vector=>SV, DenseVector=>SDV, SparseVector=>SSV}
   
-  val entries = _entries.toArray
+  val entries = _entries.copy
   
-  val norms = entries.zip(entries.map(norm(_))).zipWithIndex
+  val norms = entries(*, ::).map(norm(_))
   
   def trainingMatchQuality = { SampleSink.empty += mqsink }
   
@@ -58,15 +58,9 @@ class SOM(val xdim: Int, val ydim: Int, val fdim: Int, _entries: DenseVector[Den
   /** Return the index of the most similar vector in the map to the supplied example, along with its similarity */
   def closestWithSimilarity(example: Vector[Double], exampleNorm: Option[Double] = None): (Int, Double) = {
     val vn = exampleNorm.getOrElse(norm(example))
-    val ce = norms(0)
-    val initialCandidate = (0, math.min(1.0, math.max(-1.0, (example dot ce._1._1) / (ce._1._2 * vn))))
-    
-    norms.foldLeft(initialCandidate) { 
-      case(answer: (Int, Double), ((e: Vector[Double], en: Double), i: Int)) => {
-        val candidate = (i, math.min(1.0, math.max(-1.0, (example dot e) / (en * vn))))
-        if (answer._2 > candidate._2) answer else candidate
-      }
-    }
+    val evec = if (vn != 1.0) (example * (1 / vn)) else example
+    val candidates = (entries * evec) /:/ norms
+    (argmax(candidates), max(candidates))
   }
   
   def closestWithSimilarity(example: SV, exampleNorm: Option[Double]): (Int, Double) = {
@@ -75,6 +69,7 @@ class SOM(val xdim: Int, val ydim: Int, val fdim: Int, _entries: DenseVector[Den
 }
 
 object SOM {
+  import breeze.linalg._
   import breeze.numerics._
   import org.apache.spark.rdd.RDD
   import org.apache.spark.sql.{DataFrame, Row}
@@ -103,11 +98,11 @@ object SOM {
     })
   }
 
-  private [som] case class SomTrainingState(counts: Array[Int], weights: Array[DenseVector[Double]], mqsink: SampleSink) {
+  private [som] case class SomTrainingState(counts: DenseVector[Int], weights: DenseMatrix[Double], mqsink: SampleSink) {
     /* destructively updates this state with a new example */
     def update(index: Int, example: Vector[Double]): SomTrainingState = {
       counts(index) = counts(index) + 1
-      weights(index) = weights(index) + example
+      weights(index, ::) := (weights(index, ::) + example.t)
       this
     }
     
@@ -122,7 +117,7 @@ object SOM {
     def combine(other: SomTrainingState) = { 
       (0 until counts.length) foreach { index =>
         this.counts(index) = this.counts(index) + other.counts(index)
-        this.weights(index) = this.weights(index) + other.weights(index)
+        this.weights(index, ::) := (this.weights(index, ::) + other.weights(index, ::))
       }
       
       this.mqsink += other.mqsink
@@ -133,37 +128,41 @@ object SOM {
   }
   
   private [som] object SomTrainingState {
-    def empty(dim: Int, fdim: Int): SomTrainingState = SomTrainingState(Array.fill(dim)(0), Array.fill(dim)(DenseVector.zeros[Double](fdim)), SampleSink.empty)
+    def empty(dim: Int, fdim: Int): SomTrainingState = SomTrainingState(DenseVector.fill(dim)(0), DenseMatrix.zeros[Double](dim, fdim), SampleSink.empty)
   }
   
   /** Initialize a self-organizing map with random weights, <tt>xdim</tt> columns, <tt>ydim</tt> rows, and <tt>fdim</tt> features per cell. */
   def random(xdim: Int, ydim: Int, fdim: Int, seed: Option[Int] = None): SOM = {
     // nb: could/should use breeze PRNGs?
     val rng = seed.map { s => new scala.util.Random(s) }.getOrElse(new scala.util.Random())
-    val randomMap = DenseVector.fill[DenseVector[Double]](xdim * ydim)(DenseVector.fill[Double](fdim)(rng.nextDouble()))
+    val randomMap = DenseMatrix.fill[Double](xdim * ydim, fdim)(rng.nextDouble())
 
     new SOM(xdim, ydim, fdim, randomMap, SampleSink.empty)
   }
   
   /** Create a new SOM instance with the results of the training state */
   private [som] def step(xdim: Int, ydim: Int, fdim: Int, state: SomTrainingState, xsigma: Double, ysigma: Double, lastState: SOM) = {
-    var weights = DenseVector.fill[DenseVector[Double]](xdim * ydim)(DenseVector.zeros[Double](fdim))
-    val seenWeights = DenseVector[DenseVector[Double]](state.weights)
-    var neighborhoods = DenseVector.zeros[Double](xdim * ydim)
+    var weights = DenseMatrix.zeros[Double](xdim * ydim, fdim)
+    var neighborhoods = DenseMatrix.zeros[Double](ydim, xdim)
     
     (0 until xdim * ydim).foreach { idx =>
       val (xc, yc) = (idx / ydim, idx % ydim)
-      val counts = state.counts(idx).toDouble
-      val hood = Neighborhood.mat(xc, xdim, xsigma, yc, ydim, ysigma).reshape(xdim * ydim, 1).toDenseVector
-      neighborhoods = neighborhoods +:+ (hood * counts)
-      val update = DenseVector(hood.toArray.map { hoodDistance => state.weights(idx) * hoodDistance})
+      val ct = state.counts(idx).toDouble
+      val hood = Neighborhood.mat(xc, xdim, xsigma, yc, ydim, ysigma)
+      
+      neighborhoods = neighborhoods +:+ (hood * ct)
+      val update = DenseMatrix(hood.map { d => state.weights(idx, ::).t * d}.toArray : _*).reshape(xdim * ydim, fdim)
       weights = weights +:+ update
     }
     
-    val newWeights = DenseVector((weights.values.iterator.zip(lastState.entries.iterator)).zip(neighborhoods.values.iterator).map { 
-      case ((vd, od), d) if d == 0.0 => od
-      case ((vd, _), d) => vd / d 
-    }.toArray)
+    val flatHoods = tile(neighborhoods.reshape(xdim * ydim, 1), 1, fdim)
+    val changedMat = (flatHoods :== 0.0).map { if(_) 0.0 else 1.0 }
+    val retainedMat = (flatHoods :== 0.0).map { if(_) 1.0 else 0.0 }
+    
+    val newWeights = (retainedMat *:* lastState.entries) +:+ 
+                     (changedMat *:* 
+                        (weights /:/ flatHoods))
+    
     new SOM(xdim, ydim, fdim, newWeights, state.matchQuality)
   }
   
