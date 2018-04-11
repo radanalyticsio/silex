@@ -323,7 +323,7 @@ object ImageExample {
   
   def main(args: Array[String]) {
     val app = new io.radanalytics.silex.app.ConsoleApp()
-    run(64, 32, 40, app.context, 10000)
+    run(256, 64, 30, app.context, 100000)
     app.context.stop
   }
   
