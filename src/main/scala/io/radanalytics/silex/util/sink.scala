@@ -20,28 +20,38 @@
 
 package io.radanalytics.silex.util
 
+
+
 /**
- * On-line mean and variance estimates for a stream of Double values.
- * Uses Chan's formulae.
-*/
-sealed class SampleSink(private var _count: Long, private var _min: Double, private var _max: Double, private var _mean: Double, private var _m2: Double) extends java.io.Serializable {
-  // TODO:  parameterize this over sample (at least), fractional (mean/variance), and integral (count) types
+  * On-line mean and variance estimates for a stream of fractional values. Uses
+  * Chan's formulae. 
+  *
+  * Type S must have a <tt>scala.math.Fractional[S]</tt> witness in scope, a
+  * <tt>NumericLimits[S]</tt> witness in scope, and a function converting from
+  * Long to S in scope. Scala provides the former and the latter for its
+  * fractional numeric types; the SampleSink companion object provides witnesses
+  * for<tt>NumericLimits[Float]</tt> and <tt>NumericLimits[Double]</tt>.
+  *
+  */
+sealed class SampleSink[S](private var _count: Long, private var _min: S, private var _max: S, private var _mean: S, private var _m2: S)(implicit num: Fractional[S], long2s: (Long => S), lim: NumericLimits[S]) extends java.io.Serializable {
+  import num._
+  import SampleSink._
   
-  @inline def put(sample: Double) = {
+  @inline def put(sample: S) = {
     val dev = sample - _mean
-    _mean = _mean + (dev / (count + 1))
-    _m2 = _m2 + (dev * dev) * count / (count + 1)
+    _mean = _mean + (dev / long2s(count + 1))
+    _m2 = _m2 + (dev * dev) * long2s(count / (count + 1))
     _count = count + 1
-    _min = math.min(_min, sample)
-    _max = math.max(_max, sample)
+    _min = num.min(_min, sample)
+    _max = num.max(_max, sample)
   }
   
-  def ++(other: SampleSink): SampleSink = {
-    val result = SampleSink.empty += this
+  def ++(other: SampleSink[S]): SampleSink[S] = {
+    val result = SampleSink.emptyOf[S] += this
     result += other
   }
 
-  def +=(other: SampleSink): SampleSink = {
+  def +=(other: SampleSink[S]): SampleSink[S] = {
     if(other.count == 0L) {
       this
     } else if (this.count == 0L) {
@@ -53,12 +63,12 @@ sealed class SampleSink(private var _count: Long, private var _min: Double, priv
       this
     } else {
       val dev = other.mean - mean
-      val newCount = other.count + count
-      val newMean = (this.count * this.mean + other.count * other.mean) / newCount
-      val newM2 = this._m2 + other._m2 + (dev * dev) * this.count * other.count / newCount
-      this._count = newCount
-      this._min = math.min(this.min, other.min)
-      this._max = math.max(this.max, other.max)
+      val newCount = long2s(other.count + count)
+      val newMean = (long2s(this.count) * this.mean + long2s(other.count) * other.mean) / newCount
+      val newM2 = this._m2 + other._m2 + (dev * dev) * long2s(this.count) * long2s(other.count) / newCount
+      this._count = newCount.toLong
+      this._min = num.min(this.min, other.min)
+      this._max = num.max(this.max, other.max)
       this._mean = newMean
       this._m2 = newM2
 
@@ -70,13 +80,37 @@ sealed class SampleSink(private var _count: Long, private var _min: Double, priv
   @inline def count = _count
   @inline def min = _min
   @inline def max = _max
-  @inline def variance = _m2 / count
+  @inline def variance = _m2 / long2s(count)
   
-  def stddev = math.sqrt(variance)
+  def stddev = math.sqrt(variance.toDouble)
   
   override def toString = s"SampleSink(count=$count, min=$min, max=$max, mean=$mean, variance=$variance)"
 }
 
-object SampleSink {
-  def empty: SampleSink = new SampleSink(0, Double.PositiveInfinity, Double.NegativeInfinity, 0.0d, 0.0d)
+object SampleSink {  
+  case object DoubleLimits extends NumericLimits[Double] {
+    override val minimum = Double.MinValue
+    override val maximum = Double.MaxValue
+  }
+
+  case object FloatLimits extends NumericLimits[Float] {
+    override val minimum = Float.MinValue
+    override val maximum = Float.MaxValue
+  }
+  
+  implicit val doubleRange: NumericLimits[Double] = DoubleLimits
+  implicit val floatRange: NumericLimits[Float] = FloatLimits
+  
+  def emptyOf[S](implicit num: Fractional[S], lim: NumericLimits[S], conv: (Long => S)): SampleSink[S] = new SampleSink[S](0, lim.maximum, lim.minimum, num.zero, num.zero)
+  
+  def empty = emptyOf[Double]
 }
+
+
+trait NumericLimits[T] {
+  /** The largest positive value representable as a <tt>T</tt> */
+  val minimum: T
+
+  /** The negative value with the largest magnitude representable as a <tt>T</tt> */
+  val maximum: T
+} 

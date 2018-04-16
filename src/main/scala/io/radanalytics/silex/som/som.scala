@@ -41,7 +41,7 @@ object Neighborhood {
   }
 }
 
-class SOM(val xdim: Int, val ydim: Int, val fdim: Int, _entries: DenseMatrix[Double], private val mqsink: SampleSink) extends Serializable {
+class SOM(val xdim: Int, val ydim: Int, val fdim: Int, _entries: DenseMatrix[Double], private val mqsink: SampleSink[Double]) extends Serializable {
   import breeze.numerics._
   import org.apache.spark.ml.linalg.{Vector=>SV, DenseVector=>SDV, SparseVector=>SSV}
   
@@ -98,7 +98,7 @@ object SOM {
     })
   }
 
-  private [som] case class SomTrainingState(counts: DenseVector[Int], weights: DenseMatrix[Double], mqsink: SampleSink) {
+  private [som] case class SomTrainingState(counts: DenseVector[Int], weights: DenseMatrix[Double], mqsink: SampleSink[Double]) {
     /* destructively updates this state with a new example */
     def update(index: Int, example: Vector[Double]): SomTrainingState = {
       counts(index) = counts(index) + 1
