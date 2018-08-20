@@ -2,9 +2,9 @@ name := "silex"
 
 organization := "io.radanalytics"
 
-version := "0.2.0"
+version := "0.2.1"
 
-val SPARK_VERSION = "2.2.0"
+val SPARK_VERSION = "2.2.2"
 
 scalaVersion := "2.11.11"
 
