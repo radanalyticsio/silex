@@ -83,21 +83,21 @@
     <div class="content">
       <p>Since version 0.0.2, Silex has included <a href="/latest/api/#com.redhat.et.silex.frame.NaturalJoining">a simple interface to perform natural join operations on data frames</a>.  (For more background, <a href="http://chapeau.freevariable.com/2015/04/natural-join-for-spark-dataframes.html">see here</a>.)  Here’s an example of this functionality in action:</p>
 
-<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="cm">/* Apologies to Paul Revere, but we wanted a join that</span>
-<span class="cm">   would actually filter some rows out. */</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="cm">/* Apologies to Paul Revere, but we wanted a join that
+   would actually filter some rows out. */</span>
 <span class="k">case</span> <span class="k">class</span> <span class="nc">TwoIfByLand</span><span class="o">(</span><span class="n">i</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">byLand</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="o">{}</span>
 <span class="k">case</span> <span class="k">class</span> <span class="nc">ThreeIfBySea</span><span class="o">(</span><span class="n">i</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">bySea</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="o">{}</span>
 
-<span class="k">val</span> <span class="n">landDF</span> <span class="k">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">parallelize</span><span class="o">((</span><span class="mi">0</span> <span class="n">to</span> <span class="mi">50</span> <span class="n">by</span> <span class="mi">2</span><span class="o">).</span><span class="n">map</span> <span class="o">{</span> <span class="n">i</span> <span class="k">=&gt;</span> <span class="nc">TwoIfByLand</span><span class="o">(</span><span class="n">i</span><span class="o">,</span> <span class="n">s</span><span class="s">&quot;land: $i&quot;</span><span class="o">)</span> <span class="o">}).</span><span class="n">toDF</span><span class="o">()</span>
-<span class="k">val</span> <span class="n">seaDF</span> <span class="k">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">parallelize</span><span class="o">((</span><span class="mi">0</span> <span class="n">to</span> <span class="mi">50</span> <span class="n">by</span> <span class="mi">3</span><span class="o">).</span><span class="n">map</span> <span class="o">{</span> <span class="n">i</span> <span class="k">=&gt;</span> <span class="nc">ThreeIfBySea</span><span class="o">(</span><span class="n">i</span><span class="o">,</span> <span class="n">s</span><span class="s">&quot;sea: $i&quot;</span><span class="o">)</span> <span class="o">}).</span><span class="n">toDF</span><span class="o">()</span>
+<span class="k">val</span> <span class="n">landDF</span> <span class="k">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">parallelize</span><span class="o">((</span><span class="mi">0</span> <span class="n">to</span> <span class="mi">50</span> <span class="n">by</span> <span class="mi">2</span><span class="o">).</span><span class="n">map</span> <span class="o">{</span> <span class="n">i</span> <span class="k">=&gt;</span> <span class="nc">TwoIfByLand</span><span class="o">(</span><span class="n">i</span><span class="o">,</span> <span class="n">s</span><span class="s">"land: $i"</span><span class="o">)</span> <span class="o">}).</span><span class="n">toDF</span><span class="o">()</span>
+<span class="k">val</span> <span class="n">seaDF</span> <span class="k">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">parallelize</span><span class="o">((</span><span class="mi">0</span> <span class="n">to</span> <span class="mi">50</span> <span class="n">by</span> <span class="mi">3</span><span class="o">).</span><span class="n">map</span> <span class="o">{</span> <span class="n">i</span> <span class="k">=&gt;</span> <span class="nc">ThreeIfBySea</span><span class="o">(</span><span class="n">i</span><span class="o">,</span> <span class="n">s</span><span class="s">"sea: $i"</span><span class="o">)</span> <span class="o">}).</span><span class="n">toDF</span><span class="o">()</span>
 
 <span class="k">import</span> <span class="nn">com.redhat.et.silex.frame.NaturalJoin.implicits._</span>
 
-<span class="n">landDF</span><span class="o">.</span><span class="n">natjoin</span><span class="o">(</span><span class="n">seaDF</span><span class="o">).</span><span class="n">orderBy</span><span class="o">(</span><span class="s">&quot;i&quot;</span><span class="o">).</span><span class="n">show</span></code></pre></figure>
+<span class="n">landDF</span><span class="o">.</span><span class="n">natjoin</span><span class="o">(</span><span class="n">seaDF</span><span class="o">).</span><span class="n">orderBy</span><span class="o">(</span><span class="s">"i"</span><span class="o">).</span><span class="n">show</span></code></pre></figure>
 
 <p>That should produce the following output.</p>
 
-<pre><code>i  byLand   bySea  
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>i  byLand   bySea  
 0  land: 0  sea: 0 
 6  land: 6  sea: 6 
 12 land: 12 sea: 12
@@ -107,7 +107,7 @@
 36 land: 36 sea: 36
 42 land: 42 sea: 42
 48 land: 48 sea: 48
-</code></pre>
+</code></pre></div></div>
 
 
     </div>
@@ -120,7 +120,7 @@
       <hr>
       <footer>
         <p>
-          &copy; 2017 William Benton, Erik Erlandson, and contributors
+          &copy; 2018 William Benton, Erik Erlandson, and contributors
         </p>
       </footer>
     </div>

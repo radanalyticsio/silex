@@ -91,7 +91,7 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="io.radanalytics.silex.som.SOM#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(xdim:Int,ydim:Int,fdim:Int,_entries:breeze.linalg.DenseVector[breeze.linalg.DenseVector[Double]],mqsink:io.radanalytics.silex.util.SampleSink):io.radanalytics.silex.som.SOM"></a>
+      <a id="&lt;init&gt;(xdim:Int,ydim:Int,fdim:Int,_entries:breeze.linalg.DenseMatrix[Double],mqsink:io.radanalytics.silex.util.SampleSink[Double]):io.radanalytics.silex.som.SOM"></a>
       <a id="&lt;init&gt;:SOM"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -99,10 +99,10 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">SOM</span><span class="params">(<span name="xdim">xdim: <span class="extype" name="scala.Int">Int</span></span>, <span name="ydim">ydim: <span class="extype" name="scala.Int">Int</span></span>, <span name="fdim">fdim: <span class="extype" name="scala.Int">Int</span></span>, <span name="_entries">_entries: <span class="extype" name="breeze.linalg.DenseVector">DenseVector</span>[<span class="extype" name="breeze.linalg.DenseVector">DenseVector</span>[<span class="extype" name="scala.Double">Double</span>]]</span>, <span name="mqsink">mqsink: <a href="../util/SampleSink.html" class="extype" name="io.radanalytics.silex.util.SampleSink">SampleSink</a></span>)</span>
+        <span class="name">SOM</span><span class="params">(<span name="xdim">xdim: <span class="extype" name="scala.Int">Int</span></span>, <span name="ydim">ydim: <span class="extype" name="scala.Int">Int</span></span>, <span name="fdim">fdim: <span class="extype" name="scala.Int">Int</span></span>, <span name="_entries">_entries: <span class="extype" name="breeze.linalg.DenseMatrix">DenseMatrix</span>[<span class="extype" name="scala.Double">Double</span>]</span>, <span name="mqsink">mqsink: <a href="../util/SampleSink.html" class="extype" name="io.radanalytics.silex.util.SampleSink">SampleSink</a>[<span class="extype" name="scala.Double">Double</span>]</span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.som.SOM@&lt;init&gt;(xdim:Int,ydim:Int,fdim:Int,_entries:breeze.linalg.DenseVector[breeze.linalg.DenseVector[Double]],mqsink:io.radanalytics.silex.util.SampleSink):io.radanalytics.silex.som.SOM" title="Permalink" target="_top">
+      <a href="../../../../index.html#io.radanalytics.silex.som.SOM@&lt;init&gt;(xdim:Int,ydim:Int,fdim:Int,_entries:breeze.linalg.DenseMatrix[Double],mqsink:io.radanalytics.silex.util.SampleSink[Double]):io.radanalytics.silex.som.SOM" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -259,18 +259,18 @@
     </span>
       <p class="shortcomment cmt">Return the index of the most similar vector in the map to the supplied example, along with its similarity</p>
     </li><li name="io.radanalytics.silex.som.SOM#entries" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="entries:Array[breeze.linalg.DenseVector[Double]]"></a>
-      <a id="entries:Array[DenseVector[Double]]"></a>
+      <a id="entries:breeze.linalg.DenseMatrix[Double]"></a>
+      <a id="entries:DenseMatrix[Double]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">entries</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="breeze.linalg.DenseVector">DenseVector</span>[<span class="extype" name="scala.Double">Double</span>]]</span>
+        <span class="name">entries</span><span class="result">: <span class="extype" name="breeze.linalg.DenseMatrix">DenseMatrix</span>[<span class="extype" name="scala.Double">Double</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.som.SOM@entries:Array[breeze.linalg.DenseVector[Double]]" title="Permalink" target="_top">
+      <a href="../../../../index.html#io.radanalytics.silex.som.SOM@entries:breeze.linalg.DenseMatrix[Double]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -418,18 +418,18 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="io.radanalytics.silex.som.SOM#norms" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="norms:Array[((breeze.linalg.DenseVector[Double],Double),Int)]"></a>
-      <a id="norms:Array[((DenseVector[Double],Double),Int)]"></a>
+      <a id="norms:breeze.linalg.DenseVector[Double]"></a>
+      <a id="norms:DenseVector[Double]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">norms</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[((<span class="extype" name="breeze.linalg.DenseVector">DenseVector</span>[<span class="extype" name="scala.Double">Double</span>], <span class="extype" name="scala.Double">Double</span>), <span class="extype" name="scala.Int">Int</span>)]</span>
+        <span class="name">norms</span><span class="result">: <span class="extype" name="breeze.linalg.DenseVector">DenseVector</span>[<span class="extype" name="scala.Double">Double</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.som.SOM@norms:Array[((breeze.linalg.DenseVector[Double],Double),Int)]" title="Permalink" target="_top">
+      <a href="../../../../index.html#io.radanalytics.silex.som.SOM@norms:breeze.linalg.DenseVector[Double]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -503,18 +503,18 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="io.radanalytics.silex.som.SOM#trainingMatchQuality" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="trainingMatchQuality:io.radanalytics.silex.util.SampleSink"></a>
-      <a id="trainingMatchQuality:SampleSink"></a>
+      <a id="trainingMatchQuality:io.radanalytics.silex.util.SampleSink[Double]"></a>
+      <a id="trainingMatchQuality:SampleSink[Double]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">trainingMatchQuality</span><span class="result">: <a href="../util/SampleSink.html" class="extype" name="io.radanalytics.silex.util.SampleSink">SampleSink</a></span>
+        <span class="name">trainingMatchQuality</span><span class="result">: <a href="../util/SampleSink.html" class="extype" name="io.radanalytics.silex.util.SampleSink">SampleSink</a>[<span class="extype" name="scala.Double">Double</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.som.SOM@trainingMatchQuality:io.radanalytics.silex.util.SampleSink" title="Permalink" target="_top">
+      <a href="../../../../index.html#io.radanalytics.silex.som.SOM@trainingMatchQuality:io.radanalytics.silex.util.SampleSink[Double]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>

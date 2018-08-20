@@ -107,6 +107,23 @@ will convert to UTC first).
       </a>
     </span>
       
+    </li><li name="io.radanalytics.silex.util.NumericLimits" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="NumericLimits[T]extendsAnyRef"></a>
+      <a id="NumericLimits[T]:NumericLimits[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="NumericLimits.html"><span class="name">NumericLimits</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <a href="../../../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#io.radanalytics.silex.util.package@NumericLimits[T]extendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
     </li><li name="io.radanalytics.silex.util.OptionalArg" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="OptionalArg[A]extendsAnyVal"></a>
       <a id="OptionalArg[A]:OptionalArg[A]"></a>
@@ -147,23 +164,27 @@ possiblyFilter(data, filterMax = -<span class="num">1</span>) <span class="cmt">
   filterMax.map(t <span class="kw">=&gt;</span> data.filter(_ &lt;= t)).getOrElse(data)
 }</pre></div><dl class="paramcmts block"><dt class="tparam">A</dt><dd class="cmt"><p>The underlying value type.</p></dd></dl></div>
     </li><li name="io.radanalytics.silex.util.SampleSink" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="SampleSinkextendsSerializable"></a>
-      <a id="SampleSink:SampleSink"></a>
+      <a id="SampleSink[S]extendsSerializable"></a>
+      <a id="SampleSink[S]:SampleSink[S]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">sealed </span>
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="SampleSink.html"><span class="name">SampleSink</span></a><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
+        <a href="SampleSink.html"><span class="name">SampleSink</span></a><span class="tparams">[<span name="S">S</span>]</span><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.package@SampleSinkextendsSerializable" title="Permalink" target="_top">
+      <a href="../../../../index.html#io.radanalytics.silex.util.package@SampleSink[S]extendsSerializable" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">On-line mean and variance estimates for a stream of Double values.</p><div class="fullcomment"><div class="comment cmt"><p>On-line mean and variance estimates for a stream of Double values.
-Uses Chan's formulae.</p></div></div>
+      <p class="shortcomment cmt">On-line mean and variance estimates for a stream of fractional values.</p><div class="fullcomment"><div class="comment cmt"><p>On-line mean and variance estimates for a stream of fractional values. Uses
+Chan's formulae.</p><p>Type S must have a <tt>scala.math.Fractional[S]</tt> witness in scope, a
+<tt>NumericLimits[S]</tt> witness in scope, and a function converting from
+Long to S in scope. Scala provides the former and the latter for its
+fractional numeric types; the SampleSink companion object provides witnesses
+for<tt>NumericLimits[Float]</tt> and <tt>NumericLimits[Double]</tt>.</p></div></div>
     </li><li name="io.radanalytics.silex.util.TimeLens" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="TimeLensextendsAnyRef"></a>
       <a id="TimeLens:TimeLens"></a>

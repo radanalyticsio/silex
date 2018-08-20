@@ -84,19 +84,19 @@
       <p>We’ve just released Silex version 0.0.5.  Here are the main changes:</p>
 
 <ul>
-  <li>Added support for creating <a href="http://silex.freevariable.com/latest/api/#com.redhat.et.silex.histogram.HistogramMethods">histograms from RDDs</a>.  If the implicit conversions from <code>com.redhat.et.silex.histogram.implicits</code> are in scope, then the <code>countBy</code>, <code>countByFlat</code>, <code>histBy</code>, and <code>histByFlat</code> methods will be available on every RDD.</li>
-  <li>Factored <a href="http://silex.freevariable.com/latest/api/#com.redhat.et.silex.app.ReplApp$"><code>ReplApp</code></a> functionality <a href="http://silex.freevariable.com/latest/api/#com.redhat.et.silex.app.ReplAppLike">to a trait</a>, to allow REPLs running with custom Spark configurations.  This is useful if you need to interact with something like ElasticSearch that depends on a particular Spark configuration.  (See <a href="http://chapeau.freevariable.com/2015/04/spark-sql-repl.html">here</a> for more on why you might care about <code>ReplApp</code>.)</li>
-  <li>Silex apps should now play more nicely with <code>spark-submit</code>.</li>
-  <li>Silex now is built and tested against Spark 1.3.1, although it assumes Spark is a <code>provided</code> dependency (that is, that your app will depend on Spark separately).</li>
+  <li>Added support for creating <a href="http://silex.freevariable.com/latest/api/#com.redhat.et.silex.histogram.HistogramMethods">histograms from RDDs</a>.  If the implicit conversions from <code class="highlighter-rouge">com.redhat.et.silex.histogram.implicits</code> are in scope, then the <code class="highlighter-rouge">countBy</code>, <code class="highlighter-rouge">countByFlat</code>, <code class="highlighter-rouge">histBy</code>, and <code class="highlighter-rouge">histByFlat</code> methods will be available on every RDD.</li>
+  <li>Factored <a href="http://silex.freevariable.com/latest/api/#com.redhat.et.silex.app.ReplApp$"><code class="highlighter-rouge">ReplApp</code></a> functionality <a href="http://silex.freevariable.com/latest/api/#com.redhat.et.silex.app.ReplAppLike">to a trait</a>, to allow REPLs running with custom Spark configurations.  This is useful if you need to interact with something like ElasticSearch that depends on a particular Spark configuration.  (See <a href="http://chapeau.freevariable.com/2015/04/spark-sql-repl.html">here</a> for more on why you might care about <code class="highlighter-rouge">ReplApp</code>.)</li>
+  <li>Silex apps should now play more nicely with <code class="highlighter-rouge">spark-submit</code>.</li>
+  <li>Silex now is built and tested against Spark 1.3.1, although it assumes Spark is a <code class="highlighter-rouge">provided</code> dependency (that is, that your app will depend on Spark separately).</li>
 </ul>
 
-<p>To use Silex 0.0.5 in your projects, add the following resolver to your <code>build.sbt</code>:</p>
+<p>To use Silex 0.0.5 in your projects, add the following resolver to your <code class="highlighter-rouge">build.sbt</code>:</p>
 
-<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="n">resolvers</span> <span class="o">+=</span> <span class="s">&quot;Will&#39;s bintray&quot;</span> <span class="n">at</span> <span class="s">&quot;https://dl.bintray.com/willb/maven/&quot;</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="n">resolvers</span> <span class="o">+=</span> <span class="s">"Will's bintray"</span> <span class="n">at</span> <span class="s">"https://dl.bintray.com/willb/maven/"</span></code></pre></figure>
 
 <p>and then add Silex as a dependency:</p>
 
-<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">&quot;com.redhat.et&quot;</span> <span class="o">%%</span> <span class="s">&quot;silex&quot;</span> <span class="o">%</span> <span class="s">&quot;0.0.5&quot;</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="n">libraryDependencies</span> <span class="o">+=</span> <span class="s">"com.redhat.et"</span> <span class="o">%%</span> <span class="s">"silex"</span> <span class="o">%</span> <span class="s">"0.0.5"</span></code></pre></figure>
 
 
     </div>
@@ -109,7 +109,7 @@
       <hr>
       <footer>
         <p>
-          &copy; 2017 William Benton, Erik Erlandson, and contributors
+          &copy; 2018 William Benton, Erik Erlandson, and contributors
         </p>
       </footer>
     </div>

@@ -88,24 +88,24 @@
 <figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">import</span> <span class="nn">com.redhat.et.silex.util._</span>
 
 <span class="k">val</span> <span class="n">utc</span> <span class="k">=</span> <span class="nc">DateTimeUTC</span><span class="o">.</span><span class="n">fromSecondsSinceEpoch</span><span class="o">(</span><span class="mi">1428690706</span><span class="o">)</span>
-<span class="c1">// utc: com.redhat.et.silex.util.DateTimeUTC = DateTimeUTC(2015,4,10,18,31,46,0)</span>
-
+<span class="c1">// utc: com.redhat.et.silex.util.DateTimeUTC = DateTimeUTC(2015,4,10,18,31,46,0)
+</span>
 <span class="k">val</span> <span class="n">fiveDaysAgo</span> <span class="k">=</span> <span class="nc">DateTimeUTC</span><span class="o">.</span><span class="n">fromSecondsSinceEpoch</span><span class="o">(</span><span class="mi">1428258706</span><span class="o">)</span>
-<span class="c1">// fiveDaysAgo: com.redhat.et.silex.util.DateTimeUTC = DateTimeUTC(2015,4,5,18,31,46,0)</span>
-
+<span class="c1">// fiveDaysAgo: com.redhat.et.silex.util.DateTimeUTC = DateTimeUTC(2015,4,5,18,31,46,0)
+</span>
 <span class="k">val</span> <span class="n">db</span> <span class="k">=</span> <span class="n">fiveDaysAgo</span> <span class="n">daysBetween</span> <span class="n">utc</span>
-<span class="c1">// db: Int = 5</span>
-
+<span class="c1">// db: Int = 5
+</span>
 <span class="k">val</span> <span class="n">seconds</span> <span class="k">=</span> <span class="n">fiveDaysAgo</span><span class="o">.</span><span class="n">asSecondsSinceEpoch</span>
-<span class="c1">// seconds: Int = 1428258706</span>
-
+<span class="c1">// seconds: Int = 1428258706
+</span>
 <span class="k">val</span> <span class="n">joda</span> <span class="k">=</span> <span class="n">fiveDaysAgo</span><span class="o">.</span><span class="n">as</span><span class="o">[</span><span class="kt">org.joda.time.DateTime</span><span class="o">]</span>
-<span class="c1">// joda: org.joda.time.DateTime = 2015-04-05T18:31:46.000Z</span>
-
+<span class="c1">// joda: org.joda.time.DateTime = 2015-04-05T18:31:46.000Z
+</span>
 <span class="k">val</span> <span class="n">roundtrip</span> <span class="k">=</span> <span class="nc">DateTimeUTC</span><span class="o">.</span><span class="n">from</span><span class="o">(</span><span class="n">joda</span><span class="o">)</span>
-<span class="c1">// roundtrip: com.redhat.et.silex.util.DateTimeUTC = DateTimeUTC(2015,4,5,18,31,46,0)</span></code></pre></figure>
+<span class="o">//</span> <span class="n">roundtrip</span><span class="k">:</span> <span class="kt">com.redhat.et.silex.util.DateTimeUTC</span> <span class="o">=</span> <span class="nc">DateTimeUTC</span><span class="o">(</span><span class="mi">2015</span><span class="o">,</span><span class="mi">4</span><span class="o">,</span><span class="mi">5</span><span class="o">,</span><span class="mi">18</span><span class="o">,</span><span class="mi">31</span><span class="o">,</span><span class="mi">46</span><span class="o">,</span><span class="mi">0</span><span class="o">)</span></code></pre></figure>
 
-<p>The idea is not that <code>DateTimeUTC</code> is a reasonable general-purpose representation for timestamps (it is absolutely not).  Rather, it is intended to:</p>
+<p>The idea is not that <code class="highlighter-rouge">DateTimeUTC</code> is a reasonable general-purpose representation for timestamps (it is absolutely not).  Rather, it is intended to:</p>
 
 <ul>
   <li>provide a straightforward intermediate format for time values that may be converted from one of several string formats to one of several richer date and time libraries,</li>
@@ -116,34 +116,34 @@
 
 <h3 id="implementing-conversions">Implementing conversions</h3>
 
-<p>In order to meet these requirements, Silex provides two interfaces involving <code>DateTimeUTC</code> instances.</p>
+<p>In order to meet these requirements, Silex provides two interfaces involving <code class="highlighter-rouge">DateTimeUTC</code> instances.</p>
 
-<p>The first is the conversion interface, given by the <code>as[T]</code> method in <a href="/latest/api/#com.redhat.et.silex.util.DateTimeUTC"><code>DateTimeUTC</code></a> and the <code>from[T](T)</code> method <a href="/latest/api/index.html#com.redhat.et.silex.util.DateTimeUTC$">in the companion object</a>.  In order to extend these for arbitrary <code>T</code>, simply ensure that witness functions converting from <code>T</code> to <code>DateTimeUTC</code> (for <code>from</code>) and from <code>DateTimeUTC</code> to <code>T</code> (for <code>as</code>) are in scope.  (Silex provides <a href="https://github.com/radanalyticsio/silex/blob/v0.0.4/src/main/scala/com/redhat/et/silex/util/timeUtils.scala#L46">implementations of these</a> for Joda-Time’s <code>DateTime</code> class.)</p>
+<p>The first is the conversion interface, given by the <code class="highlighter-rouge">as[T]</code> method in <a href="/latest/api/#com.redhat.et.silex.util.DateTimeUTC"><code class="highlighter-rouge">DateTimeUTC</code></a> and the <code class="highlighter-rouge">from[T](T)</code> method <a href="/latest/api/index.html#com.redhat.et.silex.util.DateTimeUTC$">in the companion object</a>.  In order to extend these for arbitrary <code class="highlighter-rouge">T</code>, simply ensure that witness functions converting from <code class="highlighter-rouge">T</code> to <code class="highlighter-rouge">DateTimeUTC</code> (for <code class="highlighter-rouge">from</code>) and from <code class="highlighter-rouge">DateTimeUTC</code> to <code class="highlighter-rouge">T</code> (for <code class="highlighter-rouge">as</code>) are in scope.  (Silex provides <a href="https://github.com/radanalyticsio/silex/blob/v0.0.4/src/main/scala/com/redhat/et/silex/util/timeUtils.scala#L46">implementations of these</a> for Joda-Time’s <code class="highlighter-rouge">DateTime</code> class.)</p>
 
-<p>The second interface is the <a href="/latest/api/index.html#com.redhat.et.silex.util.TimeLens"><code>TimeLens</code></a> trait, which lets applications define conversions from a particular string-based time format to a <code>DateTimeUTC</code> instance and back.  (This is not exactly a “lens” in the functional programming sense, since it doesn’t extract or modify individual components of the time, but it provides the round-trip functionality of a lens.)  Silex currently includes one <code>TimeLens</code> (to convert to and from timestamps in the format used by Amazon Web Services billing data); we’ve reproduced it below as an example:</p>
+<p>The second interface is the <a href="/latest/api/index.html#com.redhat.et.silex.util.TimeLens"><code class="highlighter-rouge">TimeLens</code></a> trait, which lets applications define conversions from a particular string-based time format to a <code class="highlighter-rouge">DateTimeUTC</code> instance and back.  (This is not exactly a “lens” in the functional programming sense, since it doesn’t extract or modify individual components of the time, but it provides the round-trip functionality of a lens.)  Silex currently includes one <code class="highlighter-rouge">TimeLens</code> (to convert to and from timestamps in the format used by Amazon Web Services billing data); we’ve reproduced it below as an example:</p>
 
-<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="cm">/** </span>
-<span class="cm">  * A function object to convert to and from times in the AWS billing format.</span>
-<span class="cm">  * </span>
-<span class="cm">  * These are UTC, in the form &lt;code&gt;YYYY-MM-DD HH:MM:SS&lt;/code&gt;.  By converting to the </span>
-<span class="cm">  * [[DateTimeUTC]] format, you can manipulate individual components or convert to </span>
-<span class="cm">  * another format for further processing.</span>
-<span class="cm">  */</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="cm">/** 
+  * A function object to convert to and from times in the AWS billing format.
+  * 
+  * These are UTC, in the form &lt;code&gt;YYYY-MM-DD HH:MM:SS&lt;/code&gt;.  By converting to the 
+  * [[DateTimeUTC]] format, you can manipulate individual components or convert to 
+  * another format for further processing.
+  */</span>
 <span class="k">object</span> <span class="nc">AWSTimeLens</span> <span class="k">extends</span> <span class="n">com</span><span class="o">.</span><span class="n">redhat</span><span class="o">.</span><span class="n">et</span><span class="o">.</span><span class="n">silex</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="nc">TimeLens</span> <span class="o">{</span>
   <span class="k">import</span> <span class="nn">RegexImplicits._</span>
   
   <span class="k">def</span> <span class="n">apply</span><span class="o">(</span><span class="n">date</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">=</span> <span class="n">date</span> <span class="k">match</span> <span class="o">{</span>
-    <span class="k">case</span> <span class="n">r</span><span class="s">&quot;(\d\d\d\d)$year-(\d\d)$month-(\d\d)$day (\d\d)$hour:(\d\d)$minute:(\d\d)$second&quot;</span> <span class="k">=&gt;</span> 
+    <span class="k">case</span> <span class="n">r</span><span class="s">"(\d\d\d\d)$year-(\d\d)$month-(\d\d)$day (\d\d)$hour:(\d\d)$minute:(\d\d)$second"</span> <span class="k">=&gt;</span> 
       <span class="nc">DateTimeUTC</span><span class="o">(</span><span class="n">year</span><span class="o">.</span><span class="n">toInt</span><span class="o">,</span> <span class="n">month</span><span class="o">.</span><span class="n">toInt</span><span class="o">,</span> <span class="n">day</span><span class="o">.</span><span class="n">toInt</span><span class="o">,</span> <span class="n">hour</span><span class="o">.</span><span class="n">toInt</span><span class="o">,</span> <span class="n">minute</span><span class="o">.</span><span class="n">toInt</span><span class="o">,</span> <span class="n">second</span><span class="o">.</span><span class="n">toInt</span><span class="o">)</span>
   <span class="o">}</span>
   
   <span class="k">def</span> <span class="n">apply</span><span class="o">(</span><span class="n">d</span><span class="k">:</span> <span class="kt">DateTimeUTC</span><span class="o">)</span> <span class="k">=</span> 
-    <span class="s">&quot;%04d-%02d-%02d %02d:%02d:%02d&quot;</span><span class="o">.</span><span class="n">format</span><span class="o">(</span><span class="n">d</span><span class="o">.</span><span class="n">year</span><span class="o">,</span> <span class="n">d</span><span class="o">.</span><span class="n">month</span><span class="o">,</span> <span class="n">d</span><span class="o">.</span><span class="n">day</span><span class="o">,</span> <span class="n">d</span><span class="o">.</span><span class="n">hour</span><span class="o">,</span> <span class="n">d</span><span class="o">.</span><span class="n">minute</span><span class="o">,</span> <span class="n">d</span><span class="o">.</span><span class="n">second</span><span class="o">)</span>
+    <span class="s">"%04d-%02d-%02d %02d:%02d:%02d"</span><span class="o">.</span><span class="n">format</span><span class="o">(</span><span class="n">d</span><span class="o">.</span><span class="n">year</span><span class="o">,</span> <span class="n">d</span><span class="o">.</span><span class="n">month</span><span class="o">,</span> <span class="n">d</span><span class="o">.</span><span class="n">day</span><span class="o">,</span> <span class="n">d</span><span class="o">.</span><span class="n">hour</span><span class="o">,</span> <span class="n">d</span><span class="o">.</span><span class="n">minute</span><span class="o">,</span> <span class="n">d</span><span class="o">.</span><span class="n">second</span><span class="o">)</span>
 <span class="o">}</span></code></pre></figure>
 
-<p>(If you develop a useful <code>TimeLens</code>, please contribute it as a pull request!)</p>
+<p>(If you develop a useful <code class="highlighter-rouge">TimeLens</code>, please contribute it as a pull request!)</p>
 
-<p>Most data processing code will only need declare a custom <code>TimeLens</code> and convert string timestamps to seconds since the UNIX epoch.  However, since Silex lets users declare arbitrary round-trip conversions between string formats and <code>DateTimeUTC</code> instances and between <code>DateTimeUTC</code> instances and objects in any alternative date and time representation, it is possible to write more sophisticated time-processing code concisely and generically.</p>
+<p>Most data processing code will only need declare a custom <code class="highlighter-rouge">TimeLens</code> and convert string timestamps to seconds since the UNIX epoch.  However, since Silex lets users declare arbitrary round-trip conversions between string formats and <code class="highlighter-rouge">DateTimeUTC</code> instances and between <code class="highlighter-rouge">DateTimeUTC</code> instances and objects in any alternative date and time representation, it is possible to write more sophisticated time-processing code concisely and generically.</p>
 
 
     </div>
@@ -156,7 +156,7 @@
       <hr>
       <footer>
         <p>
-          &copy; 2017 William Benton, Erik Erlandson, and contributors
+          &copy; 2018 William Benton, Erik Erlandson, and contributors
         </p>
       </footer>
     </div>

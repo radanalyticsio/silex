@@ -1,9 +1,9 @@
 <!DOCTYPE html >
 <html>
         <head>
-          <title>SampleSink - io.radanalytics.silex.util.SampleSink</title>
-          <meta name="description" content="SampleSink - io.radanalytics.silex.util.SampleSink" />
-          <meta name="keywords" content="SampleSink io.radanalytics.silex.util.SampleSink" />
+          <title>DoubleLimits - io.radanalytics.silex.util.SampleSink.DoubleLimits</title>
+          <meta name="description" content="DoubleLimits - io.radanalytics.silex.util.SampleSink.DoubleLimits" />
+          <meta name="keywords" content="DoubleLimits io.radanalytics.silex.util.SampleSink.DoubleLimits" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
       <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
@@ -16,7 +16,7 @@
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../index.html';
-            var hash = 'io.radanalytics.silex.util.SampleSink';
+            var hash = 'io.radanalytics.silex.util.SampleSink$$DoubleLimits$';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -26,16 +26,14 @@
    	  </script>
     
         </head>
-        <body class="type">
+        <body class="value">
       <div id="definition">
-        <a href="SampleSink$.html" title="See companion object"><img alt="Class/Object" src="../../../../lib/class_to_object_big.png" /></a>
-        <p id="owner"><a href="../../../package.html" class="extype" name="io">io</a>.<a href="../../package.html" class="extype" name="io.radanalytics">radanalytics</a>.<a href="../package.html" class="extype" name="io.radanalytics.silex">silex</a>.<a href="package.html" class="extype" name="io.radanalytics.silex.util">util</a></p>
-        <h1><a href="SampleSink$.html" title="See companion object">SampleSink</a></h1><h3><span class="morelinks"><div>
-            Related Docs:
-            <a href="SampleSink$.html" title="See companion object">object SampleSink</a>
-            | <a href="package.html" class="extype" name="io.radanalytics.silex.util">package util</a>
+        <img alt="Object" src="../../../../lib/object_big.png" />
+        <p id="owner"><a href="../../../package.html" class="extype" name="io">io</a>.<a href="../../package.html" class="extype" name="io.radanalytics">radanalytics</a>.<a href="../package.html" class="extype" name="io.radanalytics.silex">silex</a>.<a href="package.html" class="extype" name="io.radanalytics.silex.util">util</a>.<a href="SampleSink$.html" class="extype" name="io.radanalytics.silex.util.SampleSink">SampleSink</a></p>
+        <h1>DoubleLimits</h1><h3><span class="morelinks"><div>Related Doc:
+            <a href="SampleSink$.html" class="extype" name="io.radanalytics.silex.util.SampleSink">package SampleSink</a>
           </div></span></h3><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink" title="Permalink" target="_top">
+      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink$$DoubleLimits$" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -43,22 +41,17 @@
 
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
-        <span class="modifier">sealed </span>
-        <span class="kind">class</span>
+        <span class="modifier"></span>
+        <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">SampleSink</span><span class="tparams">[<span name="S">S</span>]</span><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
+        <span class="name">DoubleLimits</span><span class="result"> extends <a href="NumericLimits.html" class="extype" name="io.radanalytics.silex.util.NumericLimits">NumericLimits</a>[<span class="extype" name="scala.Double">Double</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>On-line mean and variance estimates for a stream of fractional values. Uses
-Chan's formulae.</p><p>Type S must have a <tt>scala.math.Fractional[S]</tt> witness in scope, a
-<tt>NumericLimits[S]</tt> witness in scope, and a function converting from
-Long to S in scope. Scala provides the former and the latter for its
-fractional numeric types; the SampleSink companion object provides witnesses
-for<tt>NumericLimits[Float]</tt> and <tt>NumericLimits[Double]</tt>.</p></div><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="java.io.Serializable">Serializable</span>, <a href="../../../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="NumericLimits.html" class="extype" name="io.radanalytics.silex.util.NumericLimits">NumericLimits</a>[<span class="extype" name="scala.Double">Double</span>], <a href="../../../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -76,7 +69,7 @@ for<tt>NumericLimits[Float]</tt> and <tt>NumericLimits[Double]</tt>.</p></div><d
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="io.radanalytics.silex.util.SampleSink"><span>SampleSink</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="io.radanalytics.silex.util.SampleSink.DoubleLimits"><span>DoubleLimits</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="io.radanalytics.silex.util.NumericLimits"><span>NumericLimits</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -93,27 +86,7 @@ for<tt>NumericLimits[Float]</tt> and <tt>NumericLimits[Double]</tt>.</p></div><d
 
       <div id="template">
         <div id="allMembers">
-        <div id="constructors" class="members">
-              <h3>Instance Constructors</h3>
-              <ol><li name="io.radanalytics.silex.util.SampleSink#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(_count:Long,_min:S,_max:S,_mean:S,_m2:S)(implicitnum:Fractional[S],implicitlong2s:Long=&gt;S,implicitlim:io.radanalytics.silex.util.NumericLimits[S]):io.radanalytics.silex.util.SampleSink[S]"></a>
-      <a id="&lt;init&gt;:SampleSink[S]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">new</span>
-      </span>
-      <span class="symbol">
-        <span class="name">SampleSink</span><span class="params">(<span name="_count">_count: <span class="extype" name="scala.Long">Long</span></span>, <span name="_min">_min: <span class="extype" name="io.radanalytics.silex.util.SampleSink.S">S</span></span>, <span name="_max">_max: <span class="extype" name="io.radanalytics.silex.util.SampleSink.S">S</span></span>, <span name="_mean">_mean: <span class="extype" name="io.radanalytics.silex.util.SampleSink.S">S</span></span>, <span name="_m2">_m2: <span class="extype" name="io.radanalytics.silex.util.SampleSink.S">S</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="num">num: <a href="../../../../scala/package.html#Fractional[T]=scala.math.Fractional[T]" class="extmbr" name="scala.Fractional">Fractional</a>[<span class="extype" name="io.radanalytics.silex.util.SampleSink.S">S</span>]</span>, <span name="long2s">long2s: (<span class="extype" name="scala.Long">Long</span>) ⇒ <span class="extype" name="io.radanalytics.silex.util.SampleSink.S">S</span></span>, <span name="lim">lim: <a href="NumericLimits.html" class="extype" name="io.radanalytics.silex.util.NumericLimits">NumericLimits</a>[<span class="extype" name="io.radanalytics.silex.util.SampleSink.S">S</span>]</span>)</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@&lt;init&gt;(_count:Long,_min:S,_max:S,_mean:S,_m2:S)(implicitnum:Fractional[S],implicitlong2s:Long=&gt;S,implicitlim:io.radanalytics.silex.util.NumericLimits[S]):io.radanalytics.silex.util.SampleSink[S]" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
-    </li></ol>
-            </div>
+        
 
         
 
@@ -133,7 +106,7 @@ for<tt>NumericLimits[Float]</tt> and <tt>NumericLimits[Double]</tt>.</p></div><d
         <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@!=(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink$$DoubleLimits$@!=(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -150,45 +123,11 @@ for<tt>NumericLimits[Float]</tt> and <tt>NumericLimits[Double]</tt>.</p></div><d
         <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@##():Int" title="Permalink" target="_top">
+      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink$$DoubleLimits$@##():Int" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="io.radanalytics.silex.util.SampleSink#++" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="++(other:io.radanalytics.silex.util.SampleSink[S]):io.radanalytics.silex.util.SampleSink[S]"></a>
-      <a id="++(SampleSink[S]):SampleSink[S]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: $plus$plus" class="name">++</span><span class="params">(<span name="other">other: <a href="" class="extype" name="io.radanalytics.silex.util.SampleSink">SampleSink</a>[<span class="extype" name="io.radanalytics.silex.util.SampleSink.S">S</span>]</span>)</span><span class="result">: <a href="" class="extype" name="io.radanalytics.silex.util.SampleSink">SampleSink</a>[<span class="extype" name="io.radanalytics.silex.util.SampleSink.S">S</span>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@++(other:io.radanalytics.silex.util.SampleSink[S]):io.radanalytics.silex.util.SampleSink[S]" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
-    </li><li name="io.radanalytics.silex.util.SampleSink#+=" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="+=(other:io.radanalytics.silex.util.SampleSink[S]):io.radanalytics.silex.util.SampleSink[S]"></a>
-      <a id="+=(SampleSink[S]):SampleSink[S]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: $plus$eq" class="name">+=</span><span class="params">(<span name="other">other: <a href="" class="extype" name="io.radanalytics.silex.util.SampleSink">SampleSink</a>[<span class="extype" name="io.radanalytics.silex.util.SampleSink.S">S</span>]</span>)</span><span class="result">: <a href="" class="extype" name="io.radanalytics.silex.util.SampleSink">SampleSink</a>[<span class="extype" name="io.radanalytics.silex.util.SampleSink.S">S</span>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@+=(other:io.radanalytics.silex.util.SampleSink[S]):io.radanalytics.silex.util.SampleSink[S]" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
     </li><li name="scala.AnyRef#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="==(x$1:Any):Boolean"></a>
       <a id="==(Any):Boolean"></a>
@@ -201,7 +140,7 @@ for<tt>NumericLimits[Float]</tt> and <tt>NumericLimits[Double]</tt>.</p></div><d
         <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@==(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink$$DoubleLimits$@==(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -218,7 +157,7 @@ for<tt>NumericLimits[Float]</tt> and <tt>NumericLimits[Double]</tt>.</p></div><d
         <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@asInstanceOf[T0]:T0" title="Permalink" target="_top">
+      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink$$DoubleLimits$@asInstanceOf[T0]:T0" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -235,7 +174,7 @@ for<tt>NumericLimits[Float]</tt> and <tt>NumericLimits[Double]</tt>.</p></div><d
         <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="../../../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@clone():Object" title="Permalink" target="_top">
+      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink$$DoubleLimits$@clone():Object" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -244,26 +183,6 @@ for<tt>NumericLimits[Float]</tt> and <tt>NumericLimits[Double]</tt>.</p></div><d
       
       <span class="defval" name="classOf[java.lang.CloneNotSupportedException]">...</span>
     </span>)</span>
-              
-        </dd></dl></div>
-    </li><li name="io.radanalytics.silex.util.SampleSink#count" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="count:Long"></a>
-      <a id="count:Long"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">count</span><span class="result">: <span class="extype" name="scala.Long">Long</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@count:Long" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Annotations</dt><dd>
-                <span class="name">@inline</span><span class="args">()</span>
               
         </dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
@@ -278,7 +197,7 @@ for<tt>NumericLimits[Float]</tt> and <tt>NumericLimits[Double]</tt>.</p></div><d
         <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="../../../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink$$DoubleLimits$@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -295,7 +214,7 @@ for<tt>NumericLimits[Float]</tt> and <tt>NumericLimits[Double]</tt>.</p></div><d
         <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@equals(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink$$DoubleLimits$@equals(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -312,7 +231,7 @@ for<tt>NumericLimits[Float]</tt> and <tt>NumericLimits[Double]</tt>.</p></div><d
         <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@finalize():Unit" title="Permalink" target="_top">
+      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink$$DoubleLimits$@finalize():Unit" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -335,24 +254,7 @@ for<tt>NumericLimits[Float]</tt> and <tt>NumericLimits[Double]</tt>.</p></div><d
         <span class="name">getClass</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@getClass():Class[_]" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="hashCode():Int"></a>
-      <a id="hashCode():Int"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@hashCode():Int" title="Permalink" target="_top">
+      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink$$DoubleLimits$@getClass():Class[_]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -369,71 +271,45 @@ for<tt>NumericLimits[Float]</tt> and <tt>NumericLimits[Double]</tt>.</p></div><d
         <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink$$DoubleLimits$@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="io.radanalytics.silex.util.SampleSink#max" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="max:S"></a>
-      <a id="max:S"></a>
+    </li><li name="io.radanalytics.silex.util.SampleSink.DoubleLimits#maximum" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="maximum:Double"></a>
+      <a id="maximum:Double"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">def</span>
+        <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">max</span><span class="result">: <span class="extype" name="io.radanalytics.silex.util.SampleSink.S">S</span></span>
+        <span class="name">maximum</span><span class="result">: <span class="extype" name="scala.Double">Double</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@max:S" title="Permalink" target="_top">
+      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink$$DoubleLimits$@maximum:Double" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Annotations</dt><dd>
-                <span class="name">@inline</span><span class="args">()</span>
-              
-        </dd></dl></div>
-    </li><li name="io.radanalytics.silex.util.SampleSink#mean" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="mean:S"></a>
-      <a id="mean:S"></a>
+      <p class="shortcomment cmt">The negative value with the largest magnitude representable as a <tt>T</tt></tt></p><div class="fullcomment"><div class="comment cmt"><p>The negative value with the largest magnitude representable as a <tt>T</tt></p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="io.radanalytics.silex.util.SampleSink.DoubleLimits">DoubleLimits</a> → <a href="NumericLimits.html" class="extype" name="io.radanalytics.silex.util.NumericLimits">NumericLimits</a></dd></dl></div>
+    </li><li name="io.radanalytics.silex.util.SampleSink.DoubleLimits#minimum" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="minimum:Double"></a>
+      <a id="minimum:Double"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">def</span>
+        <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">mean</span><span class="result">: <span class="extype" name="io.radanalytics.silex.util.SampleSink.S">S</span></span>
+        <span class="name">minimum</span><span class="result">: <span class="extype" name="scala.Double">Double</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@mean:S" title="Permalink" target="_top">
+      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink$$DoubleLimits$@minimum:Double" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Annotations</dt><dd>
-                <span class="name">@inline</span><span class="args">()</span>
-              
-        </dd></dl></div>
-    </li><li name="io.radanalytics.silex.util.SampleSink#min" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="min:S"></a>
-      <a id="min:S"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">min</span><span class="result">: <span class="extype" name="io.radanalytics.silex.util.SampleSink.S">S</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@min:S" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Annotations</dt><dd>
-                <span class="name">@inline</span><span class="args">()</span>
-              
-        </dd></dl></div>
+      <p class="shortcomment cmt">The largest positive value representable as a <tt>T</tt></tt></p><div class="fullcomment"><div class="comment cmt"><p>The largest positive value representable as a <tt>T</tt></p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="io.radanalytics.silex.util.SampleSink.DoubleLimits">DoubleLimits</a> → <a href="NumericLimits.html" class="extype" name="io.radanalytics.silex.util.NumericLimits">NumericLimits</a></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -446,7 +322,7 @@ for<tt>NumericLimits[Float]</tt> and <tt>NumericLimits[Double]</tt>.</p></div><d
         <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="../../../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink$$DoubleLimits$@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -463,7 +339,7 @@ for<tt>NumericLimits[Float]</tt> and <tt>NumericLimits[Double]</tt>.</p></div><d
         <span class="name">notify</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@notify():Unit" title="Permalink" target="_top">
+      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink$$DoubleLimits$@notify():Unit" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -480,48 +356,11 @@ for<tt>NumericLimits[Float]</tt> and <tt>NumericLimits[Double]</tt>.</p></div><d
         <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@notifyAll():Unit" title="Permalink" target="_top">
+      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink$$DoubleLimits$@notifyAll():Unit" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="io.radanalytics.silex.util.SampleSink#put" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="put(sample:S):Unit"></a>
-      <a id="put(S):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">put</span><span class="params">(<span name="sample">sample: <span class="extype" name="io.radanalytics.silex.util.SampleSink.S">S</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@put(sample:S):Unit" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Annotations</dt><dd>
-                <span class="name">@inline</span><span class="args">()</span>
-              
-        </dd></dl></div>
-    </li><li name="io.radanalytics.silex.util.SampleSink#stddev" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="stddev:Double"></a>
-      <a id="stddev:Double"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">stddev</span><span class="result">: <span class="extype" name="scala.Double">Double</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@stddev:Double" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -534,48 +373,11 @@ for<tt>NumericLimits[Float]</tt> and <tt>NumericLimits[Double]</tt>.</p></div><d
         <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
+      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink$$DoubleLimits$@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="io.radanalytics.silex.util.SampleSink#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="toString():String"></a>
-      <a id="toString():String"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@toString():String" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="io.radanalytics.silex.util.SampleSink">SampleSink</a> → AnyRef → Any</dd></dl></div>
-    </li><li name="io.radanalytics.silex.util.SampleSink#variance" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="variance:S"></a>
-      <a id="variance:S"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">variance</span><span class="result">: <span class="extype" name="io.radanalytics.silex.util.SampleSink.S">S</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@variance:S" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Annotations</dt><dd>
-                <span class="name">@inline</span><span class="args">()</span>
-              
-        </dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
@@ -588,7 +390,7 @@ for<tt>NumericLimits[Float]</tt> and <tt>NumericLimits[Double]</tt>.</p></div><d
         <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@wait():Unit" title="Permalink" target="_top">
+      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink$$DoubleLimits$@wait():Unit" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -611,7 +413,7 @@ for<tt>NumericLimits[Float]</tt> and <tt>NumericLimits[Double]</tt>.</p></div><d
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>, <span name="arg1">arg1: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
+      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink$$DoubleLimits$@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -634,7 +436,7 @@ for<tt>NumericLimits[Float]</tt> and <tt>NumericLimits[Double]</tt>.</p></div><d
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink@wait(x$1:Long):Unit" title="Permalink" target="_top">
+      <a href="../../../../index.html#io.radanalytics.silex.util.SampleSink$$DoubleLimits$@wait(x$1:Long):Unit" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -654,8 +456,16 @@ for<tt>NumericLimits[Float]</tt> and <tt>NumericLimits[Double]</tt>.</p></div><d
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="java.io.Serializable">
+        <div class="parent" name="scala.Serializable">
+              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="java.io.Serializable">
               <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="scala.Product">
+              <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
+            </div><div class="parent" name="scala.Equals">
+              <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
+            </div><div class="parent" name="io.radanalytics.silex.util.NumericLimits">
+              <h3>Inherited from <a href="NumericLimits.html" class="extype" name="io.radanalytics.silex.util.NumericLimits">NumericLimits</a>[<span class="extype" name="scala.Double">Double</span>]</h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <a href="../../../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">
