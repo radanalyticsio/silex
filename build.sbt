@@ -4,11 +4,11 @@ organization := "io.radanalytics"
 
 version := "0.2.1"
 
-val SPARK_VERSION = "2.2.2"
+val SPARK_VERSION = "2.3.1"
 
 scalaVersion := "2.11.11"
 
-crossScalaVersions := Seq("2.10.6", "2.11.11")
+crossScalaVersions := Seq("2.11.11")
 
 def commonSettings = Seq(
   libraryDependencies ++= Seq(
