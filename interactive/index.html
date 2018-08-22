@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8">
 
-    <title>Silex 0.2.0</title>
+    <title>Using Silex interactively</title>
     
     <meta name="author" content="William Benton, Erik Erlandson, and contributors">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -71,7 +71,7 @@
     
       
       	
-      	<li><a href="/interactive/">Using Silex interactively</a></li>
+      	<li class="active"><a href="/interactive/" class="active">Using Silex interactively</a></li>
       	
       
     
@@ -86,36 +86,27 @@
     <div class="container">
       
 <div class="page-header">
-  <h1>Silex 0.2.0 </h1>
+  <h1>Using Silex interactively </h1>
 </div>
 
-<div class="row post-full">
-  <div class="col-md-12">
-    <div class="date">
-      <span>10 August 2017</span>
-    </div>
-    <div class="content">
-      <p>Silex 0.2.0 is released!</p>
+<div class="row">
+  <div class="col-xs-12">
+      <p>It’s possible to try out Silex interactively without building a project.  You have two options:  you can use <code class="highlighter-rouge">spark-shell</code> if you have Spark installed, or you can use <code class="highlighter-rouge">sbt console</code> from a checkout of the source repository.</p>
 
-<p>Here are the main improvements and additions:</p>
+<h3 id="using-a-spark-shell">Using a Spark shell</h3>
 
-<ul>
-  <li>Preliminary support for ML pipeline training of self-organizing maps</li>
-  <li>All artifacts have been migrated to the <a href="radanalytics.io">radanalytics.io</a> group</li>
-  <li>Silex is now built against Spark 2.2 and the most recent release of Scala 2.11</li>
-</ul>
+<p>You can run Silex under a Spark shell without explicitly downloading it.  Here’s the invocation to make it work:</p>
 
-<p>You can:</p>
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">spark-shell <span class="nt">--repositories</span> https://dl.bintray.com/willb/maven/ <span class="nt">--packages</span> io.radanalytics:silex_2.11:0.2.0</code></pre></figure>
 
-<ul>
-  <li><a href="https://silex.radanalytics.io/coordinates/">Include Silex</a> in your projects,</li>
-  <li><a href="https://github.com/radanalyticsio/silex">fork Silex on GitHub</a>, and</li>
-  <li><a href="https://silex.radanalytics.io/latest/api/">read the API docs</a>.</li>
-</ul>
+<p>(Thanks to <a href="https://plus.google.com/+JiriKremser">Jirka Kremser</a> for this suggestion!)</p>
 
-    </div>
+<h3 id="using-the-developer-console">Using the developer console</h3>
 
-    
+<p>If you’ve checked out the <a href="https://github.com/radanalyticsio/silex">Silex repository</a>, you can run <code class="highlighter-rouge">sbt console</code> and get an environment with Silex preloaded.</p>
+
+<p>(In general, you can <a href="https://chapeau.freevariable.com/2014/09/interactive-sbt.html">customize the behavior of <code class="highlighter-rouge">sbt console</code></a>.)</p>
+
   </div>
 </div>
 
