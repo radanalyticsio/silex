@@ -7,7 +7,7 @@ url: "https://silex.radanalytics.io/"
 author:
   name: William Benton, Erik Erlandson, and contributors
 
-silexVersion: 0.2.0
+silexVersion: 0.2.2
 
 # Build settings
 markdown: kramdown
