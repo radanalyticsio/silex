@@ -19,7 +19,7 @@
 package io.radanalytics.silex.som
 
 import org.apache.spark.ml.{Estimator, Model}
-import org.apache.spark.ml.hacks.Hacks
+import org.apache.spark.ml.linalg.SQLDataTypes
 import org.apache.spark.ml.linalg.VectorUDT
 import org.apache.spark.ml.param._
 import org.apache.spark.ml.util.{DefaultParamsReadable, DefaultParamsWritable, Identifiable}
@@ -110,7 +110,7 @@ private[som] trait SOMParams extends Params with DefaultParamsWritable /* with H
     
     // ...and to be the proper type
     schema($(featuresCol)) match {
-      case sf: StructField => require(sf.dataType.equals(Hacks.vectorUDT))
+      case sf: StructField => require(sf.dataType.equals(SQLDataTypes.VectorType))
     }
     
     // but we don't want the output columns to exist
