@@ -9,7 +9,6 @@ cache:
 jdk:
   - openjdk8
 scala:
-   - 2.10.6
    - 2.11.11
 script:
   - sbt ++$TRAVIS_SCALA_VERSION clean 

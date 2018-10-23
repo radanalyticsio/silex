@@ -103,24 +103,24 @@ class ClusteringRandomForestModelSpec extends FlatSpec with Matchers with PerTes
     rules.size should be (2)
 
     rules(0.0).map(_.toVector) should beEqSeq(Seq(
-      Vector(LE("foo", 0.0)),
-      Vector(GT("foo", 0.0), IN("bar", Seq(0.0))),
-      Vector(LE("foo", 0.0)),
-      Vector(GT("foo", 0.0), IN("bar", Seq(0.0))),
+      Vector(LE("foo", 0.5)),
+      Vector(GT("foo", 0.5), IN("bar", Seq(0.0))),
+      Vector(LE("foo", 0.5)),
+      Vector(GT("foo", 0.5), IN("bar", Seq(0.0))),
       Vector(IN("bar", Seq(0.0))),
-      Vector(IN("bar", Seq(1.0)), LE("foo", 0.0)),
-      Vector(LE("foo", 0.0)),
-      Vector(GT("foo", 0.0), IN("bar", Seq(0.0))),
-      Vector(LE("foo", 0.0)),
-      Vector(GT("foo", 0.0), IN("bar", Seq(0.0)))
+      Vector(IN("bar", Seq(1.0)), LE("foo", 0.5)),
+      Vector(LE("foo", 0.5)),
+      Vector(GT("foo", 0.5), IN("bar", Seq(0.0))),
+      Vector(LE("foo", 0.5)),
+      Vector(GT("foo", 0.5), IN("bar", Seq(0.0)))
     ) : Seq[Vector[Predicate]])
 
     rules(1.0).map(_.toVector) should beEqSeq(Seq(
-      Vector(GT("foo", 0.0), IN("bar", Seq(1.0))),
-      Vector(GT("foo", 0.0), IN("bar", Seq(1.0))),
-      Vector(IN("bar", Seq(1.0)), GT("foo", 0.0)),
-      Vector(GT("foo", 0.0), IN("bar", Seq(1.0))),
-      Vector(GT("foo", 0.0), IN("bar", Seq(1.0)))
+      Vector(GT("foo", 0.5), IN("bar", Seq(1.0))),
+      Vector(GT("foo", 0.5), IN("bar", Seq(1.0))),
+      Vector(IN("bar", Seq(1.0)), GT("foo", 0.5)),
+      Vector(GT("foo", 0.5), IN("bar", Seq(1.0))),
+      Vector(GT("foo", 0.5), IN("bar", Seq(1.0)))
     ) : Seq[Vector[Predicate]])
   }
 }
